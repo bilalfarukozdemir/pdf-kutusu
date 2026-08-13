@@ -19,13 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Bu lisans bu deponun KENDI kaynak kodunu kapsar. Depoda birlikte dagitilan
-ucuncu taraf varliklar kendi lisanslarini korur; ozellikle:
-
-  app/src/main/assets/fonts/NotoSans-Regular.ttf
-  -> SIL Open Font License 1.1 (bkz. app/src/main/assets/fonts/OFL.txt)
-
-Tum bagimliliklarin lisans dokumu icin THIRD_PARTY_NOTICES.md dosyasina bakin.

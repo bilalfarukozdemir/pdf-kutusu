@@ -1,6 +1,8 @@
 # Üçüncü taraf bileşenler
 
-PDF Kutusu MIT lisanslıdır. Aşağıdaki bileşenler kendi lisanslarını korur.
+[LICENSE](LICENSE) dosyasındaki MIT lisansı bu deponun **kendi kaynak kodunu**
+kapsar. Depoda birlikte dağıtılan üçüncü taraf varlıklar ve bağımlılıklar kendi
+lisanslarını korur; hepsi aşağıda listelenmiştir.
 
 **AGPL lisanslı hiçbir bileşen kullanılmamıştır.** MuPDF ve iText bilerek
 dışarıda bırakıldı; ikisi de AGPL'dir ve bu projenin lisans modeliyle

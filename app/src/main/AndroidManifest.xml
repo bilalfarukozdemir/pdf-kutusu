@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+    ===========================================================================
+      SIFIR IZIN
+    ===========================================================================
+      Bu uygulama HICBIR izin talep etmez. Asagidaki satirlarin hicbiri bir
+      izin TALEBI DEGILDIR; her biri manifest birlestiriciye (merger) verilen
+      bir KALDIRMA direktifidir.
+
+      Neden gerekli: ML Kit'in bagimlilik zinciri (play-services-basement,
+      com.google.android.datatransport) kendi manifestlerinde INTERNET ve
+      ACCESS_NETWORK_STATE izinlerini tanimlar. tools:node="remove" bunlari
+      birlesme sirasinda siler; nihai APK'da bu izinler bulunmaz.
+
+      Bu tek basina bir soz degil, yapisal bir garantidir:
+        1. Bu satirlar kutuphanelerin ekledigi izinleri siler.
+        2. app/build.gradle.kts icindeki AgIzniDenetimi gorevi, birlesmis
+           manifestte tek bir <uses-permission> kalirsa DERLEMEYI DURDURUR.
+        3. Uretilen APK `aapt dump permissions` ile dogrulanabilir (README).
+
+      Dogrulama:
+        ./gradlew assembleDebug
+        aapt dump permissions app/build/outputs/apk/debug/app-debug.apk
+      -> ciktida hicbir "uses-permission" satiri gorunmemelidir.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="remove" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" tools:node="remove" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+
+    <application
+        android:name=".PdfKutusuUygulamasi"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/veri_cikarma_kurallari"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/uygulama_adi"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PdfKutusu"
+        tools:targetApi="34">
+
+        <activity
+            android:name=".ui.AnaAktivite"
+            android:exported="true"
+            android:label="@string/uygulama_adi"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          ML Kit'in "unbundled" model indirici burada BILEREK tanimlanmamistir.
+          <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" .../>
+          satiri eklenirse Google Play Services modeli agdan indirmeye calisir.
+          Paketli (bundled) model kullandigimiz icin buna ihtiyac yoktur.
+        -->
+    </application>
+
+</manifest>

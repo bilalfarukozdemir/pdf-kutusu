@@ -1,0 +1,85 @@
+name: Derleme ve testler
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Birim testleri, APK ve izin denetimi
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Robolectric ilk calistirmada ~100 MB android-all jar indirir.
+      # Onbellege almak CI suresini ~5 dakikadan ~1 dakikaya indirir.
+      - name: Robolectric önbelleği
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: robolectric-${{ runner.os }}-
+
+      - name: Birim testleri
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      # ---------------------------------------------------------------
+      # Bu projenin merkezi iddiasi: uygulama hicbir Android izni istemez.
+      # Derleme icindeki AgIzniDenetimi gorevi zaten bunu kontrol ediyor;
+      # burada URETILEN APK uzerinde bagimsiz olarak bir kez daha bakiyoruz.
+      # ---------------------------------------------------------------
+      - name: INTERNET izni yok — APK üzerinde doğrula
+        run: |
+          set -euo pipefail
+          AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -1)"
+          echo "aapt: $AAPT"
+          "$AAPT" dump permissions app/build/outputs/apk/debug/app-debug.apk | tee izinler.txt
+          echo "---"
+          if grep -q "android\.permission\." izinler.txt; then
+            echo "::error::APK bir Android izni talep ediyor. Ayrıntı için yukarıdaki listeye bakın."
+            exit 1
+          fi
+          echo "Temiz: APK hiçbir android.permission.* izni talep etmiyor."
+
+      - name: Test raporlarını yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-raporlari
+          path: |
+            app/build/reports/tests/
+            app/build/reports/izin-denetimi/
+          retention-days: 14
+
+      - name: Debug APK'yı yükle
+        uses: actions/upload-artifact@v4
+        with:
+          # DIKKAT: debug derlemesi android:debuggable="true" tasir.
+          # Gunluk kullanim icin degil, yalnizca inceleme/test icindir.
+          name: app-debug-apk-INCELEME-ICIN
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14

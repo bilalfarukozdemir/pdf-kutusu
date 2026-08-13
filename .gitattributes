@@ -1,0 +1,27 @@
+# Depoda her sey LF; calisma kopyasinda isletim sistemine birakiliyor.
+* text=auto eol=lf
+
+# Windows toplu is dosyalari CRLF olmali.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# gradlew Linux/macOS'ta kabuk betigi olarak calisir; CRLF olursa
+# "bad interpreter" hatasi verir ve CI kirilir.
+gradlew text eol=lf
+
+# Ikili dosyalar - donusturme yok.
+*.jar   binary
+*.ttf   binary
+*.otf   binary
+*.png   binary
+*.jpg   binary
+*.webp  binary
+*.apk   binary
+*.aab   binary
+*.keystore binary
+*.jks   binary
+
+# GitHub dil istatistiklerinde gradle sarmalayicisi sayilmasin.
+gradle/wrapper/** linguist-vendored
+gradlew           linguist-vendored
+gradlew.bat       linguist-vendored

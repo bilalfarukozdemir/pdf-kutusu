@@ -1,0 +1,84 @@
+name: Hata bildirimi
+description: Beklenmeyen bir davranış ya da bozuk çıktı
+labels: ["hata"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Gerçek belgenizi eklemeyin.** Bu bir gizlilik aracı; sorunu yeniden
+        üreten *sentetik* bir dosya üretip onu ekleyin.
+
+  - type: dropdown
+    id: arac
+    attributes:
+      label: Hangi araç
+      options:
+        - Resimden PDF
+        - Birleştir
+        - Böl
+        - Sırala
+        - Döndür
+        - Sıkıştır
+        - Filigran
+        - Karart
+        - OCR
+        - Dosyalar / Günlük
+        - Diğer
+    validations:
+      required: true
+
+  - type: textarea
+    id: beklenen
+    attributes:
+      label: Ne bekliyordunuz
+    validations:
+      required: true
+
+  - type: textarea
+    id: gerceklesen
+    attributes:
+      label: Ne oldu
+    validations:
+      required: true
+
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Yeniden üretme adımları
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: cihaz
+    attributes:
+      label: Cihaz modeli
+      placeholder: örn. Xiaomi 2312DRA50I
+    validations:
+      required: true
+
+  - type: input
+    id: android
+    attributes:
+      label: Android sürümü
+      placeholder: örn. Android 13 (API 33)
+    validations:
+      required: true
+
+  - type: input
+    id: surum
+    attributes:
+      label: Uygulama sürümü
+      placeholder: örn. 1.0.0 ya da main dalı commit hash
+
+  - type: textarea
+    id: gunluk
+    attributes:
+      label: İşlem günlüğü kaydı (varsa)
+      description: >
+        Günlük ekranından dökümü dışa aktarıp ilgili satırı yapıştırabilirsiniz.
+        Dosya adını değiştirmekte özgürsünüz.
+      render: text

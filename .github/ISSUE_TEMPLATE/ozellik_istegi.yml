@@ -1,0 +1,43 @@
+name: Özellik isteği
+description: Yeni bir araç ya da mevcut bir aracın iyileştirilmesi
+labels: ["özellik"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Başlamadan önce [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md)
+        içindeki **kapsam dışı** listesine bakın. Şunlar bilerek yapılmıyor:
+        Office → PDF dönüşümü, imza akışı, hesap/abonelik, telemetri, bulut
+        senkronu, reklam ve `INTERNET` izni gerektiren her şey.
+
+  - type: textarea
+    id: sorun
+    attributes:
+      label: Hangi sorunu çözüyor
+      description: Çözümü değil, sorunu anlatın.
+    validations:
+      required: true
+
+  - type: textarea
+    id: oneri
+    attributes:
+      label: Önerdiğiniz çözüm
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: kisitlar
+    attributes:
+      label: Kısıtlara uygunluk
+      options:
+        - label: İnternet erişimi gerektirmiyor
+          required: true
+        - label: Yeni bir çalışma zamanı izni gerektirmiyor
+          required: true
+        - label: Kapsam dışı listesinde değil
+          required: true
+
+  - type: textarea
+    id: alternatifler
+    attributes:
+      label: Denediğiniz alternatifler

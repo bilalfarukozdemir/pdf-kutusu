@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "1cf6a422e697af9f4a2cb4e3c9ae29d2",
+    "entities": [
+      {
+        "tableName": "islem_gunlugu",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kimlik` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `zaman_damgasi` INTEGER NOT NULL, `islem_turu` TEXT NOT NULL, `girdi_dosya_adi` TEXT NOT NULL, `girdi_sha256` TEXT, `cikti_sha256` TEXT, `sayfa_sayisi` INTEGER, `sonuc` TEXT NOT NULL, `hata_mesaji` TEXT, `cikti_dosya_adi` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "kimlik",
+            "columnName": "kimlik",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zamanDamgasi",
+            "columnName": "zaman_damgasi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "islemTuru",
+            "columnName": "islem_turu",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "girdiDosyaAdi",
+            "columnName": "girdi_dosya_adi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "girdiSha256",
+            "columnName": "girdi_sha256",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ciktiSha256",
+            "columnName": "cikti_sha256",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sayfaSayisi",
+            "columnName": "sayfa_sayisi",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sonuc",
+            "columnName": "sonuc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hataMesaji",
+            "columnName": "hata_mesaji",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ciktiDosyaAdi",
+            "columnName": "cikti_dosya_adi",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "kimlik"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1cf6a422e697af9f4a2cb4e3c9ae29d2')"
+    ]
+  }
+}

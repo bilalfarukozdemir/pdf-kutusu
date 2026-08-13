@@ -1,0 +1,7 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Güvenlik açığı
+    url: https://github.com/bilalfarukozdemir/pdf-kutusu/security/advisories/new
+    about: >
+      Kullanıcı dosyalarını sızdıran somut bir açık bulduysanız burayı kullanın.
+      Diğer güvenlik konuları için normal issue açabilirsiniz (bkz. SECURITY.md).

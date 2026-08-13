@@ -1,0 +1,60 @@
+# Değişiklik günlüğü
+
+Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) esas alınmıştır.
+Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
+
+## [Yayımlanmamış]
+
+## [1.0.0] — 2026-08-14
+
+İlk sürüm. Tamamen çevrimdışı çalışan kişisel PDF araç kutusu.
+
+### Eklendi
+
+**Araçlar**
+
+- **Resimden PDF** — birden çok görseli tek PDF'te topla. EXIF yönü uygulanır,
+  EXIF verisi (GPS, cihaz modeli, çekim tarihi) çıktıya geçmez, saydam PNG
+  beyaza düzleştirilir. A4'e sığdır / görüntü boyutu düzenleri, sürükle-bırak
+  sıralama, kalite seçimi ve tahmini boyut.
+- **Birleştir** — birden fazla PDF'i sırayla tek dosyada topla.
+- **Böl** — sayfa aralığı seçerek ayır; her aralığı ayrı dosyaya çıkarma seçeneği.
+- **Sırala** — sayfaları sürükle-bırak ile yeniden diz, sayfa çıkar.
+- **Döndür** — 90/180/270°, tüm sayfalar ya da seçili aralık.
+- **Sıkıştır** — gömülü görselleri yeniden örnekle ve yeniden kodla; üç kalite
+  düzeyi ve tahmini boyut.
+- **Filigran** — çapraz ya da döşeli metin filigranı; punto, saydamlık, açı, renk.
+- **Karart** — sayfayı ≥200 DPI rasterize edip seçilen alanları piksellere opak
+  siyah boyar. Metin PDF'in içerik akışından gerçekten kalkar.
+- **OCR** — ML Kit'in paketli Latin modeliyle cihaz üstü metin tanıma; panoya
+  kopyalama ve `.txt` kaydetme.
+- Sayfa önizleme, Android'in yerleşik `PdfRenderer` motoruyla (ek kütüphane yok).
+
+**Altyapı**
+
+- Sıfır izin. `AgIzniDenetimi` Gradle görevi, birleşmiş manifestte yetenek veren
+  bir izin kalırsa derlemeyi durdurur; `assembleDebug` bu göreve bağlıdır.
+- Salt-ekleme işlem günlüğü (Room). DAO'da `@Update`/`@Delete` yok.
+- Storage Access Framework ile dosya seçme ve dışa aktarma; kaynak dosyaya asla
+  yazılmaz.
+- Çıktı adlandırma: `<orijinal-ad>__<islem>__<yyyyMMdd-HHmmss>.pdf`. Dosya adı
+  temizleyicisi yol gezinmesini ve kontrol karakterlerini eler, **Türkçe
+  karakterleri korur**.
+- Paketli Noto Sans (statik, OFL 1.1); filigranda yalnızca kullanılan harfler
+  gömülür. Kodlanamayan karakter (emoji, CJK) işlemi çökertmez, değiştirilir.
+- Şifreli PDF'lerde parola akışı; çıktı şifresiz üretilir ve bu açıkça söylenir.
+- İşlem öncesi risk uyarıları: form alanı, imza, şifreleme, gömülü olmayan yazı tipi.
+- Compose + Material 3, sistem ayarını izleyen açık/koyu tema, dinamik renk.
+- Her ekranda boş / yükleniyor / başarılı / kurtarılabilir hata durumları;
+  uzun işlemlerde ilerleme ve iptal.
+- İlk açılışta düşük riskli kullanım uyarısı.
+
+**Testler**
+
+- 89 birim testi (Robolectric + saf JVM)
+- 10 enstrümante test, gerçek cihazda
+- Zorunlu karartma doğrulaması hem birim hem cihaz testinde
+- EXIF sızıntısı, EXIF dönüşü ve saydam PNG doğrulamaları piksel düzeyinde
+
+[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/releases/tag/v1.0.0

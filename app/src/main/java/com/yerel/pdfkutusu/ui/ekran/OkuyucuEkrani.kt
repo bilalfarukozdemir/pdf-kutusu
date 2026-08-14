@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,6 +63,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -81,6 +83,17 @@ import kotlinx.coroutines.launch
 
 private const val ASGARI_YAKINLASTIRMA = 1f
 private const val AZAMI_YAKINLASTIRMA = 5f
+
+/** Yatay kaydirmayi odak noktasi sabit kalacak sekilde duzeltir. */
+private suspend fun yatayKaydirmaDuzelt(
+    yatayKaydirma: androidx.compose.foundation.ScrollState,
+    odakX: Float,
+    k: Float,
+) {
+    yatayKaydirma.scrollTo(
+        ((yatayKaydirma.value + odakX) * k - odakX).roundToInt().coerceAtLeast(0),
+    )
+}
 
 /**
  * PDF okuyucu.
@@ -229,7 +242,15 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                     }
                 }
 
-                /** Parmak kalkinca: olcegi yerlesime isle ve odagi koru. */
+                /**
+                 * Parmak kalkinca: olcegi yerlesime isle ve odagi koru.
+                 *
+                 * Cipa **odagin uzerindeki sayfa ve o sayfa icindeki oran**.
+                 * Mutlak piksel ofsetiyle kaydirmak, ofset sayfanin boyunu
+                 * astiginda sonraki sayfalara tasiyordu - kullanicinin
+                 * gordugu "isinlanma" buydu. Sayfa indeksine cipalayinca
+                 * bir ogeden fazla kayma yapisal olarak mumkun degil.
+                 */
                 fun hareketiIsle() {
                     val olcek = hareketOlcegi
                     hareketOlcegi = 1f
@@ -241,39 +262,61 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                         .coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
                     if (yeni == eski) return
                     val k = yeni / eski
-                    yerlesimYakinlastirma = yeni
 
-                    // Parmaklarin ortasindaki nokta ekranda ayni yerde kalsin.
                     val odakX = hareketMerkezi.x
                     val odakY = hareketMerkezi.y
-                    val ilkIndeks = listeDurumu.firstVisibleItemIndex
-                    val ilkOfset = listeDurumu.firstVisibleItemScrollOffset
+
+                    // Odagin uzerindeki sayfayi ve icindeki orani bul.
+                    val gorunenler = listeDurumu.layoutInfo.visibleItemsInfo
+                    val cipa = gorunenler.firstOrNull {
+                        odakY >= it.offset && odakY < it.offset + it.size
+                    } ?: gorunenler.firstOrNull()
+
+                    yerlesimYakinlastirma = yeni
+
+                    if (cipa == null || cipa.size <= 0) {
+                        kapsam.launch { yatayKaydirmaDuzelt(yatayKaydirma, odakX, k) }
+                        return
+                    }
+
+                    val kesir = ((odakY - cipa.offset) / cipa.size.toFloat()).coerceIn(0f, 1f)
+                    val yeniBoy = cipa.size * k
+                    // kesir <= 1 oldugu icin bu deger yeniBoy'u asamaz:
+                    // kaydirma her zaman bu sayfanin icinde kalir.
+                    val hedefOfset = kesir * yeniBoy - odakY
 
                     kapsam.launch {
-                        yatayKaydirma.scrollTo(
-                            ((yatayKaydirma.value + odakX) * k - odakX)
-                                .roundToInt().coerceAtLeast(0),
-                        )
+                        yatayKaydirmaDuzelt(yatayKaydirma, odakX, k)
                         listeDurumu.scrollToItem(
-                            ilkIndeks,
-                            (ilkOfset * k + (k - 1f) * odakY).roundToInt().coerceAtLeast(0),
+                            cipa.index,
+                            hedefOfset.roundToInt().coerceAtLeast(0),
                         )
+                        if (hedefOfset < 0f) {
+                            // Sayfanin ust kismi ekranin altina insin.
+                            listeDurumu.scrollBy(hedefOfset)
+                        }
                     }
                 }
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .horizontalScroll(yatayKaydirma, enabled = gorunenYakinlastirma > 1f)
-                        // Yalnizca iki parmak varken olaylari tuketir; tek
-                        // parmakla kaydirma LazyColumn'a dokunulmadan gider.
+                        // Hareket yakalama, kaydirma kabinin DISINDA: boylece
+                        // parmak konumu her zaman gorunum koordinatlarinda,
+                        // yakinlastirmadan bagimsiz.
                         .pointerInput(motor) {
                             awaitEachGesture {
-                                awaitFirstDown(requireUnconsumed = false)
+                                awaitFirstDown(
+                                    requireUnconsumed = false,
+                                    pass = PointerEventPass.Initial,
+                                )
                                 var cokParmak = false
                                 var toplam = 1f
                                 while (true) {
-                                    val olay = awaitPointerEvent()
+                                    // Initial gecis: iki parmak varken olayi
+                                    // liste gormeden tuketiriz, tek parmakta
+                                    // dokunmayiz ve kaydirma listeye gider.
+                                    val olay = awaitPointerEvent(PointerEventPass.Initial)
                                     val basili = olay.changes.count { it.pressed }
                                     if (basili == 0) break
                                     if (basili >= 2) {
@@ -288,43 +331,56 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                                             val ustSinir = AZAMI_YAKINLASTIRMA / yerlesimYakinlastirma
                                             toplam = (toplam * degisim).coerceIn(altSinir, ustSinir)
                                             hareketOlcegi = toplam
-                                            olay.changes.forEach { it.consume() }
                                         }
+                                        olay.changes.forEach { it.consume() }
                                     }
                                 }
                                 if (cokParmak) hareketiIsle()
                             }
                         },
                 ) {
-                    LazyColumn(
-                        state = listeDurumu,
-                        modifier = Modifier
-                            .width(sayfaGenisligiDp)
-                            .fillMaxHeight()
-                            // Parmak hareketi suresince yalnizca GPU donusumu.
-                            .graphicsLayer {
-                                if (hareketOlcegi != 1f) {
-                                    scaleX = hareketOlcegi
-                                    scaleY = hareketOlcegi
-                                    transformOrigin = TransformOrigin(
-                                        (hareketMerkezi.x / gorunumGenisligiPx.toFloat())
-                                            .coerceIn(0f, 1f),
-                                        (hareketMerkezi.y / gorunumYuksekligiPx.toFloat())
-                                            .coerceIn(0f, 1f),
-                                    )
-                                }
-                            },
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .horizontalScroll(
+                                yatayKaydirma,
+                                enabled = gorunenYakinlastirma > 1f,
+                            ),
                     ) {
-                        items(sayfalar, key = { it }) { indeks ->
-                            SayfaGorunumu(
-                                motor = motor,
-                                indeks = indeks,
-                                genislikPx = sayfaGenisligiPx,
-                                cizimEtkin = !hareketAktif,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
+                        LazyColumn(
+                            state = listeDurumu,
+                            modifier = Modifier
+                                .width(sayfaGenisligiDp)
+                                .fillMaxHeight()
+                                // Parmak hareketi suresince yalnizca GPU donusumu.
+                                .graphicsLayer {
+                                    if (hareketOlcegi != 1f) {
+                                        scaleX = hareketOlcegi
+                                        scaleY = hareketOlcegi
+                                        // Odak, olceklenen dugumun KENDI
+                                        // koordinatlarinda olmali. Gorunum
+                                        // genisligine bolmek, sayfa gorunumden
+                                        // genisken yanlis noktadan olcekliyordu.
+                                        transformOrigin = TransformOrigin(
+                                            ((yatayKaydirma.value + hareketMerkezi.x) /
+                                                sayfaGenisligiPx.toFloat()).coerceIn(0f, 1f),
+                                            (hareketMerkezi.y /
+                                                gorunumYuksekligiPx.toFloat()).coerceIn(0f, 1f),
+                                        )
+                                    }
+                                },
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
+                        ) {
+                            items(sayfalar, key = { it }) { indeks ->
+                                SayfaGorunumu(
+                                    motor = motor,
+                                    indeks = indeks,
+                                    genislikPx = sayfaGenisligiPx,
+                                    cizimEtkin = !hareketAktif,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
                         }
                     }
                 }

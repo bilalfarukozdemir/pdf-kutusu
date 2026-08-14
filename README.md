@@ -803,3 +803,15 @@ kalıcıdır.
 Bu proje ücretsiz ve ücretsiz kalacak. İşine yaradıysa
 [sponsor olabilirsin](https://github.com/sponsors/bilalfarukozdemir); bir yıldız
 ya da iyi bir hata bildirimi de en az onun kadar kıymetli.
+
+---
+
+## Künye
+
+| | |
+|---|---|
+| Bakım | Tek geliştirici, boş zamanlarında — [@bilalfarukozdemir](https://github.com/bilalfarukozdemir) |
+| Finansman | Yok. Reklam, telemetri ve ücretli sürüm yok; tek gelir kalemi [GitHub Sponsors](https://github.com/sponsors/bilalfarukozdemir) |
+| Durum | Aktif geliştiriliyor |
+| Lisans | MIT |
+| Destek | Hata bildirimleri okunur ve ele alınır. Yanıt süresi taahhüdü ve garanti yoktur |

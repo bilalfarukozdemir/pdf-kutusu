@@ -19,8 +19,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.BrandingWatermark
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.ContentCut
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
@@ -66,7 +68,11 @@ val ARACLAR = listOf(
 )
 
 @Composable
-fun AnaEkran(gecis: (String) -> Unit) {
+fun AnaEkran(
+    gecis: (String) -> Unit,
+    bekleyenBelge: String? = null,
+    bekleyeniBirak: () -> Unit = {},
+) {
     AracIskeleti(
         baslik = "PDF Kutusu",
         eylemler = {
@@ -83,6 +89,12 @@ fun AnaEkran(gecis: (String) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item(span = { GridItemSpan(maxLineSpan) }) { CevrimdisiSeridi() }
+
+            if (bekleyenBelge != null) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    BekleyenBelgeSeridi(bekleyenBelge, bekleyeniBirak)
+                }
+            }
 
             items(ARACLAR, key = { it.rota }) { arac ->
                 Card(
@@ -171,6 +183,44 @@ private fun YanKart(
             Spacer(Modifier.height(6.dp))
             Text(baslik, style = MaterialTheme.typography.titleSmall)
             Text(aciklama, style = MaterialTheme.typography.labelSmall)
+        }
+    }
+}
+
+/**
+ * Okuyucudan devredilen belge. Kullanici birden fazla araca sokabilsin diye
+ * bir arac secildiginde kaybolmaz; ancak burada acikca birakilir.
+ */
+@Composable
+private fun BekleyenBelgeSeridi(ad: String, birak: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 14.dp, top = 10.dp, bottom = 10.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Default.Description, contentDescription = null, Modifier.size(22.dp))
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text("Araçlara hazır", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    ad,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                )
+                Text(
+                    "Bir araç seçin; belge orada sizi bekliyor olacak.",
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
+            IconButton(onClick = birak) {
+                Icon(Icons.Default.Close, contentDescription = "Belgeyi bırak")
+            }
         }
     }
 }

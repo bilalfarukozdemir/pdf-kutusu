@@ -32,12 +32,17 @@ class Bagimliliklar(baglam: Context) {
 }
 
 /**
- * Okuyucudan arac ekranina gecerken belgeyi tasiyan tek seferlik kutu.
+ * Okuyucudan arac ekranina gecerken belgeyi tasiyan kutu.
  *
  * Niyet (Intent) ekleriyle tasimak yerine burada tutuyoruz: dosya zaten
  * calisma alaninda, yalnizca "hangi belge" bilgisinin gezinmeyi asmasi
- * gerekiyor. Okundugunda temizlenir, boylece uygulamayi sonra normal
- * acildiginda eski bir belge kendiliginden yuklenmez.
+ * gerekiyor.
+ *
+ * **Okumak kutuyu bosaltmaz.** Ilk once bosaltiyordu ve sonucu su oluyordu:
+ * okuyucudan gelip Sirala'ya giren kullanici belgeyi goruyor, geri cikip
+ * Karart'a girdiginde "PDF sec" ile karsilasiyordu. Belge, kullanici acikca
+ * birakana ya da uygulama normal yoldan (okuyucudan degil) acilana kadar
+ * kullanilabilir kalir.
  */
 class BekleyenGirdi {
 
@@ -48,14 +53,12 @@ class BekleyenGirdi {
         kayit = dosya to gorunenAd
     }
 
-    /** Varsa dondurur ve kutuyu bosaltir. */
-    fun al(): Pair<java.io.File, String>? {
-        val mevcut = kayit
-        kayit = null
-        return mevcut
-    }
+    /** Bosaltmadan okur; birden fazla arac ayni belgeyi kullanabilsin. */
+    fun oku(): Pair<java.io.File, String>? = kayit?.takeIf { it.first.isFile }
 
-    fun varMi(): Boolean = kayit != null
+    fun adi(): String? = oku()?.second
+
+    fun varMi(): Boolean = oku() != null
 
     fun temizle() {
         kayit = null

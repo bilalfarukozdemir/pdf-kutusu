@@ -122,7 +122,9 @@ abstract class AracViewModel(
      * bunlara dokunuyor.
      */
     fun bekleyenGirdiyiYukle() {
-        val bekleyen = bagimliliklar.bekleyenGirdi.al() ?: return
+        // Kullanici zaten dosya sectiyse karisma.
+        if (durum.value.girdiler.isNotEmpty()) return
+        val bekleyen = bagimliliklar.bekleyenGirdi.oku() ?: return
         yerelDosyaEkle(bekleyen.first, bekleyen.second)
     }
 

@@ -81,12 +81,18 @@ class AnaAktivite : ComponentActivity() {
      * sectiginde o arac belgeyi kendiliginden yukler.
      */
     private fun okuyucudanGeleni_al(niyet: Intent?) {
-        if (niyet?.action != EYLEM_ARACLARDA_AC) return
+        val kutu = (applicationContext as PdfKutusuUygulamasi).bagimliliklar.bekleyenGirdi
+
+        if (niyet?.action != EYLEM_ARACLARDA_AC) {
+            // Normal acilis: onceki oturumdan kalan belge kendiliginden
+            // yuklenmesin.
+            kutu.temizle()
+            return
+        }
         val yol = niyet.getStringExtra(EK_DOSYA_YOLU) ?: return
         val dosya = File(yol)
         if (!dosya.isFile) return
-        val uygulama = applicationContext as PdfKutusuUygulamasi
-        uygulama.bagimliliklar.bekleyenGirdi.koy(dosya, dosya.name)
+        kutu.koy(dosya, dosya.name)
     }
 }
 
@@ -117,7 +123,17 @@ private fun UygulamaGezinmesi(gezinme: NavHostController, bagimliliklar: Bagimli
 
     NavHost(navController = gezinme, startDestination = Rotalar.ANA) {
         composable(Rotalar.ANA) {
-            AnaEkran(gecis = { rota -> gezinme.navigate(rota) })
+            var bekleyenAd by androidx.compose.runtime.remember {
+                androidx.compose.runtime.mutableStateOf(bagimliliklar.bekleyenGirdi.adi())
+            }
+            AnaEkran(
+                gecis = { rota -> gezinme.navigate(rota) },
+                bekleyenBelge = bekleyenAd,
+                bekleyeniBirak = {
+                    bagimliliklar.bekleyenGirdi.temizle()
+                    bekleyenAd = null
+                },
+            )
         }
         composable(Rotalar.BIRLESTIR) {
             BirlestirEkrani(araci(bagimliliklar) { BirlestirViewModel(it) }, geriDon)

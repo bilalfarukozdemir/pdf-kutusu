@@ -5,10 +5,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,13 +50,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -184,19 +191,34 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
     val listeDurumu = rememberLazyListState()
     val yatayKaydirma = rememberScrollState()
     val yogunluk = LocalDensity.current
-    var yakinlastirma by remember(motor) { mutableFloatStateOf(1f) }
+    val kapsam = rememberCoroutineScope()
+
+    // Yerlesime islenmis yakinlastirma: sayfa genisligini ve dolayisiyla
+    // cizim cozunurlugunu belirler. Yalnizca parmak kalkinca degisir.
+    var yerlesimYakinlastirma by remember(motor) { mutableFloatStateOf(1f) }
+
+    // Parmak hareketi suresince gecerli olan gecici olcek. Bu sirada
+    // YENIDEN YERLESIM YAPILMAZ; yalnizca GPU donusumu uygulanir. Her
+    // karede LazyColumn'u yeniden yerlestirmek kasmanin sebebiydi.
+    var hareketOlcegi by remember(motor) { mutableFloatStateOf(1f) }
+    var hareketMerkezi by remember(motor) { mutableStateOf(Offset.Zero) }
+    var hareketAktif by remember(motor) { mutableStateOf(false) }
 
     val sayfalar = remember(motor) { (0 until motor.sayfaSayisi).toList() }
+    val gorunenYakinlastirma = yerlesimYakinlastirma * hareketOlcegi
 
     Column(Modifier.fillMaxSize()) {
         Box(Modifier.weight(1f).fillMaxWidth()) {
-            androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize()) {
+            BoxWithConstraints(Modifier.fillMaxSize().clipToBounds()) {
                 val gorunumGenisligiPx = with(yogunluk) { maxWidth.roundToPx() }
-                val sayfaGenisligiPx = (gorunumGenisligiPx * yakinlastirma).roundToInt()
+                val gorunumYuksekligiPx = with(yogunluk) { maxHeight.roundToPx() }
+                val sayfaGenisligiPx = (gorunumGenisligiPx * yerlesimYakinlastirma).roundToInt()
                 val sayfaGenisligiDp = with(yogunluk) { sayfaGenisligiPx.toDp() }
 
                 // Gorunen aralik degisince komsu sayfalari onden ciz.
-                LaunchedEffect(listeDurumu, sayfaGenisligiPx) {
+                // Parmak hareketi surerken cizim istenmez.
+                LaunchedEffect(listeDurumu, sayfaGenisligiPx, hareketAktif) {
+                    if (hareketAktif) return@LaunchedEffect
                     snapshotFlow {
                         listeDurumu.firstVisibleItemIndex to
                             listeDurumu.layoutInfo.visibleItemsInfo.size
@@ -207,34 +229,91 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                     }
                 }
 
+                /** Parmak kalkinca: olcegi yerlesime isle ve odagi koru. */
+                fun hareketiIsle() {
+                    val olcek = hareketOlcegi
+                    hareketOlcegi = 1f
+                    hareketAktif = false
+                    if (olcek == 1f) return
+
+                    val eski = yerlesimYakinlastirma
+                    val yeni = (eski * olcek)
+                        .coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
+                    if (yeni == eski) return
+                    val k = yeni / eski
+                    yerlesimYakinlastirma = yeni
+
+                    // Parmaklarin ortasindaki nokta ekranda ayni yerde kalsin.
+                    val odakX = hareketMerkezi.x
+                    val odakY = hareketMerkezi.y
+                    val ilkIndeks = listeDurumu.firstVisibleItemIndex
+                    val ilkOfset = listeDurumu.firstVisibleItemScrollOffset
+
+                    kapsam.launch {
+                        yatayKaydirma.scrollTo(
+                            ((yatayKaydirma.value + odakX) * k - odakX)
+                                .roundToInt().coerceAtLeast(0),
+                        )
+                        listeDurumu.scrollToItem(
+                            ilkIndeks,
+                            (ilkOfset * k + (k - 1f) * odakY).roundToInt().coerceAtLeast(0),
+                        )
+                    }
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .horizontalScroll(yatayKaydirma, enabled = yakinlastirma > 1f)
+                        .horizontalScroll(yatayKaydirma, enabled = gorunenYakinlastirma > 1f)
                         // Yalnizca iki parmak varken olaylari tuketir; tek
                         // parmakla kaydirma LazyColumn'a dokunulmadan gider.
                         .pointerInput(motor) {
                             awaitEachGesture {
                                 awaitFirstDown(requireUnconsumed = false)
+                                var cokParmak = false
+                                var toplam = 1f
                                 while (true) {
                                     val olay = awaitPointerEvent()
                                     val basili = olay.changes.count { it.pressed }
                                     if (basili == 0) break
                                     if (basili >= 2) {
+                                        if (!cokParmak) {
+                                            cokParmak = true
+                                            hareketMerkezi = olay.calculateCentroid(true)
+                                            hareketAktif = true
+                                        }
                                         val degisim = olay.calculateZoom()
-                                        if (degisim != 1f && degisim.isFinite() && degisim > 0f) {
-                                            yakinlastirma = (yakinlastirma * degisim)
-                                                .coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
+                                        if (degisim.isFinite() && degisim > 0f) {
+                                            val altSinir = ASGARI_YAKINLASTIRMA / yerlesimYakinlastirma
+                                            val ustSinir = AZAMI_YAKINLASTIRMA / yerlesimYakinlastirma
+                                            toplam = (toplam * degisim).coerceIn(altSinir, ustSinir)
+                                            hareketOlcegi = toplam
                                             olay.changes.forEach { it.consume() }
                                         }
                                     }
                                 }
+                                if (cokParmak) hareketiIsle()
                             }
                         },
                 ) {
                     LazyColumn(
                         state = listeDurumu,
-                        modifier = Modifier.width(sayfaGenisligiDp).fillMaxHeight(),
+                        modifier = Modifier
+                            .width(sayfaGenisligiDp)
+                            .fillMaxHeight()
+                            // Parmak hareketi suresince yalnizca GPU donusumu.
+                            .graphicsLayer {
+                                if (hareketOlcegi != 1f) {
+                                    scaleX = hareketOlcegi
+                                    scaleY = hareketOlcegi
+                                    transformOrigin = TransformOrigin(
+                                        (hareketMerkezi.x / gorunumGenisligiPx.toFloat())
+                                            .coerceIn(0f, 1f),
+                                        (hareketMerkezi.y / gorunumYuksekligiPx.toFloat())
+                                            .coerceIn(0f, 1f),
+                                    )
+                                }
+                            },
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
                     ) {
@@ -243,6 +322,7 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                                 motor = motor,
                                 indeks = indeks,
                                 genislikPx = sayfaGenisligiPx,
+                                cizimEtkin = !hareketAktif,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
@@ -254,9 +334,18 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
         AltCubuk(
             gecerliSayfa = listeDurumu.firstVisibleItemIndex + 1,
             toplamSayfa = motor.sayfaSayisi,
-            yakinlastirma = yakinlastirma,
-            yakinlastirmaDegistir = { yeni ->
-                yakinlastirma = yeni.coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
+            yakinlastirma = gorunenYakinlastirma,
+            yakinlastirmaDegistir = { istenen ->
+                val yeni = istenen.coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
+                val eski = yerlesimYakinlastirma
+                if (yeni == eski) return@AltCubuk
+                val k = yeni / eski
+                val ilkIndeks = listeDurumu.firstVisibleItemIndex
+                val ilkOfset = listeDurumu.firstVisibleItemScrollOffset
+                yerlesimYakinlastirma = yeni
+                kapsam.launch {
+                    listeDurumu.scrollToItem(ilkIndeks, (ilkOfset * k).roundToInt().coerceAtLeast(0))
+                }
             },
         )
     }
@@ -273,6 +362,7 @@ private fun SayfaGorunumu(
     motor: OkuyucuMotoru,
     indeks: Int,
     genislikPx: Int,
+    cizimEtkin: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val oran = motor.oranTahmini(indeks)
@@ -280,8 +370,12 @@ private fun SayfaGorunumu(
         mutableStateOf<Bitmap?>(motor.onbellekten(indeks, genislikPx))
     }
 
-    LaunchedEffect(indeks, genislikPx) {
+    LaunchedEffect(indeks, genislikPx, cizimEtkin) {
+        // Elde ne varsa hemen goster - bos kutu gorunmesin.
         motor.onbellekten(indeks, genislikPx)?.let { bitmap = it }
+        // Parmak hareketi surerken yeni cizim istenmez: her ara adim icin
+        // yeniden cizmek hem bosuna hem de kasmaya yol aciyordu.
+        if (!cizimEtkin) return@LaunchedEffect
         motor.ciz(indeks, genislikPx)?.let { bitmap = it }
     }
 

@@ -62,17 +62,33 @@ class OkuyucuMotoru private constructor(
     @Volatile
     private var varsayilanOran: Float = 1.414f
 
-    private val onbellek: LruCache<String, Bitmap>
+    /**
+     * Ucuz onizleme katmani. **Ayri bir onbellek olmasi kritik:** tek bir
+     * yakinlastirilmis sayfa 20 MB'i asabiliyor ve ortak onbellekte butun
+     * onizlemeleri sipurup goturuyordu. Sonuc, kullanicinin gordugu sey:
+     * biraz gezindikten sonra o an bakilan sayfa disinda her sey "yukleniyor"
+     * durumuna dusuyordu.
+     */
+    private val onizlemeOnbellegi: LruCache<Int, Bitmap>
 
-    /** Sayfa -> o sayfa icin onbellekte bulunan genislik kovalari. */
+    /** Tam cozunurluklu sayfalar. */
+    private val netOnbellek: LruCache<String, Bitmap>
+
+    /** Sayfa -> o sayfa icin net onbellekte bulunan genislik kovalari. */
     private val mevcutKovalar = ConcurrentHashMap<Int, MutableSet<Int>>()
 
     init {
-        val butce = (Runtime.getRuntime().maxMemory() / 4).coerceIn(
-            16L * 1024 * 1024,
-            192L * 1024 * 1024,
-        ).toInt()
-        onbellek = object : LruCache<String, Bitmap>(butce) {
+        val azamiBellek = Runtime.getRuntime().maxMemory()
+        val onizlemeButcesi = (azamiBellek / 12)
+            .coerceIn(8L * 1024 * 1024, 40L * 1024 * 1024).toInt()
+        val netButce = (azamiBellek / 6)
+            .coerceIn(16L * 1024 * 1024, 96L * 1024 * 1024).toInt()
+
+        onizlemeOnbellegi = object : LruCache<Int, Bitmap>(onizlemeButcesi) {
+            override fun sizeOf(anahtar: Int, deger: Bitmap): Int = deger.byteCount
+        }
+
+        netOnbellek = object : LruCache<String, Bitmap>(netButce) {
             override fun sizeOf(anahtar: String, deger: Bitmap): Int = deger.byteCount
 
             override fun entryRemoved(
@@ -127,15 +143,18 @@ class OkuyucuMotoru private constructor(
      * Compose bunu her karede cagirabilir; disk ya da cizim islemi yapmaz.
      */
     fun onbellekten(indeks: Int, tercihEdilenGenislik: Int): Bitmap? {
-        val kovalar = mevcutKovalar[indeks] ?: return null
-        if (kovalar.isEmpty()) return null
         val hedefKova = kova(tercihEdilenGenislik)
+        val kovalar = mevcutKovalar[indeks]
 
-        // Once tam ya da daha buyuk olan en kucugu; yoksa en buyuk kucuk olan.
-        val uygun = kovalar.filter { it >= hedefKova }.minOrNull()
-            ?: kovalar.maxOrNull()
-            ?: return null
-        return onbellek.get(anahtar(indeks, uygun))
+        if (kovalar != null && kovalar.isNotEmpty()) {
+            // Once tam ya da daha buyuk olan en kucugu; yoksa en buyuk kucuk olan.
+            val uygun = kovalar.filter { it >= hedefKova }.minOrNull() ?: kovalar.maxOrNull()
+            if (uygun != null) {
+                netOnbellek.get(anahtar(indeks, uygun))?.let { return it }
+            }
+        }
+        // Net surum yoksa ucuz katman: gosterilecek bir sey her zaman bulunsun.
+        return onizlemeOnbellegi.get(indeks)
     }
 
     /**
@@ -146,14 +165,21 @@ class OkuyucuMotoru private constructor(
     suspend fun ciz(indeks: Int, hedefGenislikPx: Int): Bitmap? {
         if (indeks !in 0 until sayfaSayisi) return null
         val kova = kova(hedefGenislikPx)
-        onbellek.get(anahtar(indeks, kova))?.let { return it }
+        hazirdanAl(indeks, kova)?.let { return it }
 
         return kilit.withLock {
             if (kapandi) return@withLock null
-            onbellek.get(anahtar(indeks, kova))?.let { return@withLock it }
+            hazirdanAl(indeks, kova)?.let { return@withLock it }
             withContext(Dispatchers.IO) { cizIcsel(indeks, kova) }
         }
     }
+
+    private fun hazirdanAl(indeks: Int, kova: Int): Bitmap? =
+        if (kova == ONIZLEME_GENISLIGI) {
+            onizlemeOnbellegi.get(indeks)
+        } else {
+            netOnbellek.get(anahtar(indeks, kova))
+        }
 
     private fun cizIcsel(indeks: Int, kova: Int): Bitmap? {
         val boyut = boyutlar[indeks] ?: boyutIcsel(indeks) ?: return null
@@ -174,12 +200,19 @@ class OkuyucuMotoru private constructor(
                     runCatching { sayfa.close() }
                 }
                 bitmap.setHasAlpha(false)
-                onbellek.put(anahtar(indeks, genislik), bitmap)
-                mevcutKovalar.getOrPut(indeks) { java.util.Collections.synchronizedSet(mutableSetOf()) }
-                    .add(genislik)
+                if (genislik == ONIZLEME_GENISLIGI) {
+                    onizlemeOnbellegi.put(indeks, bitmap)
+                } else {
+                    netOnbellek.put(anahtar(indeks, genislik), bitmap)
+                    mevcutKovalar
+                        .getOrPut(indeks) { java.util.Collections.synchronizedSet(mutableSetOf()) }
+                        .add(genislik)
+                }
                 return bitmap
             } catch (yetersiz: OutOfMemoryError) {
-                onbellek.evictAll()
+                // Yalnizca net onbellegi bosalt: onizlemeler gitmezse
+                // ekranda hala gosterilecek bir sey kalir.
+                netOnbellek.evictAll()
                 mevcutKovalar.clear()
                 genislik = max(KOVA_ADIMI, genislik / 2)
             } catch (hata: Exception) {
@@ -192,7 +225,8 @@ class OkuyucuMotoru private constructor(
 
     override fun close() {
         kapandi = true
-        runCatching { onbellek.evictAll() }
+        runCatching { netOnbellek.evictAll() }
+        runCatching { onizlemeOnbellegi.evictAll() }
         mevcutKovalar.clear()
         runCatching { motor.close() }
         runCatching { tanimlayici.close() }
@@ -220,8 +254,16 @@ class OkuyucuMotoru private constructor(
         /** Her sayfanin ucuz surumu; kaydirmada anlik gosterilir. */
         const val ONIZLEME_GENISLIGI = 256
 
-        /** Yakinlastirmada tek bir sayfanin cizilecegi azami genislik. */
-        const val AZAMI_GENISLIK = 3072
+        /**
+         * Yakinlastirmada tek bir sayfanin cizilecegi azami genislik.
+         *
+         * 1600 px'lik bir A4 bitmap'i ~14 MB tutar; onbellege birkac sayfa
+         * sigar. Daha yukarisi (3072 px -> 53 MB) tek bir sayfayla onbellegi
+         * doldurup surekli yeniden cizime yol aciyordu. Daha derin
+         * yakinlastirmada netligi artirmanin dogru yolu tum sayfayi buyuk
+         * cizmek degil, yalnizca gorunen bolgeyi karo karo cizmektir.
+         */
+        const val AZAMI_GENISLIK = 1600
 
         const val KOVA_ADIMI = 256
 

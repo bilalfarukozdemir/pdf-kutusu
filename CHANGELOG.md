@@ -5,6 +5,8 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+## [1.2.0] — 2026-08-14
+
 ### Eklendi
 
 - **Son açılanlar şeridi.** Ana ekranda, açtığınız son 20 PDF. Dokununca
@@ -30,6 +32,15 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - **Üretilen dosyaya dokununca görüntüleyicide açılıyor.** Dosyalar
   ekranındaki PDF kartları artık tıklanabilir; çıktıyı kontrol etmek için
   dışa aktarıp başka uygulamada açmak gerekmiyor.
+
+**Testler**
+
+- 131 birim testi (Robolectric + saf JVM)
+- 28 enstrümante test, gerçek cihazda — hem debug hem de yayımlanan
+  küçültülmüş (R8) sürüm derlemesine karşı
+- Son açılanlar listesinin sıralama, kapasite ve ayrıştırma mantığı ayrı
+  ayrı test ediliyor; kapasite aşımında düşen kaydın döndürülmesi de dahil
+  (URI yetkisi bırakılabilsin diye)
 
 ## [1.1.0] — 2026-08-14
 
@@ -148,6 +159,7 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - Zorunlu karartma doğrulaması hem birim hem cihaz testinde
 - EXIF sızıntısı, EXIF dönüşü ve saydam PNG doğrulamaları piksel düzeyinde
 
-[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.1.0...HEAD
+[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/releases/tag/v1.0.0

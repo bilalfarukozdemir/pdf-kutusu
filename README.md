@@ -590,7 +590,7 @@ adb exec-out run-as com.yerel.pdfkutusu cat databases/pdf_kutusu.db > pdf_kutusu
 
 Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 
-### Birim testleri — 89 test
+### Birim testleri — 113 test
 
 | Dosya | Test | Neyi doğruluyor |
 |---|---|---|
@@ -600,18 +600,22 @@ Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 | `KarartmaMetinYoklugTesti` | 12 | **Zorunlu karartma testi** ve çevresi (metin yokluğu, dokunulmayan sayfalar, meta veri, DPI tabanı, geçersiz girdi) |
 | `ExifYonuTesti` | 8 | EXIF yön etiketi → dönüş/aynalama eşlemesi; 8 standart değer + tanımsızlar |
 | `SayfaYerlesimiTesti` | 16 | En-boy oranının korunması (%1 tolerans), A4 sığdırma, kenar boşluğu, DPI'dan sayfa boyutu, `inSampleSize` seçimi |
+| `OkuyucuYerlesimTesti` | 18 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
+| `BekleyenGirdiTesti` | 6 | Okuyucudan araçlara devredilen belge: okumanın kutuyu boşaltmaması (aynı belge birden fazla araca girebilmeli), silinmiş dosyanın sunulmaması |
 
 PDF'e dokunan testler Robolectric altında koşar: PdfBox-Android font
 kaynaklarını AAR `assets` klasöründen okur ve bunun için gerçek bir Android
 bağlamı gerekir. `robolectric.properties` ile SDK 34'e sabitlenmiştir.
-`ExifYonuTesti` ve `SayfaYerlesimiTesti` saf JVM testidir (ikisi birlikte 20 ms).
+`ExifYonuTesti`, `SayfaYerlesimiTesti`, `OkuyucuYerlesimTesti` ve
+`BekleyenGirdiTesti` saf JVM testidir; hiçbiri Android grafik sınıflarına
+dokunmaz ve dördü birlikte 40 ms'de biter.
 
 > **İlk çalıştırma yavaştır.** Temiz bir makinede ilk `testDebugUnitTest`
 > ~5 dakika sürer: Robolectric `android-all-instrumented-*.jar` (~100 MB)
 > indirir ve enstrümante sınıf yükleyici önbelleğini kurar. Sonraki
 > çalıştırmalar **~10 saniye**. CI'da `~/.gradle` önbelleğe alınmalıdır.
 
-### Enstrümante testler — 10 test
+### Enstrümante testler — 28 test
 
 | Dosya | Test | Neyi doğruluyor |
 |---|---|---|
@@ -619,6 +623,7 @@ bağlamı gerekir. `robolectric.properties` ile SDK 34'e sabitlenmiştir.
 | `KarartmaCihazTesti` | 1 | Gerçek `PdfRenderer` ile karartma; metin yokluğu + karartılan bölgenin piksellerinin siyah, gerisinin beyaz olması |
 | `YaziTipiTesti` | 1 | Filigranda Türkçe karakterlerin birebir korunması + yazı tipinin alt küme olarak gömülmesi (< 100 KB) |
 | `ResimdenPdfCihazTesti` | 7 | Sayfa sayısı, **EXIF dönüşünün uygulanması**, **EXIF verisinin sızmaması**, saydam PNG'nin beyaza düzleşmesi, bozuk dosyanın atlanması, büyük görselin küçültülmesi, uçtan uca akış |
+| `OkuyucuCihazTesti` | 18 | Gerçek `PdfRenderer` ile açma ve çizim; bozuk/boş/PDF olmayan dosya, şifreli belge, aranabilir olmayan dosya tanımlayıcısı, geri çekilmiş URI izni, önbellek davranışı ve çizim süreleri |
 
 Görsel testleri bilerek enstrümante: Robolectric'in varsayılan (LEGACY) grafik
 kipinde `Canvas.drawBitmap` boş geçer, `Bitmap.compress` yer tutucu yazar ve

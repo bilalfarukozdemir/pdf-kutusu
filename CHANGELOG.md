@@ -24,6 +24,15 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
   dosya tanımlayıcısı, geri çekilmiş URI izni ve bellek yetersizliği ayrı ayrı
   ele alınıyor ve cihaz testleriyle doğrulanıyor.
 
+  Kaydırma ve yakınlaştırma elde yazıldı. Sayfa konumları mutlak piksel olarak
+  tutuluyor; sayfalar kendi `Layout`umuzda ölçülüp yerleştiriliyor. Hazır
+  kapsayıcılar yakınlaştırılmış (görünümden geniş) sayfayı ya ortalıyor ya da
+  dokunma alanını görünümden koparıyordu — ikisi de cihazda ölçülüp
+  belgelendirildi. Yerleşim aritmetiği ayrı bir sınıfa alındı ve 18 birim
+  testiyle sabitlendi: yakınlaştırma odağının ekranda sabit kalması, küçük
+  adımların sapma biriktirmemesi ve kaydırma sınırının ölçekle birlikte
+  büyümesi test edilerek doğrulanıyor.
+
 - **Çıktıyı paylaşma.** Sonuç kartından ve Dosyalar ekranından dosya doğrudan
   başka bir uygulamaya gönderilebiliyor (`FileProvider`, geçici `content://`
   okuma izni). Yeni izin gerektirmez; paylaşıma yalnızca `cikti/` klasörü açılır.

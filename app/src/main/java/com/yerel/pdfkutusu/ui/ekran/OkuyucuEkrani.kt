@@ -19,11 +19,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -51,6 +48,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -64,14 +62,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yerel.pdfkutusu.okuyucu.OkuyucuMotoru
+import com.yerel.pdfkutusu.okuyucu.SayfaYerlesimBilgisi
 import com.yerel.pdfkutusu.ui.model.OkuyucuDurumu
 import com.yerel.pdfkutusu.ui.model.OkuyucuViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
@@ -85,67 +85,6 @@ import kotlinx.coroutines.launch
 
 private const val ASGARI_YAKINLASTIRMA = 1f
 private const val AZAMI_YAKINLASTIRMA = 5f
-
-/**
- * Sayfalarin dikey yerlesimi.
- *
- * Kaydirmayi kendimiz yonettigimiz icin sayfa konumlari mutlak piksel olarak
- * burada tutulur. `LazyColumn`'un "indeks + ofset" modeliyle ugrasmak zorunda
- * kalmiyoruz; yakinlastirma odagini korumak duz bir aritmetik islemine
- * donusuyor.
- */
-private class SayfaYerlesimBilgisi(
-    val ustler: FloatArray,
-    val yukseklikler: FloatArray,
-    /** Yakinlastirmayla olceklenen kisim (sayfalarin toplam yuksekligi). */
-    val icerikYuksekligi: Float,
-    /** Olceklenmeyen kisim (aralar ve kenar boslugu). */
-    val sabitYukseklik: Float,
-) {
-    val toplamYukseklik: Float get() = icerikYuksekligi + sabitYukseklik
-
-    fun gorunurAralik(kaydirmaY: Float, gorunumYuksekligi: Float): IntRange {
-        if (ustler.isEmpty()) return IntRange.EMPTY
-        val alt = kaydirmaY + gorunumYuksekligi
-        var bas = 0
-        while (bas < ustler.size - 1 && ustler[bas] + yukseklikler[bas] < kaydirmaY) bas++
-        var son = bas
-        while (son < ustler.size - 1 && ustler[son + 1] < alt) son++
-        // Bir onceki ve sonraki sayfayi da hazir tut.
-        return (bas - 1).coerceAtLeast(0)..(son + 1).coerceAtMost(ustler.size - 1)
-    }
-
-    fun sayfaBul(icerikY: Float): Int {
-        var i = 0
-        while (i < ustler.size - 1 && ustler[i + 1] <= icerikY) i++
-        return i
-    }
-
-    companion object {
-        fun hesapla(
-            motor: OkuyucuMotoru,
-            sayfaGenisligi: Float,
-            bosluk: Float,
-            kenar: Float,
-        ): SayfaYerlesimBilgisi {
-            val adet = motor.sayfaSayisi
-            val ustler = FloatArray(adet)
-            val yukseklikler = FloatArray(adet)
-            var y = kenar
-            var icerik = 0f
-            for (i in 0 until adet) {
-                val h = sayfaGenisligi * motor.oranTahmini(i)
-                ustler[i] = y
-                yukseklikler[i] = h
-                icerik += h
-                y += h
-                if (i < adet - 1) y += bosluk
-            }
-            val sabit = bosluk * (adet - 1).coerceAtLeast(0) + kenar * 2f
-            return SayfaYerlesimBilgisi(ustler, yukseklikler, icerik, sabit)
-        }
-    }
-}
 
 /**
  * PDF okuyucu.
@@ -284,11 +223,27 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
     val sayfaGenisligi = gorunumGenisligi * olcek
 
     val yerlesim = remember(motor, sayfaGenisligi, bosluk, kenar, olculenOran) {
-        SayfaYerlesimBilgisi.hesapla(motor, sayfaGenisligi, bosluk, kenar)
+        SayfaYerlesimBilgisi.hesapla(
+            sayfaSayisi = motor.sayfaSayisi,
+            sayfaGenisligi = sayfaGenisligi,
+            bosluk = bosluk,
+            kenar = kenar,
+            oran = motor::oranTahmini,
+        )
     }
 
-    fun azamiY() = max(0f, yerlesim.toplamYukseklik - gorunumYuksekligi)
-    fun azamiX() = max(0f, sayfaGenisligi - gorunumGenisligi)
+    // ONEMLI: pointerInput yalnizca `motor` degisince yeniden kurulur, yani
+    // icindeki lambda ILK kompozisyondaki degerleri yakalar. Yerlesimi
+    // dogrudan yakalarsak parmak hareketi sonsuza dek olcek=1 zamanindaki
+    // geometriyle hesap yapar; azamiX() hep 0 cikar ve yatay kaydirma hic
+    // calismaz. Guncel referansi State uzerinden okuyoruz.
+    val guncelYerlesim by rememberUpdatedState(yerlesim)
+
+    /** Canli olcekten turetilir; yakalanan eski deger kullanilmaz. */
+    fun sayfaGenisligiCanli() = gorunumGenisligi * olcek
+
+    fun azamiY() = guncelYerlesim.azamiKaydirma(gorunumYuksekligi)
+    fun azamiX() = max(0f, sayfaGenisligiCanli() - gorunumGenisligi)
 
     fun sinirla() {
         kaydirmaY = kaydirmaY.coerceIn(0f, azamiY())
@@ -306,15 +261,14 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
         val yeni = (olcek * carpan).coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
         val k = yeni / olcek
         if (k == 1f) return
+
+        // Yatayda sabit bosluk yok; sayfa gorunum genisligini tamamen doldurur.
         kaydirmaX = (kaydirmaX + odak.x) * k - odak.x
-        kaydirmaY = (kaydirmaY + odak.y) * k - odak.y
+        // Dikeyde var: aralar ve kenar boslugu yakinlastirmayla buyumez.
+        kaydirmaY = guncelYerlesim.olcekliKonum(kaydirmaY + odak.y, k) - odak.y
         olcek = yeni
 
-        // Yeni sinirlar: sayfa yukseklikleri olcekle buyur, aralar buyumez.
-        val yeniAzamiY = max(
-            0f,
-            yerlesim.icerikYuksekligi * k + yerlesim.sabitYukseklik - gorunumYuksekligi,
-        )
+        val yeniAzamiY = guncelYerlesim.olcekliAzamiKaydirma(k, gorunumYuksekligi)
         val yeniAzamiX = max(0f, gorunumGenisligi * yeni - gorunumGenisligi)
         kaydirmaY = kaydirmaY.coerceIn(0f, yeniAzamiY)
         kaydirmaX = kaydirmaX.coerceIn(0f, yeniAzamiX)
@@ -337,6 +291,9 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
         }
     }
 
+    // Yerlesim islevi indeksle erisim istiyor; araligi bir kez listeye ceviriyoruz.
+    val gorunenler = remember(gorunurler) { gorunurler.toList() }
+
     val sonumleme = remember { exponentialDecay<Float>(frictionMultiplier = 1.1f) }
 
     Column(Modifier.fillMaxSize()) {
@@ -351,11 +308,27 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                     gorunumYuksekligi = it.height.toFloat()
                 },
         ) {
-            Box(
-                Modifier
+            // Sayfalari hazir bir kapsayiciya birakmayip elle yerlestiriyoruz.
+            //
+            // Yakinlastirilan sayfa gorunumden genis olur ve bu, hazir
+            // kapsayicilarla iki ayri tuzaga yol acti. Ikisi de olculdu:
+            //
+            //  - `Box` + `requiredSize`: cocuk gelen kisittan buyuk oldugunda
+            //    `Placeable` onu "kirpilmis" sayar ve tasan kismi ortalar.
+            //    Olculen sapma tam olarak (gorunum - sayfa) / 2 idi; sayfa
+            //    sonuna kadar saga kaydirildiginda sag kenari ekranin
+            //    ortasinda kaliyor, geri kalani gri zemin olarak goruluyordu.
+            //  - `wrapContentSize(unbounded = true)`: yukaridakini duzeltiyor
+            //    ama kapsayicinin boyutunu cocuklara bagliyor. Belge yeni
+            //    acildiginda ilk karede cocuk yok (gorunum genisligi henuz
+            //    olculmedi) ve kutuya hicbir dokunma olayi ulasmiyordu.
+            //
+            // Kendi `Layout`umuzda sayfayi tam istedigimiz olcude olcup tam
+            // istedigimiz noktaya koyuyoruz; kapsayici ise her zaman gorunum
+            // boyutunda kaliyor, yani dokunma alani da hep dogru.
+            Layout(
+                modifier = Modifier
                     .fillMaxSize()
-                    // Cocuklar gorunumden buyuk olabilsin (yakinlastirma).
-                    .wrapContentSize(align = Alignment.TopStart, unbounded = true)
                     .pointerInput(motor) {
                         awaitEachGesture {
                             val ilk = awaitFirstDown(
@@ -415,31 +388,36 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                             }
                         }
                     },
-            ) {
-                val sayfaGenisligiDp = with(yogunluk) { sayfaGenisligi.toDp() }
-                if (gorunumGenisligi > 0f) for (indeks in gorunurler) {
-                    key(indeks) {
-                        val sayfaYuksekligiDp = with(yogunluk) {
-                            yerlesim.yukseklikler[indeks].toDp()
+                content = {
+                    if (gorunumGenisligi > 0f) {
+                        for (indeks in gorunenler) {
+                            key(indeks) {
+                                SayfaGorunumu(
+                                    motor = motor,
+                                    indeks = indeks,
+                                    genislikPx = sayfaGenisligi.roundToInt(),
+                                    cizimEtkin = !hareketAktif,
+                                )
+                            }
                         }
-                        SayfaGorunumu(
-                            motor = motor,
-                            indeks = indeks,
-                            genislikPx = sayfaGenisligi.roundToInt(),
-                            cizimEtkin = !hareketAktif,
-                            modifier = Modifier
-                                // Konum yerlesim asamasinda okunur: kaydirirken
-                                // yeniden kompozisyon gerekmez.
-                                .offset {
-                                    IntOffset(
-                                        (-kaydirmaX).roundToInt(),
-                                        (yerlesim.ustler[indeks] - kaydirmaY).roundToInt(),
-                                    )
-                                }
-                                // requiredSize: yakinlastirmada sayfa gorunumden
-                                // genis olur. Modifier.size gelen kisitlara
-                                // sikistirildigi icin sayfa kirpiliyordu.
-                                .requiredSize(sayfaGenisligiDp, sayfaYuksekligiDp),
+                    }
+                },
+            ) { olculebilirler, kisitlar ->
+                val en = sayfaGenisligi.roundToInt().coerceAtLeast(0)
+                val sayfalar = olculebilirler.mapIndexed { sira, olculebilir ->
+                    val boy = yerlesim.yukseklikler[gorunenler[sira]]
+                        .roundToInt().coerceAtLeast(0)
+                    olculebilir.measure(Constraints.fixed(en, boy))
+                }
+                layout(kisitlar.maxWidth, kisitlar.maxHeight) {
+                    // Kaydirma konumu burada okunuyor. Yerlesim asamasindaki
+                    // okuma yeniden kompozisyon tetiklemedigi icin parmak
+                    // hareketi tek bir yerlestirme adimina iniyor.
+                    sayfalar.forEachIndexed { sira, sayfa ->
+                        sayfa.place(
+                            x = (-kaydirmaX).roundToInt(),
+                            y = (yerlesim.ustler[gorunenler[sira]] - kaydirmaY)
+                                .roundToInt(),
                         )
                     }
                 }
@@ -601,3 +579,4 @@ private fun OkuyucuEylemleri(
         )
     }
 }
+

@@ -747,7 +747,7 @@ Anahtarı kaybederseniz aynı uygulamayı bir daha güncelleyemezsiniz — yedek
 
 Açıktır: **31,9 MB → 21,0 MB.**
 
-Küçültülmüş APK cihazda doğrulandı — 10 enstrümante testin tamamı bu derlemeye
+Küçültülmüş APK cihazda doğrulandı — 28 enstrümante testin tamamı bu derlemeye
 karşı geçti (PdfBox, ML Kit, Room, EXIF dahil). Tekrarlamak için:
 
 ```bash

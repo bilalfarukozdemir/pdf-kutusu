@@ -56,7 +56,7 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 ### Değişti
 
 - **R8 küçültmesi açıldı: 31,9 MB → 21,0 MB.** Küçültülmüş APK cihazda
-  doğrulandı; 10 enstrümante testin tamamı bu derlemeye karşı geçiyor.
+  doğrulandı; 28 enstrümante testin tamamı bu derlemeye karşı geçiyor.
   `-PkucultR8=false` ile kapatılabilir.
 - Release derlemesi `keystore.properties` varsa onunla, yoksa debug anahtarıyla
   imzalanıyor. `testBuildType` Gradle özelliğiyle seçilebiliyor, böylece
@@ -65,7 +65,8 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 **Testler**
 
 - 119 birim testi (Robolectric + saf JVM)
-- 28 enstrümante test, gerçek cihazda (debug derlemesi)
+- 28 enstrümante test, gerçek cihazda — hem debug hem de yayımlanan
+  küçültülmüş (R8) sürüm derlemesine karşı
 - Okuyucunun kaydırma/yakınlaştırma aritmetiği ayrı ayrı test ediliyor;
   testlerin hatayı gerçekten yakaladığı, eski hatalı formül geri konularak
   doğrulandı

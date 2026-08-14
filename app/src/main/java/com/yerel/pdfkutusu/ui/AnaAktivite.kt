@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,11 +49,18 @@ import com.yerel.pdfkutusu.ui.model.ResimdenPdfViewModel
 import com.yerel.pdfkutusu.ui.model.SikistirViewModel
 import com.yerel.pdfkutusu.ui.model.SiralaViewModel
 import com.yerel.pdfkutusu.ui.tema.PdfKutusuTemasi
+import java.io.File
 
 class AnaAktivite : ComponentActivity() {
 
+    companion object {
+        const val EYLEM_ARACLARDA_AC = "com.yerel.pdfkutusu.ARACLARDA_AC"
+        const val EK_DOSYA_YOLU = "dosya_yolu"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        okuyucudanGeleni_al(intent)
         setContent {
             PdfKutusuTemasi {
                 Surface(modifier = Modifier) {
@@ -60,6 +68,25 @@ class AnaAktivite : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        okuyucudanGeleni_al(intent)
+    }
+
+    /**
+     * Okuyucudan devredilen belgeyi bekleyen kutuya koyar. Kullanici bir arac
+     * sectiginde o arac belgeyi kendiliginden yukler.
+     */
+    private fun okuyucudanGeleni_al(niyet: Intent?) {
+        if (niyet?.action != EYLEM_ARACLARDA_AC) return
+        val yol = niyet.getStringExtra(EK_DOSYA_YOLU) ?: return
+        val dosya = File(yol)
+        if (!dosya.isFile) return
+        val uygulama = applicationContext as PdfKutusuUygulamasi
+        uygulama.bagimliliklar.bekleyenGirdi.koy(dosya, dosya.name)
     }
 }
 

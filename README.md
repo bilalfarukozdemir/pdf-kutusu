@@ -6,9 +6,9 @@
 [![minSdk 26](https://img.shields.io/badge/minSdk-26-orange.svg)](#gereksinimler-ve-kurulum)
 [![Son sürüm](https://img.shields.io/github/v/release/bilalfarukozdemir/pdf-kutusu?label=indir&color=success)](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/latest)
 
-Tamamen çevrimdışı çalışan, kişisel bir Android PDF araç kutusu.
-**Resimden PDF**, birleştir, böl, sırala, döndür, sıkıştır, filigran ekle,
-**karart**, metin çıkar (OCR).
+Tamamen çevrimdışı çalışan, kişisel bir Android PDF okuyucu ve araç kutusu.
+**PDF okuma**, resimden PDF, birleştir, böl, sırala, döndür, sıkıştır,
+filigran ekle, **karart**, metin çıkar (OCR).
 
 **Hiçbir dosya cihazdan çıkmaz.** Uygulamanın `INTERNET` izni yoktur ve bu bir söz
 değil, derleme zamanında doğrulanan yapısal bir kısıttır — bkz. [İzinler](#i̇zinler).
@@ -85,6 +85,7 @@ yazılı.
 ## İçindekiler
 
 - [İndir](#i̇ndir)
+- [Okuyucu](#okuyucu)
 - [Gereksinimler ve kurulum](#gereksinimler-ve-kurulum)
 - [APK derleme ve telefona kurma](#apk-derleme-ve-telefona-kurma)
 - [İzinler](#i̇zinler)
@@ -388,6 +389,73 @@ dizin açıkça verilmelidir, `java.io.tmpdir` güvenilir biçimde yazılabilir 
 İşlem sırasında ilerleme gösterilir ve iptal edilebilir.
 
 OCR / aranabilir metin katmanı bu sürümde yok.
+
+---
+
+## Okuyucu
+
+Uygulama aynı zamanda bir PDF okuyucudur. Telefonda bir PDF'e dokunduğunuzda
+"birlikte aç" listesinde çıkar ve **varsayılan okuyucu** yapılabilir.
+
+- Sürekli dikey okuma, parmakla ve düğmeyle yakınlaştırma (%100–500)
+- Sayfa göstergesi, okurken ekran sönmez
+- Okuduğunuz belgeyi doğrudan **paylaşma** ya da **araçlara devretme** —
+  bir şey karartmak istediğinizde uygulamadan çıkmanız gerekmez
+- Şifreli belgede parola sorar
+
+Okuyucu ayrı bir aktivitedir: e-postadan açtığınız bir belgede geri tuşu
+e-postaya döner, araç ızgarasına değil.
+
+### Akıcılık nasıl sağlanıyor
+
+Üç karar:
+
+**1. Yakınlaştırma görüntüyü büyütmez, sayfayı yeniden çizer.** `graphicsLayer`
+ile ölçeklemek bulanık metin demektir. Bunun yerine sayfanın yerleşim genişliği
+değişir ve motor o genişlikte yeni bir bitmap üretir — metin her seviyede net.
+
+**2. Çizim hiçbir zaman beklemez.** Her sayfanın ucuz bir sürümü (256 px) arka
+planda üretilip önbellekte tutulur. Net sürüm hazır değilse ucuz sürüm
+büyütülerek gösterilir, net gelince yerine geçer. Kaydırırken boş kutu olmaz.
+
+**3. Parmak hareketi çakışması yok.** Yakınlaştırma yalnızca **iki parmak**
+ekrandayken olayları tüketir; tek parmak kaydırması `LazyColumn`'a dokunulmadan
+gider ve listenin geri dönüşüm mekaniği bozulmaz.
+
+Ayrıca genişlik kovalama (256 px adımlar) yakınlaştırma sırasında gereksiz
+yeniden çizimi önler, `PdfRenderer` tek bir mutex arkasında seri çalışır
+(iş parçacığı güvenli değildir) ve bellek yetmezse çözünürlük yarıya inip
+yeniden denenir — büyük bir tarama yüzünden çökmez.
+
+**Cihazda ölçülen** (Redmi 2312DRA50I, A4 sayfa):
+
+| İşlem | Süre |
+|---|---|
+| Ucuz sürüm (256 px) | 6 ms |
+| İlk tam çizim (1080 px) | 12 ms |
+| Aynı sayfa yeniden (önbellek) | 0 ms |
+| Önbellekten 120 okuma | 3 ms |
+| 8 sayfa ardışık, 1080 px | 108 ms (sayfa başına 13 ms) |
+
+Sayfa başına 13 ms, 60 fps'in kare bütçesinin (16,7 ms) altında — sayfalar
+ekrana girdiği hızda çizilebiliyor. Önbellekten okuma çağrı başına 0,025 ms,
+yani Compose her karede çağırabilir.
+
+### Hata durumları
+
+Varsayılan okuyucu olmak, "kullanıcının bilerek seçtiği dosya" varsayımını
+ortadan kaldırır. Ele alınanlar:
+
+| Durum | Davranış |
+|---|---|
+| Sağlayıcı aranabilir olmayan tanımlayıcı veriyor (boru) | Önbelleğe kopyalanır |
+| Şifreli belge | Parola sorulur, PDFBox ile çözülür |
+| Bozuk / PDF olmayan / boş dosya | Anlamlı mesaj, çökme yok |
+| URI izni geri çekilmiş, dosya silinmiş | Ne olduğunu söyleyen mesaj |
+| Tek sayfa bozuk | O sayfa atlanır, belge açık kalır |
+| Bellek yetmiyor | Çözünürlük düşürülüp yeniden denenir |
+
+Hepsi `OkuyucuCihazTesti` içinde cihaz üstünde doğrulanıyor.
 
 ---
 

@@ -65,6 +65,41 @@
         </activity>
 
         <!--
+          PDF okuyucu.
+
+          Disaridan gelen PDF'ler burada acilir; "birlikte ac" listesinde
+          gorunur ve varsayilan yapilabilir. Ana arac ekranindan ayri bir
+          aktivite olmasinin sebebi geri tusu davranisi: e-postadan acilan
+          bir belgede geri, e-postaya donmeli.
+
+          Hicbir izin gerektirmez.
+
+          singleTop: ayni pencere acikken yeni bir belge gelirse ustune
+          yeni bir kopya yigmak yerine mevcut pencere kullanilir.
+        -->
+        <activity
+            android:name=".ui.OkuyucuAktivite"
+            android:exported="true"
+            android:label="@string/uygulama_adi"
+            android:launchMode="singleTop">
+
+            <intent-filter android:label="@string/uygulama_adi">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" android:mimeType="application/pdf" />
+                <data android:scheme="file" android:mimeType="application/pdf" />
+            </intent-filter>
+
+            <!-- Baska uygulamadan "paylas" ile gonderilen PDF'ler -->
+            <intent-filter android:label="@string/uygulama_adi">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+        </activity>
+
+        <!--
           Paylasim icin dosya saglayici.
 
           Ham `file://` URI'si baska bir uygulamaya verilemez (Android 7'den

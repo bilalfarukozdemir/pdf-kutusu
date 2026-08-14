@@ -7,6 +7,23 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ### Eklendi
 
+- **PDF okuyucu.** Uygulama artık `ACTION_VIEW` ve `ACTION_SEND` ile gelen
+  PDF'leri açıyor; "birlikte aç" listesinde çıkıyor ve varsayılan okuyucu
+  yapılabiliyor. Sürekli dikey okuma, parmakla yakınlaştırma, sayfa göstergesi,
+  okurken ekranın sönmemesi. Okuyucudan doğrudan paylaşma ve araçlara devretme.
+  Yeni izin gerektirmiyor.
+
+  Akıcılık: yakınlaştırma görüntüyü ölçeklemek yerine sayfayı o çözünürlükte
+  yeniden çiziyor (metin net kalıyor); her sayfanın ucuz bir sürümü önbellekte
+  tutuluyor, böylece çizim hiçbir zaman beklemiyor; yakınlaştırma yalnızca iki
+  parmak ekrandayken olayları tüketiyor, tek parmak kaydırması listeye
+  dokunulmadan gidiyor. Cihazda ölçülen: sayfa başına 13 ms (1080 px),
+  önbellekten okuma çağrı başına 0,025 ms.
+
+  Dayanıklılık: bozuk/boş/PDF olmayan dosya, şifreli belge, aranabilir olmayan
+  dosya tanımlayıcısı, geri çekilmiş URI izni ve bellek yetersizliği ayrı ayrı
+  ele alınıyor ve cihaz testleriyle doğrulanıyor.
+
 - **Çıktıyı paylaşma.** Sonuç kartından ve Dosyalar ekranından dosya doğrudan
   başka bir uygulamaya gönderilebiliyor (`FileProvider`, geçici `content://`
   okuma izni). Yeni izin gerektirmez; paylaşıma yalnızca `cikti/` klasörü açılır.

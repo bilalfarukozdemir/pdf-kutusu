@@ -504,7 +504,7 @@ fun GirdiKarti(
 
 @Composable
 fun ParolaDiyalogu(
-    istek: ParolaIstegi,
+    gorunenAd: String,
     hataMesaji: String?,
     gonder: (String) -> Unit,
     iptal: () -> Unit,
@@ -518,7 +518,7 @@ fun ParolaDiyalogu(
         text = {
             Column {
                 Text(
-                    "\"${istek.gorunenAd}\" şifreli. Açmak için belgenin parolasını girin.",
+                    "\"$gorunenAd\" şifreli. Açmak için belgenin parolasını girin.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(12.dp))

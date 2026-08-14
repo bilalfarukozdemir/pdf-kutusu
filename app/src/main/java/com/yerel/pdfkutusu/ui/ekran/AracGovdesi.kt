@@ -108,6 +108,9 @@ fun AracGovdesi(
         ActivityResultContracts.OpenDocumentTree(),
     ) { agac -> if (agac != null) gorunum.tumunuDisaAktar(agac) }
 
+    // Okuyucudan "araclarda ac" ile gelindiyse belgeyi devral.
+    LaunchedEffect(Unit) { gorunum.bekleyenGirdiyiYukle() }
+
     LaunchedEffect(durum.bilgi) {
         val mesaj = durum.bilgi
         if (mesaj != null) {
@@ -240,7 +243,7 @@ fun AracGovdesi(
 
     durum.parolaIstegi?.let { istek ->
         ParolaDiyalogu(
-            istek = istek,
+            gorunenAd = istek.gorunenAd,
             hataMesaji = durum.parolaHatasi,
             gonder = gorunum::parolaGonder,
             iptal = gorunum::parolayiIptalEt,

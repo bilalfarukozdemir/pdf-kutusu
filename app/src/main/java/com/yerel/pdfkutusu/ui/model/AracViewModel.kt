@@ -115,6 +115,57 @@ abstract class AracViewModel(
     }
 
     /**
+     * Okuyucudan devredilen belgeyi (varsa) girdi olarak alir.
+     *
+     * Ekranin ilk kompozisyonunda cagrilir. `init` icinde yapilmiyor: alt
+     * siniflarin alanlari henuz kurulmamis olurdu ve [girdilerDegisti]
+     * bunlara dokunuyor.
+     */
+    fun bekleyenGirdiyiYukle() {
+        val bekleyen = bagimliliklar.bekleyenGirdi.al() ?: return
+        yerelDosyaEkle(bekleyen.first, bekleyen.second)
+    }
+
+    /**
+     * Diskteki bir dosyayi SAF'a ugramadan girdi olarak ekler.
+     *
+     * Dosya zaten calisma alanindaysa yerinde kullanilir; degilse kopyalanir.
+     * Kaynak dosyaya asla yazilmaz.
+     */
+    fun yerelDosyaEkle(kaynak: File, gorunenAd: String) {
+        viewModelScope.launch {
+            guncelle { it.copy(dosyaYukleniyor = true, hata = null) }
+            try {
+                val calisma = withContext(Dispatchers.IO) {
+                    val guvenliAd = com.yerel.pdfkutusu.cekirdek.DosyaAdi.guvenli(gorunenAd)
+                    val hedef = if (kaynak.parentFile == calismaAlani.calismaDizini) {
+                        kaynak
+                    } else {
+                        val yeni = com.yerel.pdfkutusu.cekirdek.DosyaAdi
+                            .cakismayan(calismaAlani.calismaDizini, guvenliAd)
+                        kaynak.copyTo(yeni, overwrite = true)
+                        yeni
+                    }
+                    CalismaDosyasi(
+                        dosya = hedef,
+                        gorunenAd = guvenliAd,
+                        kaynakUri = null,
+                        boyut = hedef.length(),
+                        sha256 = Ozet.sha256(hedef),
+                    )
+                }
+                girdiEkle(girdiyiIncele(calisma))
+            } catch (hata: Throwable) {
+                guncelle {
+                    it.copy(hata = hata as? PdfHatasi ?: PdfHatasi.Beklenmeyen(hata))
+                }
+            } finally {
+                guncelle { it.copy(dosyaYukleniyor = false) }
+            }
+        }
+    }
+
+    /**
      * Alinan dosyayi inceleyip listeye eklenecek ogeye cevirir.
      *
      * Varsayilan davranis PDF icindir. Gorsel gibi baska turlerle calisan

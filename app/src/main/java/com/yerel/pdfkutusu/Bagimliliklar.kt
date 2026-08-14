@@ -18,7 +18,7 @@ import com.yerel.pdfkutusu.veri.PdfVeritabani
  */
 class Bagimliliklar(baglam: Context) {
 
-    private val uygulamaBaglami = baglam.applicationContext
+    val uygulamaBaglami: Context = baglam.applicationContext
 
     val calismaAlani: CalismaAlani by lazy { CalismaAlani(uygulamaBaglami) }
     val tercihler: Tercihler by lazy { Tercihler(uygulamaBaglami) }
@@ -26,4 +26,38 @@ class Bagimliliklar(baglam: Context) {
     val onizleme: OnizlemeDeposu by lazy { OnizlemeDeposu(rasterlestirici) }
     val gorselOnizleme: GorselOnizlemeDeposu by lazy { GorselOnizlemeDeposu() }
     val gunluk: GunlukDeposu by lazy { GunlukDeposu(PdfVeritabani.al(uygulamaBaglami).gunlukDao()) }
+
+    /** Okuyucudan araclara devredilen belge. */
+    val bekleyenGirdi = BekleyenGirdi()
+}
+
+/**
+ * Okuyucudan arac ekranina gecerken belgeyi tasiyan tek seferlik kutu.
+ *
+ * Niyet (Intent) ekleriyle tasimak yerine burada tutuyoruz: dosya zaten
+ * calisma alaninda, yalnizca "hangi belge" bilgisinin gezinmeyi asmasi
+ * gerekiyor. Okundugunda temizlenir, boylece uygulamayi sonra normal
+ * acildiginda eski bir belge kendiliginden yuklenmez.
+ */
+class BekleyenGirdi {
+
+    @Volatile
+    private var kayit: Pair<java.io.File, String>? = null
+
+    fun koy(dosya: java.io.File, gorunenAd: String) {
+        kayit = dosya to gorunenAd
+    }
+
+    /** Varsa dondurur ve kutuyu bosaltir. */
+    fun al(): Pair<java.io.File, String>? {
+        val mevcut = kayit
+        kayit = null
+        return mevcut
+    }
+
+    fun varMi(): Boolean = kayit != null
+
+    fun temizle() {
+        kayit = null
+    }
 }

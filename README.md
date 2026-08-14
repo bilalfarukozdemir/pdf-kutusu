@@ -398,7 +398,8 @@ Uygulama aynı zamanda bir PDF okuyucudur. Telefonda bir PDF'e dokunduğunuzda
 "birlikte aç" listesinde çıkar ve **varsayılan okuyucu** yapılabilir.
 
 - Sürekli dikey okuma, parmakla ve düğmeyle yakınlaştırma (%100–500)
-- Sayfa göstergesi, okurken ekran sönmez
+- Sayfa göstergesi; üzerine dokunup **numara yazarak** o sayfaya gidilir
+- Okurken ekran sönmez
 - Okuduğunuz belgeyi doğrudan **paylaşma** ya da **araçlara devretme** —
   bir şey karartmak istediğinizde uygulamadan çıkmanız gerekmez
 - Şifreli belgede parola sorar
@@ -590,7 +591,7 @@ adb exec-out run-as com.yerel.pdfkutusu cat databases/pdf_kutusu.db > pdf_kutusu
 
 Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 
-### Birim testleri — 113 test
+### Birim testleri — 119 test
 
 | Dosya | Test | Neyi doğruluyor |
 |---|---|---|
@@ -600,7 +601,7 @@ Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 | `KarartmaMetinYoklugTesti` | 12 | **Zorunlu karartma testi** ve çevresi (metin yokluğu, dokunulmayan sayfalar, meta veri, DPI tabanı, geçersiz girdi) |
 | `ExifYonuTesti` | 8 | EXIF yön etiketi → dönüş/aynalama eşlemesi; 8 standart değer + tanımsızlar |
 | `SayfaYerlesimiTesti` | 16 | En-boy oranının korunması (%1 tolerans), A4 sığdırma, kenar boşluğu, DPI'dan sayfa boyutu, `inSampleSize` seçimi |
-| `OkuyucuYerlesimTesti` | 18 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
+| `OkuyucuYerlesimTesti` | 24 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfaya gitme, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
 | `BekleyenGirdiTesti` | 6 | Okuyucudan araçlara devredilen belge: okumanın kutuyu boşaltmaması (aynı belge birden fazla araca girebilmeli), silinmiş dosyanın sunulmaması |
 
 PDF'e dokunan testler Robolectric altında koşar: PdfBox-Android font

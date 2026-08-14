@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
@@ -22,21 +23,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +60,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -66,6 +74,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -81,6 +91,7 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val ASGARI_YAKINLASTIRMA = 1f
@@ -239,6 +250,20 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
     // calismaz. Guncel referansi State uzerinden okuyoruz.
     val guncelYerlesim by rememberUpdatedState(yerlesim)
 
+    // Suren savurma animasyonu.
+    //
+    // Yeni bir parmak hareketi ya da olcek degisikligi baslayinca durdurulmali.
+    // Savurma piksel cinsinden bir yorunge izler; yakinlastirma ise sayfa
+    // yuksekliklerini degistirir, yani ayni piksel degeri artik baska bir
+    // sayfaya denk gelir. Ikisi ayni anda calisirsa animasyon her karede eski
+    // yorungesini geri yazar ve kullanici belgede sayfalarca surüklenir.
+    val savurmaIsi = remember(motor) { mutableStateOf<Job?>(null) }
+
+    fun savurmayiDurdur() {
+        savurmaIsi.value?.cancel()
+        savurmaIsi.value = null
+    }
+
     /** Canli olcekten turetilir; yakalanan eski deger kullanilmaz. */
     fun sayfaGenisligiCanli() = gorunumGenisligi * olcek
 
@@ -261,6 +286,7 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
         val yeni = (olcek * carpan).coerceIn(ASGARI_YAKINLASTIRMA, AZAMI_YAKINLASTIRMA)
         val k = yeni / olcek
         if (k == 1f) return
+        savurmayiDurdur()
 
         // Yatayda sabit bosluk yok; sayfa gorunum genisligini tamamen doldurur.
         kaydirmaX = (kaydirmaX + odak.x) * k - odak.x
@@ -272,6 +298,12 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
         val yeniAzamiX = max(0f, gorunumGenisligi * yeni - gorunumGenisligi)
         kaydirmaY = kaydirmaY.coerceIn(0f, yeniAzamiY)
         kaydirmaX = kaydirmaX.coerceIn(0f, yeniAzamiX)
+    }
+
+    /** Sayfayi, belgenin basindakiyle ayni cerceveyle gorunume getirir. */
+    fun sayfayaGit(numara: Int) {
+        savurmayiDurdur()
+        kaydirmaY = guncelYerlesim.sayfaBasiKaydirmasi(numara - 1, gorunumYuksekligi)
     }
 
     fun kaydir(sapma: Offset) {
@@ -335,6 +367,7 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                                 requireUnconsumed = false,
                                 pass = PointerEventPass.Initial,
                             )
+                            savurmayiDurdur()
                             val hizIzleyici = VelocityTracker()
                             hizIzleyici.addPosition(ilk.uptimeMillis, ilk.position)
                             var yakinlastirdi = false
@@ -373,13 +406,16 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                             if (!yakinlastirdi) {
                                 val hiz = hizIzleyici.calculateVelocity()
                                 if (abs(hiz.y) > 80f) {
-                                    val sinir = azamiY()
-                                    kapsam.launch {
+                                    savurmaIsi.value = kapsam.launch {
                                         AnimationState(
                                             initialValue = kaydirmaY,
                                             initialVelocity = -hiz.y,
                                         ).animateDecay(sonumleme) {
-                                            val sinirli = value.coerceIn(0f, sinir)
+                                            // Sinir her karede yeniden okunuyor:
+                                            // savurma sirasinda olcek degisirse
+                                            // eski sinir belgenin ortasina
+                                            // firlatirdi.
+                                            val sinirli = value.coerceIn(0f, azamiY())
                                             kaydirmaY = sinirli
                                             if (sinirli != value) cancelAnimation()
                                         }
@@ -440,6 +476,7 @@ private fun BelgeGorunumu(hazir: OkuyucuDurumu.Hazir, gorunum: OkuyucuViewModel)
                 // Dugmeyle yakinlastirmada odak ekranin ortasi.
                 olcekle(hedef / olcek, Offset(gorunumGenisligi / 2f, gorunumYuksekligi / 2f))
             },
+            sayfayaGit = ::sayfayaGit,
         )
     }
 }
@@ -495,17 +532,36 @@ private fun AltCubuk(
     toplamSayfa: Int,
     yakinlastirma: Float,
     yakinlastirmaDegistir: (Float) -> Unit,
+    sayfayaGit: (Int) -> Unit,
 ) {
+    var sayfaSecimiAcik by remember { mutableStateOf(false) }
+
+    if (sayfaSecimiAcik) {
+        SayfayaGitDiyalogu(
+            toplamSayfa = toplamSayfa,
+            kapat = { sayfaSecimiAcik = false },
+            git = { numara ->
+                sayfayaGit(numara)
+                sayfaSecimiAcik = false
+            },
+        )
+    }
+
     Surface(tonalElevation = 3.dp, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            // Sayfa gostergesi ayni zamanda "sayfaya git" dugmesi.
             Text(
                 "$gecerliSayfa / $toplamSayfa",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(enabled = toplamSayfa > 1) { sayfaSecimiAcik = true }
+                    .padding(vertical = 8.dp),
             )
             Text(
                 "%${(yakinlastirma * 100).roundToInt()}",
@@ -526,6 +582,52 @@ private fun AltCubuk(
             }
         }
     }
+}
+
+/**
+ * Sayfa numarasi yazarak gitme.
+ *
+ * Uzun belgede parmakla aramak iskence; numara alani en kisa yol. Girdi
+ * rakamla sinirlanir (yapistirilan metin de temizlenir) ve aralik disi numara
+ * icin "Git" pasif kalir - kullaniciyi hatayla karsilastirmadan onluyoruz.
+ */
+@Composable
+private fun SayfayaGitDiyalogu(
+    toplamSayfa: Int,
+    kapat: () -> Unit,
+    git: (Int) -> Unit,
+) {
+    var metin by remember { mutableStateOf("") }
+    val numara = metin.toIntOrNull()
+    val gecerli = numara != null && numara in 1..toplamSayfa
+    val odak = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) { odak.requestFocus() }
+
+    AlertDialog(
+        onDismissRequest = kapat,
+        title = { Text("Sayfaya git") },
+        text = {
+            OutlinedTextField(
+                value = metin,
+                onValueChange = { yeni -> metin = yeni.filter { it.isDigit() }.take(6) },
+                singleLine = true,
+                isError = metin.isNotEmpty() && !gecerli,
+                label = { Text("Sayfa numarası") },
+                supportingText = { Text("1 – $toplamSayfa arası") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Go,
+                ),
+                keyboardActions = KeyboardActions(onGo = { if (gecerli) git(numara!!) }),
+                modifier = Modifier.focusRequester(odak),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { git(numara!!) }, enabled = gecerli) { Text("Git") }
+        },
+        dismissButton = { TextButton(onClick = kapat) { Text("Vazgeç") } },
+    )
 }
 
 @Composable

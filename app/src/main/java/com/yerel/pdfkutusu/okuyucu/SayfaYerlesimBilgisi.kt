@@ -60,6 +60,20 @@ internal class SayfaYerlesimBilgisi(
         return (bas - 1).coerceAtLeast(0)..(son + 1).coerceAtMost(ustler.size - 1)
     }
 
+    /**
+     * [indeks] sayfasini gorunumun basina getirecek kaydirma konumu.
+     *
+     * Belgenin en basindakiyle ayni cerceve kurulur: sayfanin ustunde kenar
+     * boslugu kadar yer kalir. Son sayfalarda belge o kadar kaydirilamayacagi
+     * icin sinir devreye girer; bu durumda sayfa ekranin basinda degil,
+     * gorunume sigdigi yerde durur.
+     */
+    fun sayfaBasiKaydirmasi(indeks: Int, gorunumYuksekligi: Float): Float {
+        if (ustler.isEmpty()) return 0f
+        val i = indeks.coerceIn(0, ustler.size - 1)
+        return (ustler[i] - kenar).coerceIn(0f, azamiKaydirma(gorunumYuksekligi))
+    }
+
     /** [icerikY] belge koordinatindaki sayfanin indeksi. */
     fun sayfaBul(icerikY: Float): Int {
         var i = 0

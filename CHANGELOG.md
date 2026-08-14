@@ -24,6 +24,9 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
   dosya tanımlayıcısı, geri çekilmiş URI izni ve bellek yetersizliği ayrı ayrı
   ele alınıyor ve cihaz testleriyle doğrulanıyor.
 
+  Sayfa göstergesine dokunup numara yazarak istenen sayfaya gidilebiliyor;
+  aralık dışı numara için "Git" pasif kalır.
+
   Kaydırma ve yakınlaştırma elde yazıldı. Sayfa konumları mutlak piksel olarak
   tutuluyor; sayfalar kendi `Layout`umuzda ölçülüp yerleştiriliyor. Hazır
   kapsayıcılar yakınlaştırılmış (görünümden geniş) sayfayı ya ortalıyor ya da

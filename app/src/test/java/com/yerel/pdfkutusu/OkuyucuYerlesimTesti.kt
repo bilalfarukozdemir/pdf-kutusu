@@ -218,6 +218,66 @@ class OkuyucuYerlesimTesti {
         assertEquals(sonAlt, sinir + gorunumYuksekligi, 0.5f)
     }
 
+    // ---- Sayfaya gitme ----
+
+    @Test
+    fun `sayfaya gidince o sayfa gorunumun basinda durur`() {
+        val y = duzen(1f)
+        for (indeks in 0 until y.sayfaSayisi) {
+            val kaydirma = y.sayfaBasiKaydirmasi(indeks, gorunumYuksekligi)
+            if (kaydirma < y.azamiKaydirma(gorunumYuksekligi)) {
+                // Sinira dayanmadiysa sayfa tam olarak kenar boslugu kadar
+                // asagida baslamali - belgenin en basiyla ayni cerceve.
+                assertEquals("Sayfa $indeks", kenar, y.ustler[indeks] - kaydirma, 0.5f)
+            }
+        }
+    }
+
+    @Test
+    fun `ilk sayfaya gitmek belgenin basina goturur`() {
+        assertEquals(0f, duzen(1f).sayfaBasiKaydirmasi(0, gorunumYuksekligi), 0.01f)
+    }
+
+    @Test
+    fun `son sayfaya gitmek siniri asmaz`() {
+        val y = duzen(1f)
+        val kaydirma = y.sayfaBasiKaydirmasi(y.sayfaSayisi - 1, gorunumYuksekligi)
+        assertEquals(y.azamiKaydirma(gorunumYuksekligi), kaydirma, 0.01f)
+    }
+
+    @Test
+    fun `yakinlastirilmisken de dogru sayfaya gider`() {
+        val y = duzen(3f)
+        val kaydirma = y.sayfaBasiKaydirmasi(11, gorunumYuksekligi)
+        // Sayfanin ustunde kenar boslugu kalir; hemen altindaki icerik
+        // gercekten 11. sayfa olmali.
+        assertEquals(kenar, y.ustler[11] - kaydirma, 0.5f)
+        assertEquals(11, y.sayfaBul(kaydirma + kenar + 1f))
+    }
+
+    @Test
+    fun `aralik disi numara kistirilir`() {
+        val y = duzen(1f)
+        assertEquals(
+            y.sayfaBasiKaydirmasi(0, gorunumYuksekligi),
+            y.sayfaBasiKaydirmasi(-5, gorunumYuksekligi),
+            0.01f,
+        )
+        assertEquals(
+            y.sayfaBasiKaydirmasi(y.sayfaSayisi - 1, gorunumYuksekligi),
+            y.sayfaBasiKaydirmasi(9_999, gorunumYuksekligi),
+            0.01f,
+        )
+        // Sayfasiz belgede de cokmemeli.
+        assertEquals(0f, duzen(1f, adet = 0).sayfaBasiKaydirmasi(3, gorunumYuksekligi), 0.01f)
+    }
+
+    @Test
+    fun `belge gorunume sigiyorsa sayfaya gitmek yerinden oynatmaz`() {
+        val tek = duzen(0.5f, adet = 1)
+        assertEquals(0f, tek.sayfaBasiKaydirmasi(0, gorunumYuksekligi), 0.01f)
+    }
+
     // ---- Gorunur aralik ve sayfa bulma ----
 
     @Test

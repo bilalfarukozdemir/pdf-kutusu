@@ -13,6 +13,15 @@ Tamamen çevrimdışı çalışan, kişisel bir Android PDF araç kutusu.
 **Hiçbir dosya cihazdan çıkmaz.** Uygulamanın `INTERNET` izni yoktur ve bu bir söz
 değil, derleme zamanında doğrulanan yapısal bir kısıttır — bkz. [İzinler](#i̇zinler).
 
+<p align="center">
+  <img src="docs/ekran-goruntusu.jpeg" alt="PDF Kutusu ana ekranı: çevrimdışı uyarısı ve araç ızgarası" width="320">
+</p>
+
+<p align="center">
+  <sub>Ana ekran. Renkler cihazın duvar kâğıdından türetilir (Material You);
+  tema sistem ayarını izler.</sub>
+</p>
+
 <details>
 <summary><b>In English</b></summary>
 

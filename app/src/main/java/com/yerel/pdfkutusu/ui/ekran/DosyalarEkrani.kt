@@ -2,6 +2,8 @@ package com.yerel.pdfkutusu.ui.ekran
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yerel.pdfkutusu.depo.Paylasim
+import com.yerel.pdfkutusu.ui.OkuyucuAktivite
 import com.yerel.pdfkutusu.ui.model.DosyalarViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BosDurum
@@ -140,7 +143,21 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                         }
                     }
                     items(dosyalar, key = { it.dosya.absolutePath }) { oge ->
-                        Card(Modifier.fillMaxWidth()) {
+                        // PDF'e dokununca kendi okuyucumuzda acilir. Metin
+                        // ciktilarinin (OCR) okuyucuda isi yok.
+                        val acilabilir = oge.dosya.extension.equals("pdf", true)
+                        Card(
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable(enabled = acilabilir) {
+                                    baglam.startActivity(
+                                        OkuyucuAktivite.acmaNiyeti(
+                                            baglam,
+                                            Uri.fromFile(oge.dosya).toString(),
+                                        ),
+                                    )
+                                },
+                        ) {
                             Row(
                                 modifier = Modifier.padding(
                                     start = 16.dp,

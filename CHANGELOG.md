@@ -5,6 +5,32 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+### Eklendi
+
+- **Son açılanlar şeridi.** Ana ekranda, açtığınız son 20 PDF. Dokununca
+  görüntüleyicide açılır. Yanındaki **PDF aç** düğmesi uygulamanın içinden
+  belge seçmenin yolu.
+
+  Yeni izin gerektirmez. Dosya seçicide seçtiğiniz belge için sisteme
+  *belgeye özel* kalıcı okuma yetkisi alınır (`takePersistableUriPermission`);
+  bu bir uygulama izni değildir, depolamaya genel erişim vermez. Cihazda
+  doğrulandı: uygulama tamamen kapatılıp yeniden açıldıktan sonra da belge
+  listeden açılabiliyor.
+
+  Başka bir uygulamadan (e-posta, mesajlaşma) gelen belgede yetki geçicidir
+  ve kalıcılaştırılamaz — gönderen uygulama o bayrağı vermez. Bu kayıtlar
+  listede **"geçici erişim"** olarak işaretlenir, kullanıcı dokunup hata
+  almadan önce bilir.
+
+  Liste silinebilir: tek tek (✕) ve topluca. Bu bilerek işlem günlüğünün
+  tersi bir kural: günlük değiştirilemez, çünkü ne yapıldığının kaydıdır;
+  son açılanlar ise hangi belgeleri okuduğunuzu gösterir ve mahremiyet
+  alanına girer. Ayrı bir depoda tutulur, günlük tablosuna dokunulmaz.
+
+- **Üretilen dosyaya dokununca görüntüleyicide açılıyor.** Dosyalar
+  ekranındaki PDF kartları artık tıklanabilir; çıktıyı kontrol etmek için
+  dışa aktarıp başka uygulamada açmak gerekmiyor.
+
 ## [1.1.0] — 2026-08-14
 
 ### Eklendi

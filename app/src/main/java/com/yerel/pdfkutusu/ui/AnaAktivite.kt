@@ -3,16 +3,22 @@ package com.yerel.pdfkutusu.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -22,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.yerel.pdfkutusu.Bagimliliklar
 import com.yerel.pdfkutusu.PdfKutusuUygulamasi
+import com.yerel.pdfkutusu.depo.BelgeYetkisi
 import com.yerel.pdfkutusu.ui.ekran.AnaEkran
 import com.yerel.pdfkutusu.ui.ekran.BirlestirEkrani
 import com.yerel.pdfkutusu.ui.ekran.BolEkrani
@@ -123,15 +130,63 @@ private fun UygulamaGezinmesi(gezinme: NavHostController, bagimliliklar: Bagimli
 
     NavHost(navController = gezinme, startDestination = Rotalar.ANA) {
         composable(Rotalar.ANA) {
-            var bekleyenAd by androidx.compose.runtime.remember {
-                androidx.compose.runtime.mutableStateOf(bagimliliklar.bekleyenGirdi.adi())
+            var bekleyenAd by remember {
+                mutableStateOf(bagimliliklar.bekleyenGirdi.adi())
             }
+            val baglam = LocalContext.current
+            var sonAcilanlar by remember {
+                mutableStateOf(bagimliliklar.sonAcilanlar.listele())
+            }
+
+            // Okuyucudan donunce liste tazelensin: yeni acilan belge basta
+            // gorunmeli.
+            val yasamDongusu = LocalLifecycleOwner.current
+            DisposableEffect(yasamDongusu) {
+                val gozlemci = LifecycleEventObserver { _, olay ->
+                    if (olay == Lifecycle.Event.ON_START) {
+                        sonAcilanlar = bagimliliklar.sonAcilanlar.listele()
+                    }
+                }
+                yasamDongusu.lifecycle.addObserver(gozlemci)
+                onDispose { yasamDongusu.lifecycle.removeObserver(gozlemci) }
+            }
+
+            val secici = rememberLauncherForActivityResult(
+                // GetContent degil OpenDocument: yalnizca bu sozlesme kalici
+                // yetki verebiliyor, son acilanlar listesi buna dayaniyor.
+                ActivityResultContracts.OpenDocument(),
+            ) { secilen ->
+                if (secilen != null) {
+                    baglam.startActivity(
+                        OkuyucuAktivite.acmaNiyeti(baglam, secilen.toString()),
+                    )
+                }
+            }
+
             AnaEkran(
                 gecis = { rota -> gezinme.navigate(rota) },
                 bekleyenBelge = bekleyenAd,
                 bekleyeniBirak = {
                     bagimliliklar.bekleyenGirdi.temizle()
                     bekleyenAd = null
+                },
+                sonAcilanlar = sonAcilanlar,
+                pdfAc = { secici.launch(arrayOf("application/pdf")) },
+                sonAcilaniAc = { belge ->
+                    baglam.startActivity(OkuyucuAktivite.acmaNiyeti(baglam, belge.uri))
+                },
+                sonAcilaniSil = { belge ->
+                    bagimliliklar.sonAcilanlar.sil(belge.uri)
+                    if (belge.kalici && belge.uri.startsWith("content:")) {
+                        BelgeYetkisi.birak(baglam, belge.uri)
+                    }
+                    sonAcilanlar = bagimliliklar.sonAcilanlar.listele()
+                },
+                sonAcilanlariTemizle = {
+                    bagimliliklar.sonAcilanlar.temizle()
+                        .filter { it.kalici && it.uri.startsWith("content:") }
+                        .forEach { BelgeYetkisi.birak(baglam, it.uri) }
+                    sonAcilanlar = bagimliliklar.sonAcilanlar.listele()
                 },
             )
         }

@@ -2,6 +2,8 @@ package com.yerel.pdfkutusu
 
 import android.content.Context
 import com.yerel.pdfkutusu.depo.CalismaAlani
+import com.yerel.pdfkutusu.depo.SonAcilanlar
+import com.yerel.pdfkutusu.depo.TercihKayitDeposu
 import com.yerel.pdfkutusu.depo.Tercihler
 import com.yerel.pdfkutusu.onizleme.GorselOnizlemeDeposu
 import com.yerel.pdfkutusu.onizleme.OnizlemeDeposu
@@ -26,6 +28,14 @@ class Bagimliliklar(baglam: Context) {
     val onizleme: OnizlemeDeposu by lazy { OnizlemeDeposu(rasterlestirici) }
     val gorselOnizleme: GorselOnizlemeDeposu by lazy { GorselOnizlemeDeposu() }
     val gunluk: GunlukDeposu by lazy { GunlukDeposu(PdfVeritabani.al(uygulamaBaglami).gunlukDao()) }
+
+    /**
+     * Okuyucuda acilan belgeler. Islem gunlugunun aksine silinebilir;
+     * gerekcesi [SonAcilanlar] belgelendirmesinde.
+     */
+    val sonAcilanlar: SonAcilanlar by lazy {
+        SonAcilanlar(TercihKayitDeposu(uygulamaBaglami))
+    }
 
     /** Okuyucudan araclara devredilen belge. */
     val bekleyenGirdi = BekleyenGirdi()

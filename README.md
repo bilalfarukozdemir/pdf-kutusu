@@ -403,6 +403,14 @@ Uygulama aynı zamanda bir PDF okuyucudur. Telefonda bir PDF'e dokunduğunuzda
 - Okuduğunuz belgeyi doğrudan **paylaşma** ya da **araçlara devretme** —
   bir şey karartmak istediğinizde uygulamadan çıkmanız gerekmez
 - Şifreli belgede parola sorar
+- Ana ekranda **son açılanlar** şeridi (son 20 belge) ve **PDF aç** düğmesi.
+  Üretilen dosyalara da Dosyalar ekranından dokunarak bakabilirsiniz.
+
+Son açılanlar listesi yeni izin gerektirmez: dosya seçiciden seçtiğiniz belge
+için sisteme *belgeye özel* kalıcı okuma yetkisi alınır, depolamaya genel
+erişim istenmez. Başka bir uygulamadan gelen belgede yetki geçicidir; bu
+kayıtlar listede "geçici erişim" olarak işaretlenir. Liste tek tek ve topluca
+silinebilir — hangi belgeleri okuduğunuz sizde kalır.
 
 Okuyucu ayrı bir aktivitedir: e-postadan açtığınız bir belgede geri tuşu
 e-postaya döner, araç ızgarasına değil.
@@ -591,7 +599,7 @@ adb exec-out run-as com.yerel.pdfkutusu cat databases/pdf_kutusu.db > pdf_kutusu
 
 Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 
-### Birim testleri — 119 test
+### Birim testleri — 131 test
 
 | Dosya | Test | Neyi doğruluyor |
 |---|---|---|
@@ -603,6 +611,7 @@ Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 | `SayfaYerlesimiTesti` | 16 | En-boy oranının korunması (%1 tolerans), A4 sığdırma, kenar boşluğu, DPI'dan sayfa boyutu, `inSampleSize` seçimi |
 | `OkuyucuYerlesimTesti` | 24 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfaya gitme, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
 | `BekleyenGirdiTesti` | 6 | Okuyucudan araçlara devredilen belge: okumanın kutuyu boşaltmaması (aynı belge birden fazla araca girebilmeli), silinmiş dosyanın sunulmaması |
+| `SonAcilanlarTesti` | 12 | Son açılanlar listesi: sıralama, aynı belgenin kopyalanmaması, kapasite aşımında düşen kaydın **döndürülmesi** (URI yetkisi bırakılabilsin diye), bozuk kayıtların yok sayılması, ayracın ada sızmaması |
 
 PDF'e dokunan testler Robolectric altında koşar: PdfBox-Android font
 kaynaklarını AAR `assets` klasöründen okur ve bunun için gerçek bir Android

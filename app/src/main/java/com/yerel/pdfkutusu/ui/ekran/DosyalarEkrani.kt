@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -38,9 +39,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.depo.Paylasim
 import com.yerel.pdfkutusu.ui.model.DosyalarViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BosDurum
@@ -55,6 +58,7 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
     val yukleniyor by gorunum.yukleniyor.collectAsStateWithLifecycle()
     val bilgi by gorunum.bilgi.collectAsStateWithLifecycle()
     val anlikMesaj = remember { SnackbarHostState() }
+    val baglam = LocalContext.current
     var kaydedilecek by remember { mutableStateOf<File?>(null) }
     var silmeSorusu by remember { mutableStateOf(false) }
 
@@ -158,6 +162,14 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
+                                }
+                                IconButton(onClick = {
+                                    val niyet = Paylasim.niyet(baglam, listOf(oge.dosya))
+                                    if (niyet != null) {
+                                        runCatching { baglam.startActivity(niyet) }
+                                    }
+                                }) {
+                                    Icon(Icons.Default.Share, contentDescription = "Paylaş")
                                 }
                                 IconButton(onClick = { kaydet(oge.dosya) }) {
                                     Icon(Icons.Default.Save, contentDescription = "Dışa aktar")

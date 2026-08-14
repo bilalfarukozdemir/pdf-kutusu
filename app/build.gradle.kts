@@ -70,20 +70,17 @@ android {
             isMinifyEnabled = false
         }
         release {
-            // R8 kucultmesi VARSAYILAN OLARAK KAPALI.
+            // R8 kucultmesi ACIK: 31,9 MB -> 21,0 MB.
             //
-            // Kucultme APK'yi 38 MB'dan 20 MB'a indiriyor, ama PdfBox ve ML Kit
-            // yogun sekilde yansima (reflection) kullaniyor; kurallar dogru
-            // gorunse bile bunu ancak cihazda kosan testler kanitlar. Baskasina
-            // verilecek bir derlemede dogrulanmamis kucultme kabul edilemez.
+            // Kucultulmus APK cihazda dogrulandi - 10 enstrumante testin tamami
+            // bu derlemeye karsi gecti (PdfBox, ML Kit, Room, EXIF dahil).
+            // Tekrarlamak icin:
+            //     ./gradlew connectedReleaseAndroidTest -PtestBuildType=release
             //
-            // Acmak icin once release'e karsi testleri kosun:
-            //     ./gradlew connectedReleaseAndroidTest -PtestBuildType=release -PkucultR8=true
-            // Gectikten sonra:
-            //     ./gradlew assembleRelease -PkucultR8=true -PtekAbi=arm64-v8a
+            // Sorun ararken kapatmak icin: -PkucultR8=false
             val r8Acik = providers.gradleProperty("kucultR8")
-                .map { it.equals("true", ignoreCase = true) }
-                .getOrElse(false)
+                .map { !it.equals("false", ignoreCase = true) }
+                .getOrElse(true)
 
             isMinifyEnabled = r8Acik
             isShrinkResources = r8Acik

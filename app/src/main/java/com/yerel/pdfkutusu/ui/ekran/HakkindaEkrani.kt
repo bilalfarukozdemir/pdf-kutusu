@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
+import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
 
 @Composable
 fun HakkindaEkrani(geriDon: () -> Unit) {
@@ -147,13 +148,19 @@ private fun UygulamaKimligi() {
                 "Yapımcı",
                 style = MaterialTheme.typography.labelMedium,
             )
-            SelectionContainer {
-                Text(
-                    "vitrincim.com",
-                    style = MaterialTheme.typography.titleMedium,
+            BaglantiMetni(
+                metin = "vitrincim.com",
+                adres = "https://vitrincim.com",
+                stil = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold,
-                )
-            }
+                ),
+                renk = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.offset(x = (-4).dp),
+            )
+            Text(
+                "Dokunmak tarayıcınızı açar. Uygulama hiçbir veri göndermez.",
+                style = MaterialTheme.typography.labelSmall,
+            )
         }
     }
 }

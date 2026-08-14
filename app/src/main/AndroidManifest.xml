@@ -65,6 +65,29 @@
         </activity>
 
         <!--
+          Paylasim icin dosya saglayici.
+
+          Ham `file://` URI'si baska bir uygulamaya verilemez (Android 7'den
+          beri FileUriExposedException). Paylasim, uretilen cikti icin gecici
+          bir `content://` izni uretir.
+
+          Hicbir izin gerektirmez; disari acilan tek klasor `cikti/`dir
+          (bkz. res/xml/paylasim_yollari.xml). exported="false" ve
+          grantUriPermissions="true": yalnizca kullanicinin secip
+          paylastigi dosya, yalnizca sectigi uygulama tarafindan, yalnizca
+          o an okunabilir.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.dosyalar"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paylasim_yollari" />
+        </provider>
+
+        <!--
           ML Kit'in "unbundled" model indirici burada BILEREK tanimlanmamistir.
           <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" .../>
           satiri eklenirse Google Play Services modeli agdan indirmeye calisir.

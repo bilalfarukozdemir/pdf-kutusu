@@ -35,8 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.depo.Paylasim
 import com.yerel.pdfkutusu.ui.model.AracViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BosDurum
@@ -111,6 +113,18 @@ fun AracGovdesi(
         if (mesaj != null) {
             anlikMesaj.showSnackbar(mesaj)
             gorunum.bilgiyiKapat()
+        }
+    }
+
+    val baglam = LocalContext.current
+    val paylas: (List<File>) -> Unit = { dosyalar ->
+        val niyet = Paylasim.niyet(baglam, dosyalar)
+        if (niyet == null) {
+            gorunum.mesajGoster("Paylaşılacak dosya bulunamadı.")
+        } else {
+            runCatching { baglam.startActivity(niyet) }.onFailure {
+                gorunum.mesajGoster("Paylaşabilecek bir uygulama bulunamadı.")
+            }
         }
     }
 
@@ -213,8 +227,10 @@ fun AracGovdesi(
                 SonucKarti(
                     sonuc = sonuc,
                     kaydet = dosyaKaydet,
-                    tumunuKaydet = { klasorSecici.launch(null) },
+                    paylas = paylas,
                     kapat = gorunum::sonucuKapat,
+                    tumunuKaydet = { klasorSecici.launch(null) },
+                    yenidenAdlandir = gorunum::ciktiyiYenidenAdlandir,
                 )
             }
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Paylasima acilan tek klasor: uygulamanin uretilen ciktilari.
+
+  Girdi kopyalarinin durdugu `calisma/` ve gecici dosyalarin durdugu
+  `cache/gecici/` BILEREK disarida: kullanicinin sectigi kaynak dosyalar
+  baska uygulamalara acilmaz. Yalnizca kullanicinin kendi urettigi ve
+  paylasmayi sectigi cikti gorunur.
+-->
+<paths>
+    <files-path
+        name="ciktilar"
+        path="cikti/" />
+</paths>

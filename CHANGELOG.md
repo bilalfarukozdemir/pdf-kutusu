@@ -5,6 +5,26 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+### Eklendi
+
+- **Çıktıyı paylaşma.** Sonuç kartından ve Dosyalar ekranından dosya doğrudan
+  başka bir uygulamaya gönderilebiliyor (`FileProvider`, geçici `content://`
+  okuma izni). Yeni izin gerektirmez; paylaşıma yalnızca `cikti/` klasörü açılır.
+- **Çıktı adını düzenleme.** Kaydetmeden ya da paylaşmadan önce dosya adı sonuç
+  kartında değiştirilebiliyor. Uzantı korunur, ad temizlenir, çakışma uyarısı
+  verilir; değişiklik diske de yansır.
+- Yapımcı bilgisi (vitrincim.com) Hakkında ekranında ve ana ekranın altında;
+  dokunulabilir bağlantı olarak. Tarayıcıyı açar, veri göndermez.
+
+### Değişti
+
+- **R8 küçültmesi açıldı: 31,9 MB → 21,0 MB.** Küçültülmüş APK cihazda
+  doğrulandı; 10 enstrümante testin tamamı bu derlemeye karşı geçiyor.
+  `-PkucultR8=false` ile kapatılabilir.
+- Release derlemesi `keystore.properties` varsa onunla, yoksa debug anahtarıyla
+  imzalanıyor. `testBuildType` Gradle özelliğiyle seçilebiliyor, böylece
+  enstrümante testler release derlemesine karşı da koşabiliyor.
+
 ## [1.0.0] — 2026-08-14
 
 İlk sürüm. Tamamen çevrimdışı çalışan kişisel PDF araç kutusu.

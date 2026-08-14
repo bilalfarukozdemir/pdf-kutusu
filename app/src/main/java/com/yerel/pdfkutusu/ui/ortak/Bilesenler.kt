@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu.ui.ortak
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -52,11 +56,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import com.yerel.pdfkutusu.pdf.Ilerleme
@@ -222,14 +232,22 @@ fun HataKarti(
     }
 }
 
-/** Basarili durum: cikti dosyalari ve disa aktarma. */
+/**
+ * Basarili durum: cikti dosyalari, yeniden adlandirma, paylasma, disa aktarma.
+ *
+ * Tek dosyalik ciktilarda ad dogrudan burada duzenlenebilir: kullanici
+ * kaydetmeden ya da paylasmadan **once** adi duzeltebilsin. Ad diskte de
+ * degisir, boylece Dosyalar ekraninda ayni adla gorunur.
+ */
 @Composable
 fun SonucKarti(
     sonuc: IslemCiktisi,
     kaydet: (File) -> Unit,
-    tumunuKaydet: (() -> Unit)? = null,
+    paylas: (List<File>) -> Unit,
     kapat: () -> Unit,
     modifier: Modifier = Modifier,
+    tumunuKaydet: (() -> Unit)? = null,
+    yenidenAdlandir: ((File, String) -> Unit)? = null,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -257,38 +275,93 @@ fun SonucKarti(
             HorizontalDivider()
             Spacer(Modifier.height(8.dp))
 
-            sonuc.dosyalar.forEach { dosya ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            dosya.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        Text(
-                            bicimliBoyut(dosya.length()),
-                            style = MaterialTheme.typography.labelSmall,
-                        )
+            val tekDosya = sonuc.dosyalar.singleOrNull()
+
+            if (tekDosya != null) {
+                if (yenidenAdlandir != null) {
+                    DosyaAdiDuzenleyici(
+                        dosya = tekDosya,
+                        yenidenAdlandir = { yeniAd -> yenidenAdlandir(tekDosya, yeniAd) },
+                    )
+                } else {
+                    Text(
+                        tekDosya.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+                Text(
+                    bicimliBoyut(tekDosya.length()),
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            } else {
+                sonuc.dosyalar.forEach { dosya ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                dosya.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            Text(
+                                bicimliBoyut(dosya.length()),
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
+                        TextButton(onClick = { kaydet(dosya) }) {
+                            Icon(Icons.Default.Save, contentDescription = null, Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Kaydet")
+                        }
                     }
-                    TextButton(onClick = { kaydet(dosya) }) {
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    onClick = { paylas(sonuc.dosyalar) },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Icon(Icons.Default.Share, contentDescription = null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(if (tekDosya != null) "Paylaş" else "Hepsini paylaş")
+                }
+                if (tekDosya != null) {
+                    OutlinedButton(
+                        onClick = { kaydet(tekDosya) },
+                        modifier = Modifier.weight(1f),
+                    ) {
                         Icon(Icons.Default.Save, contentDescription = null, Modifier.size(18.dp))
-                        Spacer(Modifier.width(6.dp))
+                        Spacer(Modifier.width(8.dp))
                         Text("Kaydet")
                     }
                 }
             }
 
             if (sonuc.dosyalar.size > 1 && tumunuKaydet != null) {
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(8.dp))
                 OutlinedButton(onClick = tumunuKaydet, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.Folder, contentDescription = null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
                     Text("Tümünü bir klasöre aktar")
                 }
             }
+
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "\"Kaydet\" dosyayı seçtiğiniz konuma yazar ve cihazda kalır. " +
+                    "\"Paylaş\" ise dosyayı başka bir uygulamaya teslim eder — o uygulama " +
+                    "onu istediği yere gönderebilir.",
+                style = MaterialTheme.typography.labelSmall,
+            )
 
             if (sonuc.notlar.isNotEmpty()) {
                 Spacer(Modifier.height(12.dp))
@@ -302,6 +375,52 @@ fun SonucKarti(
             }
         }
     }
+}
+
+/**
+ * Cikti adini yerinde duzenleme.
+ *
+ * Uzanti ayri gosterilir ve degistirilemez; kullanici yanlislikla ".pdf"yi
+ * silip dosyayi acilamaz hale getirmesin. Ad ancak onaylandiginda (✓)
+ * diskte degisir.
+ */
+@Composable
+private fun DosyaAdiDuzenleyici(
+    dosya: File,
+    yenidenAdlandir: (String) -> Unit,
+) {
+    val uzanti = dosya.extension
+    var ad by remember(dosya.absolutePath) { mutableStateOf(dosya.nameWithoutExtension) }
+    val degisti = ad.trim().isNotBlank() && ad.trim() != dosya.nameWithoutExtension
+
+    OutlinedTextField(
+        value = ad,
+        onValueChange = { ad = it },
+        label = { Text("Dosya adı") },
+        singleLine = true,
+        suffix = if (uzanti.isNotEmpty()) {
+            { Text(".$uzanti") }
+        } else {
+            null
+        },
+        trailingIcon = {
+            if (degisti) {
+                IconButton(onClick = { yenidenAdlandir(ad.trim()) }) {
+                    Icon(Icons.Default.Check, contentDescription = "Yeni adı onayla")
+                }
+            }
+        },
+        supportingText = {
+            Text(
+                if (degisti) {
+                    "Onaylamak için ✓ dokunun"
+                } else {
+                    "Kaydetmeden ya da paylaşmadan önce adı değiştirebilirsiniz"
+                },
+            )
+        },
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 /** Islem oncesi risk uyarilari. */
@@ -450,6 +569,38 @@ fun AralikGirisi(
         },
         textStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Monospace),
         modifier = modifier.fillMaxWidth(),
+    )
+}
+
+/**
+ * Tiklanabilir baglanti metni.
+ *
+ * Uygulamanin disariya acilan tek noktasi. `INTERNET` izni gerektirmez: agi
+ * kullanicinin tarayicisi kullanir, bu uygulama hicbir sey indirmez ve
+ * gondermez. Dokunma kullanicinin kendi eylemidir; belge verisi tasinmaz.
+ *
+ * Tarayici yoksa (kiosk cihazlar) sessizce hicbir sey yapmaz, cokmez.
+ */
+@Composable
+fun BaglantiMetni(
+    metin: String,
+    adres: String,
+    modifier: Modifier = Modifier,
+    stil: TextStyle = MaterialTheme.typography.bodyMedium,
+    renk: Color = MaterialTheme.colorScheme.primary,
+) {
+    val acici = LocalUriHandler.current
+    Text(
+        text = metin,
+        style = stil.copy(textDecoration = TextDecoration.Underline),
+        color = renk,
+        modifier = modifier
+            .clip(RoundedCornerShape(4.dp))
+            .clickable(
+                role = Role.Button,
+                onClickLabel = "$metin adresini tarayıcıda aç",
+            ) { runCatching { acici.openUri(adres) } }
+            .padding(horizontal = 4.dp, vertical = 2.dp),
     )
 }
 

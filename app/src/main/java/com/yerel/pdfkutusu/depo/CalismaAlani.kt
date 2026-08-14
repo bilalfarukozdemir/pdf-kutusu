@@ -125,6 +125,42 @@ class CalismaAlani(private val baglam: Context) {
 
     fun sil(dosya: File): Boolean = runCatching { dosya.delete() }.getOrDefault(false)
 
+    /**
+     * Cikti dosyasini yeniden adlandirir.
+     *
+     * Kullanicinin yazdigi ad [DosyaAdi.guvenli] ile temizlenir (Turkce
+     * karakterler korunur, yol ayiricilari ve kontrol karakterleri atilir).
+     * Uzanti yazilmamissa eski uzanti korunur - kullanici ".pdf" yazmayi
+     * unuttu diye dosya bozulmasin.
+     *
+     * @return yeni dosya
+     * @throws PdfHatasi ad bosalirsa ya da ayni adda dosya varsa
+     */
+    fun yenidenAdlandir(dosya: File, istenenAd: String): File {
+        val eskiUzanti = DosyaAdi.uzantisi(dosya.name)
+        val temiz = DosyaAdi.guvenli(istenenAd.trim(), varsayilan = "")
+        if (temiz.isBlank() || DosyaAdi.tabani(temiz).isBlank()) {
+            throw PdfHatasi.GirdiYok("Dosya adı boş olamaz.")
+        }
+
+        val yeniAd = if (DosyaAdi.uzantisi(temiz).isEmpty() && eskiUzanti.isNotEmpty()) {
+            "$temiz.$eskiUzanti"
+        } else {
+            temiz
+        }
+
+        if (yeniAd == dosya.name) return dosya
+
+        val hedef = File(dosya.parentFile, yeniAd)
+        if (hedef.exists()) {
+            throw PdfHatasi.DosyaOkunamadi("Bu adda bir dosya zaten var: $yeniAd")
+        }
+        if (!dosya.renameTo(hedef)) {
+            throw PdfHatasi.DosyaOkunamadi("Dosya yeniden adlandırılamadı.")
+        }
+        return hedef
+    }
+
     fun calismaGirdileriniTemizle() {
         calismaDizini.listFiles()?.forEach { runCatching { it.delete() } }
         gecicilerDizini.listFiles()?.forEach { runCatching { it.delete() } }

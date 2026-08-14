@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
+import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
 
 data class AracKarti(
     val rota: String,
@@ -130,13 +131,22 @@ fun AnaEkran(gecis: (String) -> Unit) {
             }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = "Yapımcı · vitrincim.com",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
+                Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp),
-                )
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Yapımcı · ",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    BaglantiMetni(
+                        metin = "vitrincim.com",
+                        adres = "https://vitrincim.com",
+                        stil = MaterialTheme.typography.labelMedium,
+                    )
+                }
             }
         }
     }

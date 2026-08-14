@@ -329,6 +329,37 @@ abstract class AracViewModel(
         }
     }
 
+    /**
+     * Sonuc ekranindaki cikti dosyasini yeniden adlandirir.
+     *
+     * Kaydetmeden ya da paylasmadan once adi duzeltmek icin; dosya diskte
+     * gercekten yeniden adlandirilir, boylece Dosyalar ekraninda da ayni
+     * adla gorunur.
+     */
+    fun ciktiyiYenidenAdlandir(eski: File, yeniAd: String) {
+        viewModelScope.launch {
+            try {
+                val yeni = withContext(Dispatchers.IO) {
+                    calismaAlani.yenidenAdlandir(eski, yeniAd)
+                }
+                if (yeni == eski) return@launch
+
+                onizleme.gecersizKil(eski)
+                guncelle { durum ->
+                    val sonuc = durum.sonuc ?: return@guncelle durum
+                    durum.copy(
+                        sonuc = sonuc.copy(
+                            dosyalar = sonuc.dosyalar.map { if (it == eski) yeni else it },
+                        ),
+                        bilgi = "Yeni ad: ${yeni.name}",
+                    )
+                }
+            } catch (hata: PdfHatasi) {
+                guncelle { it.copy(hata = hata) }
+            }
+        }
+    }
+
     fun tumunuDisaAktar(agacUri: Uri) {
         val dosyalar = _durum.value.sonuc?.dosyalar.orEmpty()
         if (dosyalar.isEmpty()) return
@@ -348,6 +379,9 @@ abstract class AracViewModel(
     }
 
     // ------------------------------------------------------------- yardimcilar
+
+    /** Ekran katmanindan (SAF, paylasim niyeti vb.) kisa mesaj gostermek icin. */
+    fun mesajGoster(mesaj: String) = guncelle { it.copy(bilgi = mesaj) }
 
     fun hatayiKapat() = guncelle { it.copy(hata = null) }
     fun bilgiyiKapat() = guncelle { it.copy(bilgi = null) }

@@ -107,8 +107,9 @@ APK'yı telefona kopyalayıp dosya yöneticisinden de kurabilirsiniz; bu durumda
 
 | Derleme | Ölçülen boyut |
 |---|---|
-| `./gradlew assembleDebug` (dört mimari) | **67,0 MB** |
-| `./gradlew assembleDebug -PtekAbi=arm64-v8a` | **38,7 MB** |
+| `assembleDebug` (dört mimari) | **67,0 MB** |
+| `assembleDebug -PtekAbi=arm64-v8a` | **38,7 MB** |
+| `assembleRelease -PtekAbi=arm64-v8a` | **21,0 MB** ← paylaşmak için bu |
 
 Farkın tamamı ML Kit'in paketli OCR modelidir:
 `libmlkit_google_ocr_pipeline.so` her mimari için ayrı gelir (x86_64 11,1 MB +
@@ -343,6 +344,29 @@ dizin açıkça verilmelidir, `java.io.tmpdir` güvenilir biçimde yazılabilir 
 İşlem sırasında ilerleme gösterilir ve iptal edilebilir.
 
 OCR / aranabilir metin katmanı bu sürümde yok.
+
+---
+
+## Çıktıyla ne yapılır
+
+İşlem bitince sonuç kartında üç şey yapabilirsiniz:
+
+- **Adı düzenle** — dosya adı doğrudan orada değiştirilebilir. Uzantı ayrı
+  gösterilir ve korunur; ad `DosyaAdi.guvenli` ile temizlenir (Türkçe
+  karakterler korunur) ve aynı adda dosya varsa uyarı verilir. Ad diskte de
+  değişir, Dosyalar ekranında aynı adla görünür.
+- **Paylaş** — dosyayı başka bir uygulamaya gönderir (WhatsApp, e-posta,
+  bulut...). `FileProvider` üzerinden geçici bir `content://` okuma izni verilir;
+  **yeni bir izin gerektirmez.**
+- **Kaydet** — SAF ile seçtiğiniz konuma yazar, dosya cihazda kalır.
+
+> **Paylaşma, "hiçbir şey cihazdan çıkmaz" sözünün bilinçli istisnasıdır.**
+> Uygulama kendiliğinden hiçbir şey göndermez ve `INTERNET` izni yoktur; ama
+> dosyayı teslim ettiğiniz uygulama onu istediği yere yükleyebilir. Arayüz bunu
+> sonuç kartında açıkça yazar.
+>
+> Paylaşıma yalnızca `cikti/` klasörü açılır. Seçtiğiniz kaynak dosyaların
+> kopyaları (`calisma/`) ve geçici dosyalar dışarıya hiç görünmez.
 
 ---
 
@@ -603,14 +627,25 @@ Anahtarı kaybederseniz aynı uygulamayı bir daha güncelleyemezsiniz — yedek
 
 #### R8 küçültmesi
 
-R8 APK'yı ~32 MB'dan ~20 MB'a indirir ama **varsayılan olarak kapalıdır.**
-PdfBox ve ML Kit yoğun biçimde yansıma kullanır; keep kuralları doğru görünse
-bile bunu ancak cihazda koşan testler kanıtlar. Açmadan önce doğrulayın:
+Açıktır: **31,9 MB → 21,0 MB.**
+
+Küçültülmüş APK cihazda doğrulandı — 10 enstrümante testin tamamı bu derlemeye
+karşı geçti (PdfBox, ML Kit, Room, EXIF dahil). Tekrarlamak için:
 
 ```bash
-./gradlew connectedReleaseAndroidTest -PtestBuildType=release -PkucultR8=true
-./gradlew assembleRelease -PkucultR8=true -PtekAbi=arm64-v8a
+./gradlew connectedReleaseAndroidTest -PtestBuildType=release
 ```
+
+Sorun ararken kapatmak için `-PkucultR8=false`.
+
+> `proguard-rules.pro` içinde, yalnızca **küçültülmüş derlemenin test
+> edilebilmesi** için birkaç `-keep` kuralı var (kotlin-stdlib, androidx.tracing,
+> ExifInterface, uygulamanın kendi sınıfları). Uygulama ile test APK'sı ayrı ayrı
+> küçültüldüğü için, test APK'sının çağırdığı ama uygulamanın kullanmadığı
+> sınıflar aksi hâlde siliniyor ve test koşucusu çöküyor. Dosyadaki yorumlar
+> hangi kuralın hangi hatayı çözdüğünü tek tek anlatıyor. Ölçülen maliyet:
+> 20,2 MB → 21,0 MB. Karşılığında dağıttığımız APK'nın ta kendisini test
+> edebiliyoruz.
 
 #### iOS
 

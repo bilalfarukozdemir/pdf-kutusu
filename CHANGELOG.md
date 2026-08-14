@@ -5,6 +5,8 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+## [1.1.0] — 2026-08-14
+
 ### Eklendi
 
 - **PDF okuyucu.** Uygulama artık `ACTION_VIEW` ve `ACTION_SEND` ile gelen
@@ -31,10 +33,16 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
   tutuluyor; sayfalar kendi `Layout`umuzda ölçülüp yerleştiriliyor. Hazır
   kapsayıcılar yakınlaştırılmış (görünümden geniş) sayfayı ya ortalıyor ya da
   dokunma alanını görünümden koparıyordu — ikisi de cihazda ölçülüp
-  belgelendirildi. Yerleşim aritmetiği ayrı bir sınıfa alındı ve 18 birim
+  belgelendirildi. Yerleşim aritmetiği ayrı bir sınıfa alındı ve 24 birim
   testiyle sabitlendi: yakınlaştırma odağının ekranda sabit kalması, küçük
   adımların sapma biriktirmemesi ve kaydırma sınırının ölçekle birlikte
   büyümesi test edilerek doğrulanıyor.
+
+  Savurma (fling) animasyonu artık yeni bir parmak hareketi ya da ölçek
+  değişikliğinde durduruluyor. Önceden animasyon piksel cinsinden yörüngesini
+  yazmaya devam ettiği için, kaydırma bitmeden yakınlaştırmaya başlayan
+  kullanıcı belgede sayfalarca sürükleniyordu (cihazda ölçüldü: bırakılan
+  yerin 2,5 katı ileri).
 
 - **Çıktıyı paylaşma.** Sonuç kartından ve Dosyalar ekranından dosya doğrudan
   başka bir uygulamaya gönderilebiliyor (`FileProvider`, geçici `content://`
@@ -53,6 +61,14 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - Release derlemesi `keystore.properties` varsa onunla, yoksa debug anahtarıyla
   imzalanıyor. `testBuildType` Gradle özelliğiyle seçilebiliyor, böylece
   enstrümante testler release derlemesine karşı da koşabiliyor.
+
+**Testler**
+
+- 119 birim testi (Robolectric + saf JVM)
+- 28 enstrümante test, gerçek cihazda (debug derlemesi)
+- Okuyucunun kaydırma/yakınlaştırma aritmetiği ayrı ayrı test ediliyor;
+  testlerin hatayı gerçekten yakaladığı, eski hatalı formül geri konularak
+  doğrulandı
 
 ## [1.0.0] — 2026-08-14
 
@@ -105,5 +121,6 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - Zorunlu karartma doğrulaması hem birim hem cihaz testinde
 - EXIF sızıntısı, EXIF dönüşü ve saydam PNG doğrulamaları piksel düzeyinde
 
-[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.0.0...HEAD
+[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/releases/tag/v1.0.0

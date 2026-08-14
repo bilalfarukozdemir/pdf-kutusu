@@ -60,8 +60,8 @@ no iOS build and there will not be one.
 
 | Dosya | Boyut | Kimin için |
 |---|---|---|
-| [`PDF-Kutusu-1.0.0-arm64-v8a.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.0.0/PDF-Kutusu-1.0.0-arm64-v8a.apk) | 21 MB | **Çoğu kişi bunu indirsin.** 2017 sonrası bütün telefonlar `arm64-v8a`. |
-| [`PDF-Kutusu-1.0.0-universal.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.0.0/PDF-Kutusu-1.0.0-universal.apk) | 50 MB | Eski 32-bit cihazlar ve emülatörler. Emin değilseniz bunu indirin, her yerde çalışır. |
+| [`PDF-Kutusu-1.1.0-arm64-v8a.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.1.0/PDF-Kutusu-1.1.0-arm64-v8a.apk) | 21 MB | **Çoğu kişi bunu indirsin.** 2017 sonrası bütün telefonlar `arm64-v8a`. |
+| [`PDF-Kutusu-1.1.0-universal.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.1.0/PDF-Kutusu-1.1.0-universal.apk) | 50 MB | Eski 32-bit cihazlar ve emülatörler. Emin değilseniz bunu indirin, her yerde çalışır. |
 
 Aradaki fark yalnızca ML Kit'in OCR modelidir: evrensel sürüm dört işlemci
 mimarisi için ayrı kopya taşır, telefonunuz bunlardan yalnızca birini kullanır.

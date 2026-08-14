@@ -113,6 +113,9 @@ class OkuyucuMotoru private constructor(
      */
     fun oranTahmini(indeks: Int): Float = boyutlar.getOrNull(indeks)?.oran ?: varsayilanOran
 
+    /** Kac sayfanin gercek orani olculdu. Yerlesim bunu izleyip tazelenir. */
+    fun olculenOranSayisi(): Int = boyutlar.count { it != null }
+
     suspend fun boyut(indeks: Int): SayfaBoyutu? {
         boyutlar.getOrNull(indeks)?.let { return it }
         if (indeks !in 0 until sayfaSayisi) return null

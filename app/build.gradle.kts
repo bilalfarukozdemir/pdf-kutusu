@@ -1,4 +1,5 @@
 import com.android.build.api.artifact.SingleArtifact
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -38,19 +39,73 @@ android {
         resourceConfigurations += listOf("tr", "en")
     }
 
+    // -----------------------------------------------------------------------
+    // Yayin imzasi
+    //
+    // keystore.properties varsa (dosya .gitignore'da) oradan okunur. Yoksa
+    // release derlemesi DEBUG anahtariyla imzalanir: yandan yukleme (sideload)
+    // icin calisir, uygulama debuggable DEGILDIR, ama imza herkesin elindeki
+    // ortak anahtardir - baskasi uzerine guncelleme imzalayabilir ve magazaya
+    // gonderilemez. Kendi anahtarinizi uretmek icin: README > Surum derlemesi.
+    // -----------------------------------------------------------------------
+    val imzaDosyasi = rootProject.file("keystore.properties")
+    val kendiAnahtarVar = imzaDosyasi.exists()
+
+    signingConfigs {
+        if (kendiAnahtarVar) {
+            create("yayin") {
+                val ozellikler = Properties().apply {
+                    imzaDosyasi.inputStream().use { load(it) }
+                }
+                storeFile = rootProject.file(ozellikler.getProperty("storeFile"))
+                storePassword = ozellikler.getProperty("storePassword")
+                keyAlias = ozellikler.getProperty("keyAlias")
+                keyPassword = ozellikler.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // R8 kucultmesi VARSAYILAN OLARAK KAPALI.
+            //
+            // Kucultme APK'yi 38 MB'dan 20 MB'a indiriyor, ama PdfBox ve ML Kit
+            // yogun sekilde yansima (reflection) kullaniyor; kurallar dogru
+            // gorunse bile bunu ancak cihazda kosan testler kanitlar. Baskasina
+            // verilecek bir derlemede dogrulanmamis kucultme kabul edilemez.
+            //
+            // Acmak icin once release'e karsi testleri kosun:
+            //     ./gradlew connectedReleaseAndroidTest -PtestBuildType=release -PkucultR8=true
+            // Gectikten sonra:
+            //     ./gradlew assembleRelease -PkucultR8=true -PtekAbi=arm64-v8a
+            val r8Acik = providers.gradleProperty("kucultR8")
+                .map { it.equals("true", ignoreCase = true) }
+                .getOrElse(false)
+
+            isMinifyEnabled = r8Acik
+            isShrinkResources = r8Acik
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = if (kendiAnahtarVar) {
+                signingConfigs.getByName("yayin")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            // Yalnizca -PtestBuildType=release ile kosulan enstrumante test
+            // APK'sina uygulanir; uygulama APK'sini etkilemez.
+            testProguardFiles("proguard-test-rules.pro")
         }
     }
+
+    // Enstrumante testleri release derlemesine karsi da kosturabilmek icin:
+    //     ./gradlew connectedReleaseAndroidTest -PtestBuildType=release
+    // R8'in PdfBox/ML Kit yansimasini bozup bozmadigi ancak boyle anlasilir.
+    testBuildType = providers.gradleProperty("testBuildType").getOrElse("debug")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

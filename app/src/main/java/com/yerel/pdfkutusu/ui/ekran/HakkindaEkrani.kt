@@ -8,14 +8,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 
@@ -30,6 +34,8 @@ fun HakkindaEkrani(geriDon: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            UygulamaKimligi()
+
             Bolum(
                 baslik = "Düşük riskli kullanım uyarısı",
                 govde = "Bu araç kişisel ve düşük riskli kullanım içindir. Resmî, hukuki " +
@@ -104,6 +110,50 @@ fun HakkindaEkrani(geriDon: () -> Unit) {
             )
 
             Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+/**
+ * Uygulama kimligi basligi: ad, surum ve yapimci.
+ *
+ * Metin secilebilir birakildi (kopyalanabilsin), ama tiklanabilir bir baglanti
+ * degil: bu uygulama hicbir sekilde disari cikis yapmaz, tarayici da acmaz.
+ */
+@Composable
+private fun UygulamaKimligi() {
+    val baglam = LocalContext.current
+    val surum = remember(baglam) {
+        runCatching {
+            baglam.packageManager.getPackageInfo(baglam.packageName, 0).versionName
+        }.getOrNull().orEmpty()
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text("PDF Kutusu", style = MaterialTheme.typography.headlineSmall)
+            if (surum.isNotBlank()) {
+                Spacer(Modifier.height(2.dp))
+                Text("Sürüm $surum", style = MaterialTheme.typography.bodySmall)
+            }
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "Yapımcı",
+                style = MaterialTheme.typography.labelMedium,
+            )
+            SelectionContainer {
+                Text(
+                    "vitrincim.com",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
     }
 }

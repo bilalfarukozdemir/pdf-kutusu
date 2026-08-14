@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 
@@ -126,6 +127,16 @@ fun AnaEkran(gecis: (String) -> Unit) {
                         modifier = Modifier.weight(1f),
                     ) { gecis(Rotalar.GUNLUK) }
                 }
+            }
+
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    text = "Yapımcı · vitrincim.com",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp),
+                )
             }
         }
     }

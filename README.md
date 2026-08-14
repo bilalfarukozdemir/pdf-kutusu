@@ -561,20 +561,62 @@ Tüm bağımlılıkların dökümü: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICE
 
 AGPL lisanslı hiçbir bileşen kullanılmadı.
 
-### Sürüm derlemesi
+### Sürüm derlemesi (paylaşmak için)
 
-Bu depo yalnızca **debug** APK üretir. Debug derlemeler
-`android:debuggable="true"` taşır; ADB erişimi olan biri uygulama verisini
-inceleyebilir. Günlük kullanım için kendi imza anahtarınızla release derlemesi
-yapın:
+Debug derlemeler `android:debuggable="true"` taşır; ADB erişimi olan biri
+uygulama verisini inceleyebilir. Başkasına verilecek APK **release** olmalı:
 
 ```bash
-keytool -genkey -v -keystore ~/pdf-kutusu.jks -keyalg RSA -keysize 2048 -validity 10000 -alias pdfkutusu
+./gradlew assembleRelease -PtekAbi=arm64-v8a
 ```
 
-Ardından `app/build.gradle.kts` içine bir `signingConfigs` bloğu ekleyip
-`./gradlew assembleRelease` çalıştırın. Anahtarınızı **depoya koymayın**;
-`.gitignore` `*.keystore` ve `*.jks` dosyalarını zaten dışarıda tutar.
+Çıktı: `app/build/outputs/apk/release/app-release.apk` (~32 MB)
+
+#### Kendi imza anahtarınız
+
+`keystore.properties` yoksa release derlemesi **Android'in ortak debug
+anahtarıyla** imzalanır. Yandan yükleme için çalışır, ama:
+
+- imza herkesin makinesinde bulunan ortak anahtardır, başkası üzerine
+  güncelleme imzalayabilir;
+- Play Store'a gönderilemez;
+- sonradan gerçek bir anahtara geçerseniz kullanıcılar **önce uygulamayı
+  kaldırmak zorunda kalır** (imza uyuşmazlığı).
+
+Bu yüzden dağıtmadan önce kendi anahtarınızı üretin:
+
+```bash
+keytool -genkey -v -keystore pdf-kutusu.jks -keyalg RSA -keysize 2048 -validity 10000 -alias pdfkutusu
+```
+
+Sonra depo kökünde `keystore.properties` oluşturun:
+
+```properties
+storeFile=pdf-kutusu.jks
+storePassword=...
+keyAlias=pdfkutusu
+keyPassword=...
+```
+
+`keystore.properties` ve `*.jks` `.gitignore` içindedir; **depoya girmezler.**
+Anahtarı kaybederseniz aynı uygulamayı bir daha güncelleyemezsiniz — yedekleyin.
+
+#### R8 küçültmesi
+
+R8 APK'yı ~32 MB'dan ~20 MB'a indirir ama **varsayılan olarak kapalıdır.**
+PdfBox ve ML Kit yoğun biçimde yansıma kullanır; keep kuralları doğru görünse
+bile bunu ancak cihazda koşan testler kanıtlar. Açmadan önce doğrulayın:
+
+```bash
+./gradlew connectedReleaseAndroidTest -PtestBuildType=release -PkucultR8=true
+./gradlew assembleRelease -PkucultR8=true -PtekAbi=arm64-v8a
+```
+
+#### iOS
+
+Yok ve olmayacak. Bu native bir Android uygulamasıdır: Kotlin, Jetpack Compose
+ve `PdfRenderer` / Storage Access Framework gibi Android platform API'leri
+üzerine kuruludur. iOS'ta çalıştırmak yeniden yazmak demektir.
 
 ---
 

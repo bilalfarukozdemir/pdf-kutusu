@@ -4,6 +4,7 @@
 [![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
 [![İzin sayısı: 0](https://img.shields.io/badge/izin-0-brightgreen.svg)](#i̇zinler)
 [![minSdk 26](https://img.shields.io/badge/minSdk-26-orange.svg)](#gereksinimler-ve-kurulum)
+[![Son sürüm](https://img.shields.io/github/v/release/bilalfarukozdemir/pdf-kutusu?label=indir&color=success)](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/latest)
 
 Tamamen çevrimdışı çalışan, kişisel bir Android PDF araç kutusu.
 **Resimden PDF**, birleştir, böl, sırala, döndür, sıkıştır, filigran ekle,
@@ -35,12 +36,46 @@ Kotlin, Jetpack Compose, PdfBox-Android and bundled ML Kit — no AGPL component
 The UI, source identifiers and documentation are in Turkish. Issues and PRs in
 English are welcome.
 
+**Download:** [latest release](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/latest)
+— pick `arm64-v8a` (21 MB) unless you have an older 32-bit device, in which case
+take `universal` (50 MB). Requires Android 8.0 (API 26). Android only; there is
+no iOS build and there will not be one.
+
 </details>
+
+---
+
+## İndir
+
+### ⬇️ [**Son sürümü indir**](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/latest)
+
+| Dosya | Boyut | Kimin için |
+|---|---|---|
+| [`PDF-Kutusu-1.0.0-arm64-v8a.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.0.0/PDF-Kutusu-1.0.0-arm64-v8a.apk) | 21 MB | **Çoğu kişi bunu indirsin.** 2017 sonrası bütün telefonlar `arm64-v8a`. |
+| [`PDF-Kutusu-1.0.0-universal.apk`](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/download/v1.0.0/PDF-Kutusu-1.0.0-universal.apk) | 50 MB | Eski 32-bit cihazlar ve emülatörler. Emin değilseniz bunu indirin, her yerde çalışır. |
+
+Aradaki fark yalnızca ML Kit'in OCR modelidir: evrensel sürüm dört işlemci
+mimarisi için ayrı kopya taşır, telefonunuz bunlardan yalnızca birini kullanır.
+
+**Kurulum:** APK'yı telefona indirip dokunun. Android bir kerelik "bilinmeyen
+kaynak" onayı isteyecektir.
+
+**Gereken:** Android 8.0 (API 26) veya üzeri.
+**iOS sürümü yok ve olmayacak** — bkz. [iOS](#ios).
+
+İndirdiğiniz dosyayı doğrulamak isterseniz SHA-256 sağlamaları ve imza
+sertifikasının parmak izi
+[sürüm notunda](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/tag/v1.0.0)
+yazılı.
+
+> Kaynaktan kendiniz derlemek isterseniz:
+> [APK derleme ve telefona kurma](#apk-derleme-ve-telefona-kurma)
 
 ---
 
 ## İçindekiler
 
+- [İndir](#i̇ndir)
 - [Gereksinimler ve kurulum](#gereksinimler-ve-kurulum)
 - [APK derleme ve telefona kurma](#apk-derleme-ve-telefona-kurma)
 - [İzinler](#i̇zinler)

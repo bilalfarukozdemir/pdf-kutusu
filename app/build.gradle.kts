@@ -188,6 +188,12 @@ dependencies {
     // calisma zamaninda indirme yapilmaz, internet gerekmez.
     implementation(libs.mlkit.text.recognition)
 
+    // Google Play Billing - bagis (destek) satin almalari icin. Internete
+    // kendi cikmaz; cihazdaki Play Store uygulamasiyla IPC/AIDL uzerinden
+    // konusur. com.android.vending.BILLING iznini kendi manifestinden
+    // ekler - bkz. AgIzniDenetimi.BILINCLI_KABUL_EDILEN.
+    implementation(libs.billing.ktx)
+
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)

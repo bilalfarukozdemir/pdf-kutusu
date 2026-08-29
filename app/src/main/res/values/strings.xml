@@ -122,6 +122,7 @@
     <string name="bol_ozet_satiri_coklu">%1$d dosya üretildi · %2$s</string>
     <string name="bol_ozet_satiri_tek">Sayfa %1$s çıkarıldı · %2$d sayfa</string>
     <string name="bol_parca_ad_oneki">parca%1$d-%2$s</string>
+    <string name="bol_parca_sayfa_parantez">(%1$d sayfa)</string>
 
     <!-- ================= dondur ================= -->
     <string name="dondur_baslik">Döndür</string>
@@ -170,6 +171,20 @@
     <string name="sikistir_not_yeniden_kodlandi">%1$d/%2$d görsel yeniden kodlandı.</string>
     <string name="sikistir_not_gomulu_gorsel_yok">Belgede gömülü görsel yok. Sıkıştırma yalnızca görseller üzerinde çalışır; metin ve yazı tipi verisi ellenmez.</string>
     <string name="sikistir_not_zaten_sikistirilmis">Görseller zaten iyi sıkıştırılmış olabilir. Orijinali kullanmanız daha iyi olur.</string>
+    <string name="kalite_yuksek_etiket">Yüksek</string>
+    <string name="kalite_yuksek_aciklama">Görseller hafifçe küçülür, baskı kalitesi büyük ölçüde korunur.</string>
+    <string name="kalite_orta_etiket">Orta</string>
+    <string name="kalite_orta_aciklama">Ekranda okumak için fazlasıyla yeterli, dosya belirgin küçülür.</string>
+    <string name="kalite_dusuk_etiket">Düşük</string>
+    <string name="kalite_dusuk_aciklama">En küçük dosya; görseller gözle görülür şekilde yumuşar.</string>
+    <string name="duzen_a4_sigdir_etiket">A4\'e sığdır</string>
+    <string name="duzen_a4_sigdir_aciklama">Sayfa A4 olur, görsel ortalanır. Yatay görselde sayfa da yatay olur.</string>
+    <string name="duzen_goruntu_boyutu_etiket">Görüntü boyutu</string>
+    <string name="duzen_goruntu_boyutu_aciklama">Sayfa görselin kendi boyutunda olur, kenar boşluğu yok. Ekran görüntüleri ve taramalar için.</string>
+    <string name="renk_gri">Gri</string>
+    <string name="renk_kirmizi">Kırmızı</string>
+    <string name="renk_mavi">Mavi</string>
+    <string name="renk_siyah">Siyah</string>
 
     <!-- ================= resimden (Resimden PDF) ================= -->
     <string name="resimden_baslik">Resimden PDF</string>

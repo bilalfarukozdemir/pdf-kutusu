@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
@@ -37,6 +38,7 @@ class DondurViewModel(bagimliliklar: Bagimliliklar) :
         val girdi = durum.value.ilkGirdi ?: return
         val ayarlar = _secenekler.value
 
+        val baglam = bagimliliklar.uygulamaBaglami
         calistir { ilerleme ->
             val indeksler = if (ayarlar.tumSayfalar) {
                 null
@@ -44,7 +46,11 @@ class DondurViewModel(bagimliliklar: Bagimliliklar) :
                 SayfaAraligi.ayristir(ayarlar.aralikIfadesi, girdi.sayfaSayisi)
             }
             val cikti = calismaAlani.ciktiDosyasi(
-                DosyaAdi.cikti(girdi.gorunenAd, IslemTuru.DONDUR, ekBilgi = "${ayarlar.aci}derece"),
+                DosyaAdi.cikti(
+                    girdi.gorunenAd,
+                    IslemTuru.DONDUR,
+                    ekBilgi = baglam.getString(R.string.dondur_ek_bilgi, ayarlar.aci),
+                ),
             )
             val dondurulen = PdfDondurucu.dondur(
                 kaynak = girdi.dosya,
@@ -56,10 +62,8 @@ class DondurViewModel(bagimliliklar: Bagimliliklar) :
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = girdi.sayfaSayisi,
-                ozetSatiri = "$dondurulen sayfa ${ayarlar.aci}° döndürüldü",
-                notlar = listOf(
-                    "Döndürme sayfanın /Rotate değerini değiştirir; metin ve görseller yeniden çizilmez.",
-                ),
+                ozetSatiri = baglam.getString(R.string.dondur_ozet_satiri, dondurulen, ayarlar.aci),
+                notlar = listOf(baglam.getString(R.string.dondur_not)),
             )
         }
     }

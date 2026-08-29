@@ -18,8 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.ui.model.BolViewModel
 import com.yerel.pdfkutusu.ui.ortak.AralikGirisi
 import com.yerel.pdfkutusu.ui.ortak.SayfaSeridi
@@ -31,20 +33,23 @@ fun BolEkrani(gorunum: BolViewModel, geriDon: () -> Unit) {
     var onizlenenSayfa by remember { mutableIntStateOf(0) }
 
     AracGovdesi(
-        baslik = "Böl",
-        bosBaslik = "Sayfa aralığı seçerek bölün",
-        bosAciklama = "Bir PDF seçin, ardından çıkarmak istediğiniz sayfaları " +
-            "\"1-3, 7, 10-\" biçiminde yazın.",
+        baslik = stringResource(R.string.bol_baslik),
+        bosBaslik = stringResource(R.string.bol_bos_baslik),
+        bosAciklama = stringResource(R.string.bol_bos_aciklama),
         simge = Icons.Default.ContentCut,
         gorunum = gorunum,
         geriDon = geriDon,
-        calistirEtiketi = if (secenekler.ayriDosyalar) "Ayrı dosyalara böl" else "Sayfaları çıkar",
+        calistirEtiketi = if (secenekler.ayriDosyalar) {
+            stringResource(R.string.bol_calistir_ayri)
+        } else {
+            stringResource(R.string.bol_calistir_cikar)
+        },
         calistirEtkin = durum.girdiler.isNotEmpty() && secenekler.aralikIfadesi.isNotBlank(),
         calistir = gorunum::bol,
         secenekler = {
             val girdi = durum.ilkGirdi
             if (girdi != null) {
-                SecenekKarti("Sayfa seçimi") {
+                SecenekKarti(stringResource(R.string.bol_sayfa_secimi_baslik)) {
                     AralikGirisi(
                         deger = secenekler.aralikIfadesi,
                         degisti = gorunum::aralikDegistir,
@@ -56,12 +61,12 @@ fun BolEkrani(gorunum: BolViewModel, geriDon: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
-                            Text("Her aralık ayrı dosya", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.bol_her_aralik_ayri), style = MaterialTheme.typography.bodyMedium)
                             Text(
                                 if (secenekler.ayriDosyalar) {
-                                    "\"1-3, 7-9\" iki ayrı PDF üretir."
+                                    stringResource(R.string.bol_ayri_aciklama)
                                 } else {
-                                    "Seçilen tüm sayfalar tek PDF olur."
+                                    stringResource(R.string.bol_tek_aciklama)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -75,7 +80,7 @@ fun BolEkrani(gorunum: BolViewModel, geriDon: () -> Unit) {
                     }
                 }
 
-                SecenekKarti("Önizleme") {
+                SecenekKarti(stringResource(R.string.bol_onizleme_baslik)) {
                     SayfaSeridi(
                         dosya = girdi.dosya,
                         sayfaIndeksleri = (0 until girdi.sayfaSayisi).toList(),
@@ -85,7 +90,7 @@ fun BolEkrani(gorunum: BolViewModel, geriDon: () -> Unit) {
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Sayfa numaralarını doğrulamak için kaydırın.",
+                        stringResource(R.string.bol_onizleme_ipucu),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

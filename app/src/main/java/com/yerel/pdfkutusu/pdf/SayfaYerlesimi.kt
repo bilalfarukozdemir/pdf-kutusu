@@ -1,18 +1,14 @@
 package com.yerel.pdfkutusu.pdf
 
+import androidx.annotation.StringRes
+import com.yerel.pdfkutusu.R
 import kotlin.math.max
 import kotlin.math.min
 
 /** Resimden PDF sayfa duzeni. */
-enum class SayfaDuzeni(val etiket: String, val aciklama: String) {
-    A4_SIGDIR(
-        "A4'e sığdır",
-        "Sayfa A4 olur, görsel ortalanır. Yatay görselde sayfa da yatay olur.",
-    ),
-    GORUNTU_BOYUTU(
-        "Görüntü boyutu",
-        "Sayfa görselin kendi boyutunda olur, kenar boşluğu yok. Ekran görüntüleri ve taramalar için.",
-    ),
+enum class SayfaDuzeni(@StringRes val etiketRes: Int, @StringRes val aciklamaRes: Int) {
+    A4_SIGDIR(R.string.duzen_a4_sigdir_etiket, R.string.duzen_a4_sigdir_aciklama),
+    GORUNTU_BOYUTU(R.string.duzen_goruntu_boyutu_etiket, R.string.duzen_goruntu_boyutu_aciklama),
 }
 
 /**

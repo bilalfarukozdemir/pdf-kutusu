@@ -6,7 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.ui.model.BirlestirViewModel
 import com.yerel.pdfkutusu.ui.ortak.bicimliBoyut
 
@@ -15,28 +17,31 @@ fun BirlestirEkrani(gorunum: BirlestirViewModel, geriDon: () -> Unit) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
 
     AracGovdesi(
-        baslik = "Birleştir",
-        bosBaslik = "PDF'leri tek dosyada birleştirin",
-        bosAciklama = "En az iki PDF seçin. Çıktıdaki sıra, listedeki sıradır; " +
-            "okları kullanarak değiştirebilirsiniz.",
+        baslik = stringResource(R.string.birlestir_baslik),
+        bosBaslik = stringResource(R.string.birlestir_bos_baslik),
+        bosAciklama = stringResource(R.string.birlestir_bos_aciklama),
         simge = Icons.Default.MergeType,
         gorunum = gorunum,
         geriDon = geriDon,
         cokluSecim = true,
-        calistirEtiketi = "Birleştir",
+        calistirEtiketi = stringResource(R.string.birlestir_calistir),
         calistirEtkin = durum.girdiler.size >= 2,
         calistir = gorunum::birlestir,
         secenekler = {
             if (durum.girdiler.isNotEmpty()) {
-                SecenekKarti("Özet") {
+                SecenekKarti(stringResource(R.string.birlestir_ozet_baslik)) {
                     Text(
-                        "${durum.girdiler.size} dosya · toplam ${durum.toplamSayfa} sayfa · " +
+                        stringResource(
+                            R.string.birlestir_ozet_metni,
+                            durum.girdiler.size,
+                            durum.toplamSayfa,
                             bicimliBoyut(durum.girdiler.sumOf { it.boyut }),
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     if (durum.girdiler.size < 2) {
                         Text(
-                            "Birleştirmek için en az bir dosya daha ekleyin.",
+                            stringResource(R.string.birlestir_daha_ekle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

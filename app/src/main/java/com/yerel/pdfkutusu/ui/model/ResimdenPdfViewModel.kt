@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi

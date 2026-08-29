@@ -36,8 +36,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.depo.Paylasim
 import com.yerel.pdfkutusu.ui.model.AracViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
@@ -76,8 +78,16 @@ fun AracGovdesi(
     calistirEtkin: Boolean = true,
     /** SAF secicisine verilecek MIME turleri. */
     mimeTurleri: Array<String> = arrayOf("application/pdf"),
-    secButonuEtiketi: String = if (cokluSecim) "PDF'leri seç" else "PDF seç",
-    ekleButonuEtiketi: String = if (cokluSecim) "PDF ekle" else "Başka PDF seç",
+    secButonuEtiketi: String = if (cokluSecim) {
+        stringResource(R.string.govde_pdfleri_sec)
+    } else {
+        stringResource(R.string.govde_pdf_sec)
+    },
+    ekleButonuEtiketi: String = if (cokluSecim) {
+        stringResource(R.string.govde_pdf_ekle)
+    } else {
+        stringResource(R.string.govde_baska_pdf_sec)
+    },
     secenekler: @Composable ColumnScope.() -> Unit = {},
 ) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
@@ -123,10 +133,10 @@ fun AracGovdesi(
     val paylas: (List<File>) -> Unit = { dosyalar ->
         val niyet = Paylasim.niyet(baglam, dosyalar)
         if (niyet == null) {
-            gorunum.mesajGoster("Paylaşılacak dosya bulunamadı.")
+            gorunum.mesajGoster(baglam.getString(R.string.govde_paylasilacak_dosya_yok))
         } else {
             runCatching { baglam.startActivity(niyet) }.onFailure {
-                gorunum.mesajGoster("Paylaşabilecek bir uygulama bulunamadı.")
+                gorunum.mesajGoster(baglam.getString(R.string.govde_paylasan_uygulama_yok))
             }
         }
     }
@@ -148,7 +158,7 @@ fun AracGovdesi(
         eylemler = {
             if (durum.girdiler.isNotEmpty()) {
                 IconButton(onClick = { gorunum.tumunuTemizle() }) {
-                    Icon(Icons.Default.DeleteSweep, contentDescription = "Seçimi temizle")
+                    Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.govde_secimi_temizle_cd))
                 }
             }
         },
@@ -197,7 +207,7 @@ fun AracGovdesi(
                 }
 
                 if (durum.dosyaYukleniyor) {
-                    YukleniyorSatiri("Dosya alınıyor…")
+                    YukleniyorSatiri(stringResource(R.string.govde_dosya_aliniyor))
                 }
 
                 UyariKarti(durum.uyarilar)

@@ -53,9 +53,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.annotation.StringRes
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.depo.SonAcilanBelge
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
@@ -63,21 +66,21 @@ import com.yerel.pdfkutusu.ui.ortak.bicimliZaman
 
 data class AracKarti(
     val rota: String,
-    val baslik: String,
-    val aciklama: String,
+    @StringRes val baslikRes: Int,
+    @StringRes val aciklamaRes: Int,
     val simge: ImageVector,
 )
 
 val ARACLAR = listOf(
-    AracKarti(Rotalar.RESIMDEN_PDF, "Resimden PDF", "Fotoğrafları tek PDF'te topla", Icons.Default.PhotoLibrary),
-    AracKarti(Rotalar.BIRLESTIR, "Birleştir", "Birden fazla PDF'i tek dosyada topla", Icons.Default.MergeType),
-    AracKarti(Rotalar.BOL, "Böl", "Sayfa aralığı seçerek ayır", Icons.Default.ContentCut),
-    AracKarti(Rotalar.SIRALA, "Sırala", "Sayfaları sürükleyerek yeniden diz", Icons.Default.SwapVert),
-    AracKarti(Rotalar.DONDUR, "Döndür", "Yatay/dikey sayfaları düzelt", Icons.Default.Rotate90DegreesCw),
-    AracKarti(Rotalar.SIKISTIR, "Sıkıştır", "Görselleri yeniden kodlayarak küçült", Icons.Default.Compress),
-    AracKarti(Rotalar.FILIGRAN, "Filigran", "Çapraz metin filigranı ekle", Icons.Default.BrandingWatermark),
-    AracKarti(Rotalar.KARART, "Karart", "Bilgiyi gerçekten kaldır (rasterize)", Icons.Default.Block),
-    AracKarti(Rotalar.OCR, "OCR", "Sayfadaki metni cihaz üstünde oku", Icons.Default.TextFields),
+    AracKarti(Rotalar.RESIMDEN_PDF, R.string.ana_arac_resimden_pdf_baslik, R.string.ana_arac_resimden_pdf_aciklama, Icons.Default.PhotoLibrary),
+    AracKarti(Rotalar.BIRLESTIR, R.string.ana_arac_birlestir_baslik, R.string.ana_arac_birlestir_aciklama, Icons.Default.MergeType),
+    AracKarti(Rotalar.BOL, R.string.ana_arac_bol_baslik, R.string.ana_arac_bol_aciklama, Icons.Default.ContentCut),
+    AracKarti(Rotalar.SIRALA, R.string.ana_arac_sirala_baslik, R.string.ana_arac_sirala_aciklama, Icons.Default.SwapVert),
+    AracKarti(Rotalar.DONDUR, R.string.ana_arac_dondur_baslik, R.string.ana_arac_dondur_aciklama, Icons.Default.Rotate90DegreesCw),
+    AracKarti(Rotalar.SIKISTIR, R.string.ana_arac_sikistir_baslik, R.string.ana_arac_sikistir_aciklama, Icons.Default.Compress),
+    AracKarti(Rotalar.FILIGRAN, R.string.ana_arac_filigran_baslik, R.string.ana_arac_filigran_aciklama, Icons.Default.BrandingWatermark),
+    AracKarti(Rotalar.KARART, R.string.ana_arac_karart_baslik, R.string.ana_arac_karart_aciklama, Icons.Default.Block),
+    AracKarti(Rotalar.OCR, R.string.ana_arac_ocr_baslik, R.string.ana_arac_ocr_aciklama, Icons.Default.TextFields),
 )
 
 @Composable
@@ -92,10 +95,10 @@ fun AnaEkran(
     sonAcilanlariTemizle: () -> Unit = {},
 ) {
     AracIskeleti(
-        baslik = "PDF Kutusu",
+        baslik = stringResource(R.string.ana_baslik),
         eylemler = {
             IconButton(onClick = { gecis(Rotalar.HAKKINDA) }) {
-                Icon(Icons.Default.Info, contentDescription = "Hakkında")
+                Icon(Icons.Default.Info, contentDescription = stringResource(R.string.ana_hakkinda_cd))
             }
         },
     ) { doldurma ->
@@ -139,13 +142,13 @@ fun AnaEkran(
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            arac.baslik,
+                            stringResource(arac.baslikRes),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.height(2.dp))
                         Text(
-                            arac.aciklama,
+                            stringResource(arac.aciklamaRes),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -156,14 +159,14 @@ fun AnaEkran(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     YanKart(
-                        baslik = "Dosyalar",
-                        aciklama = "Üretilen çıktılar",
+                        baslik = stringResource(R.string.ana_dosyalar_baslik),
+                        aciklama = stringResource(R.string.ana_dosyalar_aciklama),
                         simge = Icons.Default.Folder,
                         modifier = Modifier.weight(1f),
                     ) { gecis(Rotalar.DOSYALAR) }
                     YanKart(
-                        baslik = "Günlük",
-                        aciklama = "İşlem geçmişi",
+                        baslik = stringResource(R.string.ana_gunluk_baslik),
+                        aciklama = stringResource(R.string.ana_gunluk_aciklama),
                         simge = Icons.Default.History,
                         modifier = Modifier.weight(1f),
                     ) { gecis(Rotalar.GUNLUK) }
@@ -177,7 +180,7 @@ fun AnaEkran(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Yapımcı · ",
+                        text = stringResource(R.string.ana_yapimci_etiket),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -241,25 +244,25 @@ private fun SonAcilanlarSeridi(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "Son açılanlar",
+                    stringResource(R.string.ana_son_acilanlar_baslik),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )
                 TextButton(onClick = pdfAc) {
                     Icon(Icons.Default.FolderOpen, contentDescription = null, Modifier.size(18.dp))
                     Spacer(Modifier.width(6.dp))
-                    Text("PDF aç")
+                    Text(stringResource(R.string.ana_pdf_ac))
                 }
                 if (belgeler.isNotEmpty()) {
                     IconButton(onClick = { temizlemeSorusu = true }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Listeyi temizle")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.ana_listeyi_temizle_cd))
                     }
                 }
             }
 
             if (belgeler.isEmpty()) {
                 Text(
-                    "Açtığınız PDF'ler burada birikir; tek dokunuşla geri dönersiniz.",
+                    stringResource(R.string.ana_son_acilanlar_bos),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 14.dp),
@@ -283,21 +286,18 @@ private fun SonAcilanlarSeridi(
     if (temizlemeSorusu) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { temizlemeSorusu = false },
-            title = { Text("Listeyi temizle") },
+            title = { Text(stringResource(R.string.ana_listeyi_temizle_dialog_baslik)) },
             text = {
-                Text(
-                    "Son açılanlar listesi silinecek. Belgelerin kendisine " +
-                        "dokunulmaz, yalnızca bu liste temizlenir.",
-                )
+                Text(stringResource(R.string.ana_listeyi_temizle_dialog_govde))
             },
             confirmButton = {
                 TextButton(onClick = {
                     temizle()
                     temizlemeSorusu = false
-                }) { Text("Temizle") }
+                }) { Text(stringResource(R.string.ana_temizle)) }
             },
             dismissButton = {
-                TextButton(onClick = { temizlemeSorusu = false }) { Text("Vazgeç") }
+                TextButton(onClick = { temizlemeSorusu = false }) { Text(stringResource(R.string.ortak_vazgec)) }
             },
         )
     }
@@ -325,7 +325,7 @@ private fun SonAcilanKart(belge: SonAcilanBelge, ac: () -> Unit, sil: () -> Unit
                 IconButton(onClick = sil, modifier = Modifier.size(30.dp)) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Listeden çıkar",
+                        contentDescription = stringResource(R.string.ortak_listeden_cikar_cd),
                         modifier = Modifier.size(16.dp),
                     )
                 }
@@ -349,7 +349,7 @@ private fun SonAcilanKart(belge: SonAcilanBelge, ac: () -> Unit, sil: () -> Unit
                 // Baska bir uygulamadan gelen belgede yetki gecicidir; bunu
                 // pesinen soyluyoruz ki dokunup hata almasin.
                 Text(
-                    "geçici erişim",
+                    stringResource(R.string.ana_gecici_erisim),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
                     maxLines = 1,
@@ -379,19 +379,19 @@ private fun BekleyenBelgeSeridi(ad: String, birak: () -> Unit) {
             Icon(Icons.Default.Description, contentDescription = null, Modifier.size(22.dp))
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text("Araçlara hazır", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ana_araclara_hazir), style = MaterialTheme.typography.titleSmall)
                 Text(
                     ad,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,
                 )
                 Text(
-                    "Bir araç seçin; belge orada sizi bekliyor olacak.",
+                    stringResource(R.string.ana_bir_arac_secin),
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
             IconButton(onClick = birak) {
-                Icon(Icons.Default.Close, contentDescription = "Belgeyi bırak")
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.ana_belgeyi_birak_cd))
             }
         }
     }
@@ -412,9 +412,9 @@ private fun CevrimdisiSeridi() {
             Icon(Icons.Default.CloudOff, contentDescription = null, Modifier.size(22.dp))
             Spacer(Modifier.width(12.dp))
             Column {
-                Text("Tamamen çevrimdışı", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ana_tamamen_cevrimdisi), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "Uygulamanın internet izni yok. Dosyalarınız cihazdan çıkmaz.",
+                    stringResource(R.string.ana_cevrimdisi_aciklama),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -434,25 +434,21 @@ fun IlkAcilisUyarisi(onayla: () -> Unit) {
     androidx.compose.material3.AlertDialog(
         onDismissRequest = { /* Okunmadan gecilemez. */ },
         icon = { Icon(Icons.Default.Info, contentDescription = null) },
-        title = { Text("Başlamadan önce") },
+        title = { Text(stringResource(R.string.ana_ilk_acilis_baslik)) },
         text = {
             Column {
                 Text(
-                    "Bu araç kişisel ve düşük riskli kullanım içindir. " +
-                        "Resmî, hukuki veya regüle belgeler için tek başına güvenmeyin.",
+                    stringResource(R.string.ana_ilk_acilis_govde1),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "• Çıktıyı her zaman açıp gözle kontrol edin.\n" +
-                        "• Karartma yaptıysanız çıktıdan metin aramayı deneyin.\n" +
-                        "• Orijinal dosyanız hiçbir işlemde değiştirilmez.\n" +
-                        "• Hiçbir veri cihazdan çıkmaz; uygulamanın internet izni yoktur.",
+                    stringResource(R.string.ana_ilk_acilis_govde2),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
         },
-        confirmButton = { Button(onClick = onayla) { Text("Anladım") } },
+        confirmButton = { Button(onClick = onayla) { Text(stringResource(R.string.ana_ilk_acilis_anladim)) } },
     )
 }

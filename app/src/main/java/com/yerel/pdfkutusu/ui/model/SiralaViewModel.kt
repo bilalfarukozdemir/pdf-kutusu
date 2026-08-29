@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
@@ -37,7 +38,13 @@ class SiralaViewModel(bagimliliklar: Bagimliliklar) :
         val liste = _sira.value.toMutableList()
         if (konum !in liste.indices) return
         if (liste.size == 1) {
-            guncelle { it.copy(hata = PdfHatasi.GecersizAralik("Çıktıda en az bir sayfa kalmalı.")) }
+            guncelle {
+                it.copy(
+                    hata = PdfHatasi.GecersizAralik(
+                        bagimliliklar.uygulamaBaglami.getString(R.string.sirala_hata_en_az_bir_sayfa),
+                    ),
+                )
+            }
             return
         }
         liste.removeAt(konum)
@@ -54,7 +61,13 @@ class SiralaViewModel(bagimliliklar: Bagimliliklar) :
         val girdi = durum.value.ilkGirdi ?: return
         val yeniSira = _sira.value
         if (yeniSira.isEmpty()) {
-            guncelle { it.copy(hata = PdfHatasi.GecersizAralik("Çıktıda en az bir sayfa kalmalı.")) }
+            guncelle {
+                it.copy(
+                    hata = PdfHatasi.GecersizAralik(
+                        bagimliliklar.uygulamaBaglami.getString(R.string.sirala_hata_en_az_bir_sayfa),
+                    ),
+                )
+            }
             return
         }
 
@@ -69,11 +82,12 @@ class SiralaViewModel(bagimliliklar: Bagimliliklar) :
                 ilerleme = ilerleme,
             )
             val cikarilan = girdi.sayfaSayisi - yeniSira.distinct().size
+            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sayfaSayisi,
-                ozetSatiri = "$sayfaSayisi sayfa yeniden sıralandı" +
-                    if (cikarilan > 0) " · $cikarilan sayfa çıkarıldı" else "",
+                ozetSatiri = baglam.getString(R.string.sirala_ozet_satiri, sayfaSayisi) +
+                    if (cikarilan > 0) baglam.getString(R.string.sirala_ozet_cikarilan, cikarilan) else "",
             )
         }
     }

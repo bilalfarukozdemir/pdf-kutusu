@@ -162,7 +162,7 @@ private fun KayitKarti(kayit: IslemKaydi) {
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    IslemTuru.adindan(kayit.islemTuru)?.etiket ?: kayit.islemTuru,
+                    IslemTuru.adindan(kayit.islemTuru)?.let { stringResource(it.etiketRes) } ?: kayit.islemTuru,
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )

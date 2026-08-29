@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.pdf
 
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import com.tom_roush.pdfbox.cos.COSName
 import com.tom_roush.pdfbox.cos.COSStream
 import com.tom_roush.pdfbox.pdmodel.PDDocument
@@ -8,6 +9,7 @@ import com.tom_roush.pdfbox.pdmodel.PDResources
 import com.tom_roush.pdfbox.pdmodel.graphics.form.PDFormXObject
 import com.tom_roush.pdfbox.pdmodel.graphics.image.JPEGFactory
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject
+import com.yerel.pdfkutusu.R
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -24,16 +26,16 @@ import kotlin.math.roundToInt
  * bir PDF'te kazanc yok denecek kadar azdir. Arayuz bunu kullaniciya soyler.
  */
 enum class SikistirmaKalitesi(
-    val etiket: String,
+    @StringRes val etiketRes: Int,
     val jpegKalitesi: Float,
     val azamiKenarPiksel: Int,
-    val aciklama: String,
+    @StringRes val aciklamaRes: Int,
     /** Tahminde kullanilan piksel basina yaklasik bayt. */
     val baytPiksel: Double,
 ) {
-    YUKSEK("Yüksek", 0.85f, 2200, "Görseller hafifçe küçülür, baskı kalitesi büyük ölçüde korunur.", 0.26),
-    ORTA("Orta", 0.65f, 1600, "Ekranda okumak için fazlasıyla yeterli, dosya belirgin küçülür.", 0.15),
-    DUSUK("Düşük", 0.45f, 1100, "En küçük dosya; görseller gözle görülür şekilde yumuşar.", 0.085),
+    YUKSEK(R.string.kalite_yuksek_etiket, 0.85f, 2200, R.string.kalite_yuksek_aciklama, 0.26),
+    ORTA(R.string.kalite_orta_etiket, 0.65f, 1600, R.string.kalite_orta_aciklama, 0.15),
+    DUSUK(R.string.kalite_dusuk_etiket, 0.45f, 1100, R.string.kalite_dusuk_aciklama, 0.085),
 }
 
 data class SikistirmaSonucu(

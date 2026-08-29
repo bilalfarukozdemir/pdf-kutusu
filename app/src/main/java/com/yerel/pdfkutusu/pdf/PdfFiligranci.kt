@@ -1,18 +1,20 @@
 package com.yerel.pdfkutusu.pdf
 
+import androidx.annotation.StringRes
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState
 import com.tom_roush.pdfbox.util.Matrix
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.max
 
-enum class FiligranRengi(val etiket: String, val r: Float, val g: Float, val b: Float) {
-    GRI("Gri", 0.45f, 0.45f, 0.45f),
-    KIRMIZI("Kırmızı", 0.75f, 0.12f, 0.12f),
-    MAVI("Mavi", 0.15f, 0.30f, 0.65f),
-    SIYAH("Siyah", 0f, 0f, 0f),
+enum class FiligranRengi(@StringRes val etiketRes: Int, val r: Float, val g: Float, val b: Float) {
+    GRI(R.string.renk_gri, 0.45f, 0.45f, 0.45f),
+    KIRMIZI(R.string.renk_kirmizi, 0.75f, 0.12f, 0.12f),
+    MAVI(R.string.renk_mavi, 0.15f, 0.30f, 0.65f),
+    SIYAH(R.string.renk_siyah, 0f, 0f, 0f),
 }
 
 data class FiligranAyarlari(

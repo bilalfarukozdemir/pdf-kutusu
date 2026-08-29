@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.pdf.SikistirmaKalitesi
 import com.yerel.pdfkutusu.ui.model.SikistirViewModel
 import com.yerel.pdfkutusu.ui.ortak.YukleniyorSatiri
@@ -29,22 +31,21 @@ fun SikistirEkrani(gorunum: SikistirViewModel, geriDon: () -> Unit) {
     val secenekler by gorunum.secenekler.collectAsStateWithLifecycle()
 
     AracGovdesi(
-        baslik = "Sıkıştır",
-        bosBaslik = "Dosya boyutunu küçültün",
-        bosAciklama = "Bir PDF seçin. Gömülü görseller yeniden örneklenip daha " +
-            "düşük kalitede kodlanır; metin ve yazı tipleri değişmez.",
+        baslik = stringResource(R.string.sikistir_baslik),
+        bosBaslik = stringResource(R.string.sikistir_bos_baslik),
+        bosAciklama = stringResource(R.string.sikistir_bos_aciklama),
         simge = Icons.Default.Compress,
         gorunum = gorunum,
         geriDon = geriDon,
-        calistirEtiketi = "Sıkıştır",
+        calistirEtiketi = stringResource(R.string.sikistir_calistir),
         calistirEtkin = durum.girdiler.isNotEmpty(),
         calistir = gorunum::sikistir,
         secenekler = {
             val girdi = durum.ilkGirdi
             if (girdi != null) {
-                SecenekKarti("Kalite") {
+                SecenekKarti(stringResource(R.string.sikistir_kalite_baslik)) {
                     if (secenekler.tahminHesaplaniyor) {
-                        YukleniyorSatiri("Tahmini boyut hesaplanıyor…")
+                        YukleniyorSatiri(stringResource(R.string.sikistir_tahmin_hesaplaniyor))
                     }
 
                     SikistirmaKalitesi.entries.forEach { kalite ->
@@ -67,20 +68,20 @@ fun SikistirEkrani(gorunum: SikistirViewModel, geriDon: () -> Unit) {
                             Column(Modifier.weight(1f)) {
                                 Row {
                                     Text(
-                                        kalite.etiket,
+                                        stringResource(kalite.etiketRes),
                                         style = MaterialTheme.typography.bodyLarge,
                                         modifier = Modifier.weight(1f),
                                     )
                                     if (tahmin != null) {
                                         Text(
-                                            "≈ ${bicimliBoyut(tahmin.tahminiBayt)}",
+                                            stringResource(R.string.sikistir_tahmin_yaklasik, bicimliBoyut(tahmin.tahminiBayt)),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.primary,
                                         )
                                     }
                                 }
                                 Text(
-                                    kalite.aciklama,
+                                    stringResource(kalite.aciklamaRes),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -89,19 +90,18 @@ fun SikistirEkrani(gorunum: SikistirViewModel, geriDon: () -> Unit) {
                     }
 
                     Text(
-                        "Şu anki boyut: ${bicimliBoyut(girdi.boyut)} · ${girdi.sayfaSayisi} sayfa",
+                        stringResource(R.string.sikistir_su_anki_boyut, bicimliBoyut(girdi.boyut), girdi.sayfaSayisi),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Text(
-                        "Tahminler yaklaşıktır (≈). Gerçek sonuç işlemden sonra gösterilir.",
+                        stringResource(R.string.sikistir_tahmin_aciklama),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
 
                     if (secenekler.gorselYok && !secenekler.tahminHesaplaniyor) {
                         Text(
-                            "Bu belgede sıkıştırılabilir görsel görünmüyor. Kazanç çok az olacak; " +
-                                "orijinali kullanmak daha iyi olabilir.",
+                            stringResource(R.string.sikistir_gorsel_yok),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                         )

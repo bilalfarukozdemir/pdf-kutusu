@@ -37,7 +37,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.onizleme.OnizlemeDeposu
 import com.yerel.pdfkutusu.pdf.KarartmaAlani
 import java.io.File
@@ -76,7 +78,7 @@ fun SayfaKucukResmi(
         } else {
             Image(
                 bitmap = anlik.asImageBitmap(),
-                contentDescription = "Sayfa ${sayfaIndeksi + 1} önizlemesi",
+                contentDescription = stringResource(R.string.ortak_sayfa_onizleme_cd, sayfaIndeksi + 1),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize(),
             )
@@ -219,7 +221,7 @@ fun KarartmaTuvali(
 
         Image(
             bitmap = anlik.asImageBitmap(),
-            contentDescription = "Sayfa ${sayfaIndeksi + 1}",
+            contentDescription = stringResource(R.string.ortak_sayfa_cd, sayfaIndeksi + 1),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxSize(),
         )

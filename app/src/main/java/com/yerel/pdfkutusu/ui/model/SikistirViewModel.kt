@@ -2,6 +2,7 @@ package com.yerel.pdfkutusu.ui.model
 
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.pdf.PdfSikistirici
@@ -78,21 +79,33 @@ class SikistirViewModel(bagimliliklar: Bagimliliklar) :
                 ilerleme = ilerleme,
             )
             val yuzde = (sonuc.kazancOrani * 100).toInt()
+            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sonuc.sayfaSayisi,
                 ozetSatiri = if (yuzde > 0) {
-                    "%$yuzde küçüldü · ${bicimliBoyut(sonuc.girdiBoyutu)} → ${bicimliBoyut(sonuc.ciktiBoyutu)}"
+                    baglam.getString(
+                        R.string.sikistir_kucculdu,
+                        yuzde,
+                        bicimliBoyut(sonuc.girdiBoyutu),
+                        bicimliBoyut(sonuc.ciktiBoyutu),
+                    )
                 } else {
-                    "Boyut değişmedi · ${bicimliBoyut(sonuc.ciktiBoyutu)}"
+                    baglam.getString(R.string.sikistir_degismedi, bicimliBoyut(sonuc.ciktiBoyutu))
                 },
                 notlar = buildList {
-                    add("${sonuc.yenidenKodlananGorsel}/${sonuc.toplamGorsel} görsel yeniden kodlandı.")
+                    add(
+                        baglam.getString(
+                            R.string.sikistir_not_yeniden_kodlandi,
+                            sonuc.yenidenKodlananGorsel,
+                            sonuc.toplamGorsel,
+                        ),
+                    )
                     if (sonuc.toplamGorsel == 0) {
-                        add("Belgede gömülü görsel yok. Sıkıştırma yalnızca görseller üzerinde çalışır; metin ve yazı tipi verisi ellenmez.")
+                        add(baglam.getString(R.string.sikistir_not_gomulu_gorsel_yok))
                     }
                     if (yuzde <= 0) {
-                        add("Görseller zaten iyi sıkıştırılmış olabilir. Orijinali kullanmanız daha iyi olur.")
+                        add(baglam.getString(R.string.sikistir_not_zaten_sikistirilmis))
                     }
                 },
             )

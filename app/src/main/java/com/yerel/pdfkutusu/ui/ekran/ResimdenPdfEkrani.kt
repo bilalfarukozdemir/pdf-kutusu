@@ -20,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.pdf.SayfaDuzeni
 import com.yerel.pdfkutusu.pdf.SayfaYerlesimi
 import com.yerel.pdfkutusu.pdf.SikistirmaKalitesi
@@ -37,26 +39,25 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
     val secenekler by gorunum.secenekler.collectAsStateWithLifecycle()
 
     AracGovdesi(
-        baslik = "Resimden PDF",
-        bosBaslik = "Görselleri tek PDF'te toplayın",
-        bosAciklama = "Birden fazla fotoğraf ya da ekran görüntüsü seçin. " +
-            "Konum ve cihaz bilgisi (EXIF) çıktıya aktarılmaz.",
+        baslik = stringResource(R.string.resimden_baslik),
+        bosBaslik = stringResource(R.string.resimden_bos_baslik),
+        bosAciklama = stringResource(R.string.resimden_bos_aciklama),
         simge = Icons.Default.PhotoLibrary,
         gorunum = gorunum,
         geriDon = geriDon,
         cokluSecim = true,
         mimeTurleri = arrayOf("image/*"),
-        secButonuEtiketi = "Görselleri seç",
-        ekleButonuEtiketi = "Görsel ekle",
-        calistirEtiketi = "PDF oluştur",
+        secButonuEtiketi = stringResource(R.string.resimden_gorselleri_sec),
+        ekleButonuEtiketi = stringResource(R.string.resimden_gorsel_ekle),
+        calistirEtiketi = stringResource(R.string.resimden_calistir),
         calistirEtkin = durum.girdiler.isNotEmpty(),
         calistir = gorunum::olustur,
         secenekler = {
             if (durum.girdiler.isNotEmpty()) {
             // ---------------------------------------------------------- sira
-            SecenekKarti("Sıra — ${durum.girdiler.size} görsel") {
+            SecenekKarti(stringResource(R.string.resimden_sira_baslik, durum.girdiler.size)) {
                 Text(
-                    "Bir görseli basılı tutup yana sürükleyerek taşıyın.",
+                    stringResource(R.string.resimden_sira_ipucu),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -80,13 +81,13 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = gorunum::adaGoreSirala) { Text("Ada göre") }
-                    TextButton(onClick = gorunum::tariheGoreSirala) { Text("Çekilme tarihine göre") }
+                    TextButton(onClick = gorunum::adaGoreSirala) { Text(stringResource(R.string.resimden_ada_gore)) }
+                    TextButton(onClick = gorunum::tariheGoreSirala) { Text(stringResource(R.string.resimden_tarihe_gore)) }
                 }
             }
 
             // --------------------------------------------------------- duzen
-            SecenekKarti("Sayfa düzeni") {
+            SecenekKarti(stringResource(R.string.resimden_duzen_baslik)) {
                 SayfaDuzeni.entries.forEach { duzen ->
                     Row(
                         modifier = Modifier
@@ -104,9 +105,9 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Column {
-                            Text(duzen.etiket, style = MaterialTheme.typography.bodyLarge)
+                            Text(stringResource(duzen.etiketRes), style = MaterialTheme.typography.bodyLarge)
                             Text(
-                                duzen.aciklama,
+                                stringResource(duzen.aciklamaRes),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -116,32 +117,39 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
 
                 when (secenekler.duzen) {
                     SayfaDuzeni.A4_SIGDIR -> {
-                        Text("Kenar boşluğu", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.resimden_kenar_boslugu), style = MaterialTheme.typography.bodyMedium)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             SayfaYerlesimi.KENAR_BOSLUKLARI_MM.forEach { mm ->
                                 FilterChip(
                                     selected = secenekler.kenarBoslguMm == mm,
                                     onClick = { gorunum.kenarBoslguDegistir(mm) },
-                                    label = { Text(if (mm == 0) "Yok" else "$mm mm") },
+                                    label = {
+                                        Text(
+                                            if (mm == 0) {
+                                                stringResource(R.string.resimden_kenar_yok)
+                                            } else {
+                                                stringResource(R.string.resimden_mm, mm)
+                                            },
+                                        )
+                                    },
                                 )
                             }
                         }
                     }
 
                     SayfaDuzeni.GORUNTU_BOYUTU -> {
-                        Text("Çözünürlük", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.resimden_cozunurluk), style = MaterialTheme.typography.bodyMedium)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             SayfaYerlesimi.DPI_SECENEKLERI.forEach { dpi ->
                                 FilterChip(
                                     selected = secenekler.dpi == dpi,
                                     onClick = { gorunum.dpiDegistir(dpi) },
-                                    label = { Text("$dpi DPI") },
+                                    label = { Text(stringResource(R.string.resimden_dpi, dpi)) },
                                 )
                             }
                         }
                         Text(
-                            "Sayfa boyutu = piksel × 72 / DPI. Yüksek DPI, aynı görseli daha " +
-                                "küçük bir sayfaya sığdırır.",
+                            stringResource(R.string.resimden_dpi_aciklama),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -149,14 +157,14 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
                 }
 
                 Text(
-                    "En-boy oranı hiçbir düzende bozulmaz.",
+                    stringResource(R.string.resimden_oran_korunur),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             // -------------------------------------------------------- kalite
-            SecenekKarti("Kalite") {
+            SecenekKarti(stringResource(R.string.resimden_kalite_baslik)) {
                 SikistirmaKalitesi.entries.forEach { kalite ->
                     Row(
                         modifier = Modifier
@@ -174,9 +182,9 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Column {
-                            Text(kalite.etiket, style = MaterialTheme.typography.bodyLarge)
+                            Text(stringResource(kalite.etiketRes), style = MaterialTheme.typography.bodyLarge)
                             Text(
-                                kalite.aciklama,
+                                stringResource(kalite.aciklamaRes),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -185,11 +193,14 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
                 }
 
                 if (secenekler.tahminHesaplaniyor) {
-                    YukleniyorSatiri("Tahmini boyut hesaplanıyor…")
+                    YukleniyorSatiri(stringResource(R.string.sikistir_tahmin_hesaplaniyor))
                 } else if (secenekler.tahminiBayt > 0) {
                     Text(
-                        "Tahmini çıktı: ≈ ${bicimliBoyut(secenekler.tahminiBayt)} · " +
-                            "kaynak toplamı ${bicimliBoyut(durum.girdiler.sumOf { it.boyut })}",
+                        stringResource(
+                            R.string.resimden_tahmini_cikti,
+                            bicimliBoyut(secenekler.tahminiBayt),
+                            bicimliBoyut(durum.girdiler.sumOf { it.boyut }),
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -197,11 +208,9 @@ fun ResimdenPdfEkrani(gorunum: ResimdenPdfViewModel, geriDon: () -> Unit) {
             }
 
             // ----------------------------------------------------- gizlilik
-            SecenekKarti("Gizlilik") {
+            SecenekKarti(stringResource(R.string.resimden_gizlilik_baslik)) {
                 Text(
-                    "Görseller bitmap'e çözülüp yeniden kodlanır. Fotoğraflarınızın EXIF " +
-                        "verisi — GPS konumu, cihaz modeli, çekim tarihi — çıktıya geçmez. " +
-                        "Belge meta verileri de temizlenir.",
+                    stringResource(R.string.resimden_gizlilik_govde),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

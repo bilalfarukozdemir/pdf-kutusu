@@ -34,9 +34,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.yerel.pdfkutusu.R
 import kotlin.math.roundToInt
 
 /**
@@ -141,7 +143,7 @@ fun <T> SurukleBirakSeridi(
                         ) {
                             Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Çıkar",
+                                contentDescription = stringResource(R.string.ortak_cikar_cd),
                                 modifier = Modifier.size(16.dp),
                             )
                         }

@@ -122,6 +122,7 @@
     <string name="bol_ozet_satiri_coklu">%1$d files produced · %2$s</string>
     <string name="bol_ozet_satiri_tek">Pages %1$s extracted · %2$d pages</string>
     <string name="bol_parca_ad_oneki">part%1$d-%2$s</string>
+    <string name="bol_parca_sayfa_parantez">(%1$d pages)</string>
 
     <!-- ================= rotate ================= -->
     <string name="dondur_baslik">Rotate</string>
@@ -170,6 +171,20 @@
     <string name="sikistir_not_yeniden_kodlandi">%1$d/%2$d images re-encoded.</string>
     <string name="sikistir_not_gomulu_gorsel_yok">The document has no embedded images. Compression only works on images; text and font data is untouched.</string>
     <string name="sikistir_not_zaten_sikistirilmis">The images may already be well compressed. You may prefer to use the original.</string>
+    <string name="kalite_yuksek_etiket">High</string>
+    <string name="kalite_yuksek_aciklama">Images shrink slightly; print quality is largely preserved.</string>
+    <string name="kalite_orta_etiket">Medium</string>
+    <string name="kalite_orta_aciklama">Plenty for reading on screen; the file shrinks noticeably.</string>
+    <string name="kalite_dusuk_etiket">Low</string>
+    <string name="kalite_dusuk_aciklama">Smallest file; images visibly soften.</string>
+    <string name="duzen_a4_sigdir_etiket">Fit to A4</string>
+    <string name="duzen_a4_sigdir_aciklama">The page becomes A4 and the image is centered. A landscape image gets a landscape page too.</string>
+    <string name="duzen_goruntu_boyutu_etiket">Image size</string>
+    <string name="duzen_goruntu_boyutu_aciklama">The page matches the image\'s own size, with no margin. For screenshots and scans.</string>
+    <string name="renk_gri">Gray</string>
+    <string name="renk_kirmizi">Red</string>
+    <string name="renk_mavi">Blue</string>
+    <string name="renk_siyah">Black</string>
 
     <!-- ================= images to PDF ================= -->
     <string name="resimden_baslik">Images to PDF</string>

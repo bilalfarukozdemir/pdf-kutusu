@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
@@ -37,6 +38,7 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
         val girdi = durum.value.ilkGirdi ?: return
         val ayarlar = _secenekler.value
 
+        val baglam = bagimliliklar.uygulamaBaglami
         calistir { ilerleme ->
             if (ayarlar.ayriDosyalar) {
                 val parcalar = PdfBolucu.herAraligiAyriDosyaya(
@@ -47,7 +49,11 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
                             DosyaAdi.cikti(
                                 kaynakDosyaAdi = girdi.gorunenAd,
                                 islem = IslemTuru.BOL,
-                                ekBilgi = "parca${sira + 1}-${SayfaAraligi.bicimle(indeksler).replace(", ", "_")}",
+                                ekBilgi = baglam.getString(
+                                    R.string.bol_parca_ad_oneki,
+                                    sira + 1,
+                                    SayfaAraligi.bicimle(indeksler).replace(", ", "_"),
+                                ),
                             ),
                         )
                     },
@@ -56,8 +62,14 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
                 IslemCiktisi(
                     dosyalar = parcalar.map { it.dosya },
                     sayfaSayisi = parcalar.sumOf { it.sayfaSayisi },
-                    ozetSatiri = "${parcalar.size} dosya üretildi · " +
-                        parcalar.joinToString(" | ") { "${it.aralikMetni} (${it.sayfaSayisi} sayfa)" },
+                    ozetSatiri = baglam.getString(
+                        R.string.bol_ozet_satiri_coklu,
+                        parcalar.size,
+                        parcalar.joinToString(" | ") {
+                            "${it.aralikMetni} " +
+                                baglam.getString(R.string.bol_parca_sayfa_parantez, it.sayfaSayisi)
+                        },
+                    ),
                 )
             } else {
                 val cikti = calismaAlani.ciktiDosyasi(
@@ -72,7 +84,11 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
                 IslemCiktisi(
                     dosyalar = listOf(cikti),
                     sayfaSayisi = parca.sayfaSayisi,
-                    ozetSatiri = "Sayfa ${parca.aralikMetni} çıkarıldı · ${parca.sayfaSayisi} sayfa",
+                    ozetSatiri = baglam.getString(
+                        R.string.bol_ozet_satiri_tek,
+                        parca.aralikMetni,
+                        parca.sayfaSayisi,
+                    ),
                 )
             }
         }

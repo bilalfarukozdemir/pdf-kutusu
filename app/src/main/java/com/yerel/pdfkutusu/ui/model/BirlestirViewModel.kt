@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
@@ -14,7 +15,11 @@ class BirlestirViewModel(bagimliliklar: Bagimliliklar) :
         val girdiler = durum.value.girdiler
         if (girdiler.size < 2) {
             guncelle {
-                it.copy(hata = PdfHatasi.GirdiYok("Birleştirmek için en az iki PDF seçin."))
+                it.copy(
+                    hata = PdfHatasi.GirdiYok(
+                        bagimliliklar.uygulamaBaglami.getString(R.string.birlestir_hata_en_az_iki),
+                    ),
+                )
             }
             return
         }
@@ -27,14 +32,15 @@ class BirlestirViewModel(bagimliliklar: Bagimliliklar) :
                 cikti = cikti,
                 ilerleme = ilerleme,
             )
+            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sayfaSayisi,
-                ozetSatiri = "${girdiler.size} dosya birleştirildi · $sayfaSayisi sayfa",
+                ozetSatiri = baglam.getString(R.string.birlestir_ozet_satiri, girdiler.size, sayfaSayisi),
                 notlar = buildList {
-                    add("Sıra, listedeki sıradır. Değiştirmek için okları kullanın.")
+                    add(baglam.getString(R.string.birlestir_not_sira))
                     if (girdiler.any { it.ozet.uyarilar.isNotEmpty() }) {
-                        add("Yer imleri ve form alanları birleştirmede korunmayabilir.")
+                        add(baglam.getString(R.string.birlestir_not_yer_imi))
                     }
                 },
             )

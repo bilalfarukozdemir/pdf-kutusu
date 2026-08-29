@@ -60,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -68,6 +69,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import com.yerel.pdfkutusu.pdf.Ilerleme
 import com.yerel.pdfkutusu.ui.model.GirdiOgesi
@@ -91,7 +93,7 @@ fun AracIskeleti(
                 navigationIcon = {
                     if (geriDon != null) {
                         IconButton(onClick = geriDon) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.ortak_geri_cd))
                         }
                     }
                 },
@@ -171,7 +173,7 @@ fun IlerlemeKarti(
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = ilerleme?.etiket?.takeIf { it.isNotBlank() } ?: "İşleniyor…",
+                    text = ilerleme?.etiket?.takeIf { it.isNotBlank() } ?: stringResource(R.string.ortak_isleniyor),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )
@@ -195,7 +197,7 @@ fun IlerlemeKarti(
             OutlinedButton(onClick = iptalEt) {
                 Icon(Icons.Default.Close, contentDescription = null, Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("İptal et")
+                Text(stringResource(R.string.ortak_iptal_et))
             }
         }
     }
@@ -226,7 +228,7 @@ fun HataKarti(
                 }
             }
             IconButton(onClick = kapat) {
-                Icon(Icons.Default.Close, contentDescription = "Kapat")
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.ortak_kapat))
             }
         }
     }
@@ -261,13 +263,13 @@ fun SonucKarti(
                 Icon(Icons.Default.CheckCircle, contentDescription = null)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("İşlem tamamlandı", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.ortak_islem_tamamlandi), style = MaterialTheme.typography.titleSmall)
                     if (sonuc.ozetSatiri.isNotBlank()) {
                         Text(sonuc.ozetSatiri, style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 IconButton(onClick = kapat) {
-                    Icon(Icons.Default.Close, contentDescription = "Kapat")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.ortak_kapat))
                 }
             }
 
@@ -314,7 +316,7 @@ fun SonucKarti(
                         TextButton(onClick = { kaydet(dosya) }) {
                             Icon(Icons.Default.Save, contentDescription = null, Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("Kaydet")
+                            Text(stringResource(R.string.ortak_kaydet))
                         }
                     }
                 }
@@ -332,7 +334,7 @@ fun SonucKarti(
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (tekDosya != null) "Paylaş" else "Hepsini paylaş")
+                    Text(if (tekDosya != null) stringResource(R.string.ortak_paylas) else stringResource(R.string.ortak_hepsini_paylas))
                 }
                 if (tekDosya != null) {
                     OutlinedButton(
@@ -341,7 +343,7 @@ fun SonucKarti(
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null, Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Kaydet")
+                        Text(stringResource(R.string.ortak_kaydet))
                     }
                 }
             }
@@ -351,15 +353,13 @@ fun SonucKarti(
                 OutlinedButton(onClick = tumunuKaydet, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.Folder, contentDescription = null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Tümünü bir klasöre aktar")
+                    Text(stringResource(R.string.ortak_tumunu_klasore_aktar))
                 }
             }
 
             Spacer(Modifier.height(8.dp))
             Text(
-                "\"Kaydet\" dosyayı seçtiğiniz konuma yazar ve cihazda kalır. " +
-                    "\"Paylaş\" ise dosyayı başka bir uygulamaya teslim eder — o uygulama " +
-                    "onu istediği yere gönderebilir.",
+                stringResource(R.string.ortak_kaydet_paylas_aciklama),
                 style = MaterialTheme.typography.labelSmall,
             )
 
@@ -367,7 +367,7 @@ fun SonucKarti(
                 Spacer(Modifier.height(12.dp))
                 sonuc.notlar.forEach { not ->
                     Text(
-                        "• $not",
+                        stringResource(R.string.ortak_not_madde, not),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(bottom = 4.dp),
                     )
@@ -396,7 +396,7 @@ private fun DosyaAdiDuzenleyici(
     OutlinedTextField(
         value = ad,
         onValueChange = { ad = it },
-        label = { Text("Dosya adı") },
+        label = { Text(stringResource(R.string.ortak_dosya_adi_etiket)) },
         singleLine = true,
         suffix = if (uzanti.isNotEmpty()) {
             { Text(".$uzanti") }
@@ -406,16 +406,16 @@ private fun DosyaAdiDuzenleyici(
         trailingIcon = {
             if (degisti) {
                 IconButton(onClick = { yenidenAdlandir(ad.trim()) }) {
-                    Icon(Icons.Default.Check, contentDescription = "Yeni adı onayla")
+                    Icon(Icons.Default.Check, contentDescription = stringResource(R.string.ortak_yeni_adi_onayla_cd))
                 }
             }
         },
         supportingText = {
             Text(
                 if (degisti) {
-                    "Onaylamak için ✓ dokunun"
+                    stringResource(R.string.ortak_onayla_ipucu)
                 } else {
-                    "Kaydetmeden ya da paylaşmadan önce adı değiştirebilirsiniz"
+                    stringResource(R.string.ortak_ad_degistirme_ipucu)
                 },
             )
         },
@@ -438,10 +438,10 @@ fun UyariKarti(uyarilar: List<String>, modifier: Modifier = Modifier) {
             Icon(Icons.Default.Warning, contentDescription = null)
             Spacer(Modifier.width(12.dp))
             Column {
-                Text("İşlem öncesi dikkat", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ortak_islem_oncesi_dikkat), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(6.dp))
                 uyarilar.forEach {
-                    Text("• $it", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.ortak_uyari_madde, it), style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -470,7 +470,7 @@ fun GirdiKarti(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "${oge.sayfaSayisi} sayfa · ${bicimliBoyut(oge.boyut)}",
+                        stringResource(R.string.ortak_girdi_ozet, oge.sayfaSayisi, bicimliBoyut(oge.boyut)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -478,7 +478,7 @@ fun GirdiKarti(
                         Spacer(Modifier.width(8.dp))
                         Icon(
                             Icons.Default.Lock,
-                            contentDescription = "Şifresi çözüldü",
+                            contentDescription = stringResource(R.string.ortak_sifresi_cozuldu_cd),
                             modifier = Modifier.size(14.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -487,16 +487,16 @@ fun GirdiKarti(
             }
             if (yukari != null) {
                 IconButton(onClick = yukari) {
-                    Icon(Icons.Default.ArrowUpward, contentDescription = "Yukarı taşı")
+                    Icon(Icons.Default.ArrowUpward, contentDescription = stringResource(R.string.ortak_yukari_tasi_cd))
                 }
             }
             if (asagi != null) {
                 IconButton(onClick = asagi) {
-                    Icon(Icons.Default.ArrowDownward, contentDescription = "Aşağı taşı")
+                    Icon(Icons.Default.ArrowDownward, contentDescription = stringResource(R.string.ortak_asagi_tasi_cd))
                 }
             }
             IconButton(onClick = kaldir) {
-                Icon(Icons.Default.Delete, contentDescription = "Listeden çıkar")
+                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.ortak_listeden_cikar_cd))
             }
         }
     }
@@ -514,18 +514,18 @@ fun ParolaDiyalogu(
     AlertDialog(
         onDismissRequest = iptal,
         icon = { Icon(Icons.Default.Lock, contentDescription = null) },
-        title = { Text("Parola gerekli") },
+        title = { Text(stringResource(R.string.ortak_parola_gerekli_baslik)) },
         text = {
             Column {
                 Text(
-                    "\"$gorunenAd\" şifreli. Açmak için belgenin parolasını girin.",
+                    stringResource(R.string.ortak_parola_govde, gorunenAd),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = parola,
                     onValueChange = { parola = it },
-                    label = { Text("Parola") },
+                    label = { Text(stringResource(R.string.ortak_parola_etiket)) },
                     singleLine = true,
                     isError = hataMesaji != null,
                     supportingText = hataMesaji?.let { { Text(it) } },
@@ -535,16 +535,16 @@ fun ParolaDiyalogu(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Parola yalnızca bu belgeyi açmak için kullanılır, hiçbir yere kaydedilmez.",
+                    stringResource(R.string.ortak_parola_aciklama),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
         confirmButton = {
-            Button(onClick = { gonder(parola) }, enabled = parola.isNotEmpty()) { Text("Aç") }
+            Button(onClick = { gonder(parola) }, enabled = parola.isNotEmpty()) { Text(stringResource(R.string.ortak_ac)) }
         },
-        dismissButton = { TextButton(onClick = iptal) { Text("Vazgeç") } },
+        dismissButton = { TextButton(onClick = iptal) { Text(stringResource(R.string.ortak_vazgec)) } },
     )
 }
 
@@ -553,7 +553,7 @@ fun AralikGirisi(
     deger: String,
     degisti: (String) -> Unit,
     toplamSayfa: Int,
-    etiket: String = "Sayfa aralığı",
+    etiket: String = stringResource(R.string.ortak_sayfa_araligi_etiket),
     etkin: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
@@ -563,9 +563,9 @@ fun AralikGirisi(
         label = { Text(etiket) },
         enabled = etkin,
         singleLine = true,
-        placeholder = { Text("örn. 1-3, 5, 8-") },
+        placeholder = { Text(stringResource(R.string.ortak_sayfa_araligi_placeholder)) },
         supportingText = {
-            Text("Belge $toplamSayfa sayfa. Virgülle ayırın; \"3-\" son sayfaya kadar demektir.")
+            Text(stringResource(R.string.ortak_sayfa_araligi_yardim, toplamSayfa))
         },
         textStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Monospace),
         modifier = modifier.fillMaxWidth(),
@@ -598,7 +598,7 @@ fun BaglantiMetni(
             .clip(RoundedCornerShape(4.dp))
             .clickable(
                 role = Role.Button,
-                onClickLabel = "$metin adresini tarayıcıda aç",
+                onClickLabel = stringResource(R.string.ortak_baglanti_acma_etiketi, metin),
             ) { runCatching { acici.openUri(adres) } }
             .padding(horizontal = 4.dp, vertical = 2.dp),
     )

@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
@@ -74,11 +75,16 @@ class KarartViewModel(bagimliliklar: Bagimliliklar) :
         val ayar = _karartma.value
         if (ayar.alanlar.isEmpty()) {
             guncelle {
-                it.copy(hata = PdfHatasi.GirdiYok("Karartmak için önizleme üzerinde en az bir alan çizin."))
+                it.copy(
+                    hata = PdfHatasi.GirdiYok(
+                        bagimliliklar.uygulamaBaglami.getString(R.string.karart_hata_en_az_bir_alan),
+                    ),
+                )
             }
             return
         }
 
+        val baglam = bagimliliklar.uygulamaBaglami
         calistir { ilerleme ->
             val cikti = calismaAlani.ciktiDosyasi(
                 DosyaAdi.cikti(girdi.gorunenAd, IslemTuru.KARART),
@@ -95,13 +101,12 @@ class KarartViewModel(bagimliliklar: Bagimliliklar) :
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sonuc.toplamSayfa,
-                ozetSatiri = "${sonuc.karartilanSayfalar.size} sayfa karartıldı · " +
+                ozetSatiri = baglam.getString(R.string.karart_ozet_satiri, sonuc.karartilanSayfalar.size) +
                     bicimliBoyut(sonuc.ciktiBoyutuBayt),
                 notlar = listOf(
-                    "Karartılan sayfalar ${sonuc.kullanilanDpi} DPI görüntüye çevrildi. " +
-                        "Bu sayfalarda metin artık seçilemez ve aranamaz.",
-                    "Diğer sayfalara dokunulmadı; metinleri seçilebilir kaldı.",
-                    "Belge meta verileri (yazar, başlık, üretici) temizlendi.",
+                    baglam.getString(R.string.karart_ozet_devam, sonuc.kullanilanDpi),
+                    baglam.getString(R.string.karart_not_diger_sayfalar),
+                    baglam.getString(R.string.karart_not_meta_veri),
                 ),
             )
         }

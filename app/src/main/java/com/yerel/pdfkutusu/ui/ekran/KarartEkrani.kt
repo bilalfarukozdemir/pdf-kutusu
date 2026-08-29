@@ -22,8 +22,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.pdf.PdfKartici
 import com.yerel.pdfkutusu.ui.model.KarartViewModel
 import com.yerel.pdfkutusu.ui.ortak.KarartmaTuvali
@@ -34,16 +36,16 @@ import com.yerel.pdfkutusu.ui.ortak.bicimliBoyut
 fun KarartEkrani(gorunum: KarartViewModel, geriDon: () -> Unit) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
     val karartma by gorunum.karartma.collectAsStateWithLifecycle()
+    val sayfaEtiketIsaretliSablon = stringResource(R.string.karart_sayfa_etiket_isaretli)
 
     AracGovdesi(
-        baslik = "Karart",
-        bosBaslik = "Bilgiyi gerçekten kaldırın",
-        bosAciklama = "Bir PDF seçin, sayfayı açın ve gizlemek istediğiniz alanı " +
-            "parmağınızla çizin. Seçilen alanlar sayfa görüntüsünden silinir.",
+        baslik = stringResource(R.string.karart_baslik),
+        bosBaslik = stringResource(R.string.karart_bos_baslik),
+        bosAciklama = stringResource(R.string.karart_bos_aciklama),
         simge = Icons.Default.Block,
         gorunum = gorunum,
         geriDon = geriDon,
-        calistirEtiketi = "Karart ve kaydet",
+        calistirEtiketi = stringResource(R.string.karart_calistir),
         calistirEtkin = durum.girdiler.isNotEmpty() && karartma.alanlar.isNotEmpty(),
         calistir = gorunum::karart,
         secenekler = {
@@ -51,7 +53,7 @@ fun KarartEkrani(gorunum: KarartViewModel, geriDon: () -> Unit) {
             if (girdi != null) {
                 NasilCalisirKarti(karartma.dpi, karartma.karartilanSayfaSayisi, girdi.sayfaSayisi)
 
-                SecenekKarti("Sayfa seç") {
+                SecenekKarti(stringResource(R.string.karart_sayfa_sec_baslik)) {
                     SayfaSeridi(
                         dosya = girdi.dosya,
                         sayfaIndeksleri = (0 until girdi.sayfaSayisi).toList(),
@@ -60,14 +62,18 @@ fun KarartEkrani(gorunum: KarartViewModel, geriDon: () -> Unit) {
                         sec = gorunum::sayfaSec,
                         etiketUret = { indeks ->
                             val sayi = karartma.sayfaninAlanlari(indeks).size
-                            if (sayi > 0) "${indeks + 1} ●$sayi" else "${indeks + 1}"
+                            if (sayi > 0) {
+                                String.format(sayfaEtiketIsaretliSablon, indeks + 1, sayi)
+                            } else {
+                                "${indeks + 1}"
+                            }
                         },
                     )
                 }
 
-                SecenekKarti("Alan çiz — sayfa ${karartma.secilenSayfa + 1}") {
+                SecenekKarti(stringResource(R.string.karart_alan_ciz_baslik, karartma.secilenSayfa + 1)) {
                     Text(
-                        "Gizlemek istediğiniz yerin üzerinde parmağınızı sürükleyin.",
+                        stringResource(R.string.karart_alan_ciz_ipucu),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -87,44 +93,45 @@ fun KarartEkrani(gorunum: KarartViewModel, geriDon: () -> Unit) {
                         TextButton(onClick = gorunum::sonAlaniGeriAl) {
                             Icon(Icons.Default.Undo, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("Geri al")
+                            Text(stringResource(R.string.karart_geri_al))
                         }
                         TextButton(onClick = gorunum::sayfayiTemizle) {
-                            Text("Bu sayfayı temizle")
+                            Text(stringResource(R.string.karart_sayfayi_temizle))
                         }
                         TextButton(onClick = gorunum::tumunuTemizleAlanlar) {
                             Icon(Icons.Default.DeleteSweep, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("Tümü")
+                            Text(stringResource(R.string.karart_tumu))
                         }
                     }
 
                     Text(
-                        "Seçilen alan: ${karartma.alanlar.size} · " +
-                            "${karartma.karartilanSayfaSayisi} sayfada",
+                        stringResource(R.string.karart_secilen_alan, karartma.alanlar.size, karartma.karartilanSayfaSayisi),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
 
-                SecenekKarti("Çözünürlük") {
+                SecenekKarti(stringResource(R.string.karart_cozunurluk_baslik)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         gorunum.dpiSecenekleri.forEach { dpi ->
                             FilterChip(
                                 selected = karartma.dpi == dpi,
                                 onClick = { gorunum.dpiDegistir(dpi) },
-                                label = { Text("$dpi DPI") },
+                                label = { Text(stringResource(R.string.karart_dpi, dpi)) },
                             )
                         }
                     }
                     Text(
-                        "En düşük ${PdfKartici.ASGARI_DPI} DPI. Yüksek çözünürlük daha okunaklı " +
-                            "sayfa, daha büyük dosya demektir. Tahmini artış: " +
+                        stringResource(
+                            R.string.karart_cozunurluk_aciklama,
+                            PdfKartici.ASGARI_DPI,
                             bicimliBoyut(
                                 PdfKartici.tahminiBoyutBayt(
                                     karartma.karartilanSayfaSayisi.coerceAtLeast(1),
                                     karartma.dpi,
                                 ),
                             ),
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -152,22 +159,15 @@ private fun NasilCalisirKarti(dpi: Int, karartilanSayfa: Int, toplamSayfa: Int) 
             Icon(Icons.Default.Warning, contentDescription = null)
             Spacer(Modifier.width(12.dp))
             androidx.compose.foundation.layout.Column {
-                Text("Karartma nasıl çalışır", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.karart_nasil_calisir_baslik), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.padding(2.dp))
                 Text(
-                    "Karartılan sayfa görüntüye çevrilir, metni artık seçilemez ve " +
-                        "dosya boyutu artar.",
+                    stringResource(R.string.karart_nasil_calisir_govde),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.padding(4.dp))
                 Text(
-                    "• Sayfa $dpi DPI'da görüntüye dönüştürülür, seçtiğiniz alanlar " +
-                        "piksellerin üzerine opak siyah boyanır.\n" +
-                        "• Böylece metin PDF'in içeriğinden gerçekten kalkar — " +
-                        "üstüne dikdörtgen çizmekten farkı budur.\n" +
-                        "• Dokunmadığınız sayfalar aynen kalır; metinleri seçilebilir olmayı sürdürür " +
-                        "($karartilanSayfa / $toplamSayfa sayfa karartılacak).\n" +
-                        "• Belge meta verileri (yazar, başlık, üretici) temizlenir.",
+                    stringResource(R.string.karart_nasil_calisir_detay, dpi, karartilanSayfa, toplamSayfa),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

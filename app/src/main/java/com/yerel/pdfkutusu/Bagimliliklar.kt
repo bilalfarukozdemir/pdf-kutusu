@@ -9,6 +9,7 @@ import com.yerel.pdfkutusu.onizleme.GorselOnizlemeDeposu
 import com.yerel.pdfkutusu.onizleme.OnizlemeDeposu
 import com.yerel.pdfkutusu.pdf.PdfRendererRasterlestirici
 import com.yerel.pdfkutusu.pdf.SayfaRasterlestirici
+import com.yerel.pdfkutusu.satinalma.BagisYoneticisi
 import com.yerel.pdfkutusu.veri.GunlukDeposu
 import com.yerel.pdfkutusu.veri.PdfVeritabani
 
@@ -28,6 +29,12 @@ class Bagimliliklar(baglam: Context) {
     val onizleme: OnizlemeDeposu by lazy { OnizlemeDeposu(rasterlestirici) }
     val gorselOnizleme: GorselOnizlemeDeposu by lazy { GorselOnizlemeDeposu() }
     val gunluk: GunlukDeposu by lazy { GunlukDeposu(PdfVeritabani.al(uygulamaBaglami).gunlukDao()) }
+
+    /**
+     * BillingClient baglantisi uygulama omru boyunca tek ornek olarak
+     * yasar; her HakkindaEkrani ziyaretinde yeniden kurulmaz.
+     */
+    val bagisYoneticisi: BagisYoneticisi by lazy { BagisYoneticisi(uygulamaBaglami) }
 
     /**
      * Okuyucuda acilan belgeler. Islem gunlugunun aksine silinebilir;

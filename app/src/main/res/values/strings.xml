@@ -450,4 +450,7 @@
     <string name="gunluk_dokum_baslik">PDF Kutusu - işlem günlüğü dökümü</string>
     <string name="gunluk_dokum_kayit_sayisi">Kayıt sayısı: %1$d</string>
     <string name="paylasim_baslik">Paylaş</string>
+    <string name="ocr_metin_sayfa_basligi">"--- Sayfa %1$d ---"</string>
+    <string name="ocr_hata_gecersiz_sayfa">Belge %1$d sayfa, %2$d. sayfa istendi.</string>
+    <string name="ocr_ilerleme_bitti">Sayfa %1$d bitti</string>
 </resources>

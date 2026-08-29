@@ -450,4 +450,7 @@
     <string name="gunluk_dokum_baslik">PDF Box - operation log export</string>
     <string name="gunluk_dokum_kayit_sayisi">Record count: %1$d</string>
     <string name="paylasim_baslik">Share</string>
+    <string name="ocr_metin_sayfa_basligi">"--- Page %1$d ---"</string>
+    <string name="ocr_hata_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
+    <string name="ocr_ilerleme_bitti">Page %1$d done</string>
 </resources>

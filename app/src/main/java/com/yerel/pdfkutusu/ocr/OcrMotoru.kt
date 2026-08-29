@@ -1,9 +1,11 @@
 package com.yerel.pdfkutusu.ocr
 
+import android.content.Context
 import android.graphics.Bitmap
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import com.yerel.pdfkutusu.pdf.Ilerleme
 import com.yerel.pdfkutusu.pdf.IlerlemeDinleyicisi
@@ -25,10 +27,12 @@ data class SayfaMetni(
 data class OcrSonucu(
     val sayfalar: List<SayfaMetni>,
 ) {
-    val tumMetin: String
-        get() = sayfalar.joinToString("\n\n") { sayfa ->
-            "--- Sayfa ${sayfa.sayfaIndeksi + 1} ---\n${sayfa.metin.trim()}"
-        }
+    /** @param baglam verilirse sayfa basligi yerellestirilir; verilmezse sabit Turkce metin kullanilir. */
+    fun tumMetin(baglam: Context? = null): String = sayfalar.joinToString("\n\n") { sayfa ->
+        val baslik = baglam?.getString(R.string.ocr_metin_sayfa_basligi, sayfa.sayfaIndeksi + 1)
+            ?: "--- Sayfa ${sayfa.sayfaIndeksi + 1} ---"
+        "$baslik\n${sayfa.metin.trim()}"
+    }
 
     val karakterSayisi: Int get() = sayfalar.sumOf { it.metin.length }
     val bosMu: Boolean get() = sayfalar.all { it.bosMu }
@@ -61,26 +65,42 @@ class OcrMotoru : Closeable {
         rasterlestirici: SayfaRasterlestirici,
         dpi: Int = 300,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): OcrSonucu {
         if (sayfaIndeksleri.isEmpty()) {
-            throw PdfHatasi.GirdiYok("Metin çıkarmak için en az bir sayfa seçin.")
+            throw PdfHatasi.GirdiYok(
+                baglam?.getString(R.string.ocr_hata_en_az_bir_sayfa) ?: "Metin çıkarmak için en az bir sayfa seçin.",
+            )
         }
         val sonuclar = mutableListOf<SayfaMetni>()
         rasterlestirici.ac(kaynak).use { oturum ->
             sayfaIndeksleri.forEachIndexed { sira, indeks ->
                 if (indeks < 0 || indeks >= oturum.sayfaSayisi) {
                     throw PdfHatasi.GecersizAralik(
-                        "Belge ${oturum.sayfaSayisi} sayfa, ${indeks + 1}. sayfa istendi.",
+                        baglam?.getString(R.string.ocr_hata_gecersiz_sayfa, oturum.sayfaSayisi, indeks + 1)
+                            ?: "Belge ${oturum.sayfaSayisi} sayfa, ${indeks + 1}. sayfa istendi.",
                     )
                 }
-                ilerleme(Ilerleme(sira, sayfaIndeksleri.size, "Sayfa ${indeks + 1} taranıyor"))
+                ilerleme(
+                    Ilerleme(
+                        sira,
+                        sayfaIndeksleri.size,
+                        baglam?.getString(R.string.ocr_ilerleme_taraniyor, indeks + 1) ?: "Sayfa ${indeks + 1} taranıyor",
+                    ),
+                )
                 val bitmap = oturum.rasterlestir(indeks, dpi)
                 try {
                     sonuclar += SayfaMetni(indeks, tani(bitmap))
                 } finally {
                     runCatching { bitmap.recycle() }
                 }
-                ilerleme(Ilerleme(sira + 1, sayfaIndeksleri.size, "Sayfa ${indeks + 1} bitti"))
+                ilerleme(
+                    Ilerleme(
+                        sira + 1,
+                        sayfaIndeksleri.size,
+                        baglam?.getString(R.string.ocr_ilerleme_bitti, indeks + 1) ?: "Sayfa ${indeks + 1} bitti",
+                    ),
+                )
             }
         }
         return OcrSonucu(sonuclar)

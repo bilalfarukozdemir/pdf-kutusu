@@ -52,6 +52,7 @@ class OcrViewModel(bagimliliklar: Bagimliliklar) :
         val girdi = durum.value.ilkGirdi ?: return
         val ayarlar = _secenekler.value
 
+        val baglamOnceden = bagimliliklar.uygulamaBaglami
         calistir { ilerleme ->
             val indeksler = SayfaAraligi.ayristir(ayarlar.aralikIfadesi, girdi.sayfaSayisi)
             val sonuc = OcrMotoru().use { motor ->
@@ -61,15 +62,17 @@ class OcrViewModel(bagimliliklar: Bagimliliklar) :
                     rasterlestirici = rasterlestirici,
                     dpi = ayarlar.dpi,
                     ilerleme = ilerleme,
+                    baglam = baglamOnceden,
                 )
             }
 
-            _secenekler.update { it.copy(cikanMetin = sonuc.tumMetin) }
+            val tumMetin = sonuc.tumMetin(baglamOnceden)
+            _secenekler.update { it.copy(cikanMetin = tumMetin) }
 
             val cikti = calismaAlani.ciktiDosyasi(
                 DosyaAdi.cikti(girdi.gorunenAd, IslemTuru.OCR, uzanti = "txt"),
             )
-            cikti.writeText(sonuc.tumMetin, Charsets.UTF_8)
+            cikti.writeText(tumMetin, Charsets.UTF_8)
 
             val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(

@@ -80,6 +80,7 @@ class SiralaViewModel(bagimliliklar: Bagimliliklar) :
                 yeniSira = yeniSira,
                 cikti = cikti,
                 ilerleme = ilerleme,
+                baglam = bagimliliklar.uygulamaBaglami,
             )
             val cikarilan = girdi.sayfaSayisi - yeniSira.distinct().size
             val baglam = bagimliliklar.uygulamaBaglami

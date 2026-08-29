@@ -436,4 +436,18 @@
     <string name="filigran_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
     <string name="yazitipi_helvetica_gomulu_degil">Helvetica (not embedded)</string>
     <string name="yazitipi_noto_sans_paketli">Noto Sans (bundled)</string>
+    <string name="bol_hata_araligi_bos">The page range can\'t be empty.</string>
+    <string name="bol_parca_ilerleme_etiket">Part %1$d</string>
+    <string name="karart_hata_en_az_bir_alan_v2">Draw at least one area to redact.</string>
+    <string name="karart_hata_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested for redaction.</string>
+    <string name="sirala_hata_en_az_bir_sayfa_v2">At least one page must remain in the output.</string>
+    <string name="sirala_hata_gecersiz_sayfa">Invalid order: the document has %1$d pages, page %2$d was requested.</string>
+    <string name="ocr_hata_en_az_bir_sayfa">Choose at least one page to extract text from.</string>
+    <string name="ocr_ilerleme_taraniyor">Scanning page %1$d</string>
+    <string name="birlestir_hata_en_az_bir_pdf">Choose at least one PDF to merge.</string>
+    <string name="birlestir_hata_sayfa_yok">No pages were found in the selected files.</string>
+    <string name="dondur_hata_gecersiz_aci">The rotation angle must be a multiple of 90 (90, 180, 270).</string>
+    <string name="gunluk_dokum_baslik">PDF Box - operation log export</string>
+    <string name="gunluk_dokum_kayit_sayisi">Record count: %1$d</string>
+    <string name="paylasim_baslik">Share</string>
 </resources>

@@ -436,4 +436,18 @@
     <string name="filigran_gecersiz_sayfa">Belge %1$d sayfa, %2$d. sayfa istendi.</string>
     <string name="yazitipi_helvetica_gomulu_degil">Helvetica (gömülü değil)</string>
     <string name="yazitipi_noto_sans_paketli">Noto Sans (paketli)</string>
+    <string name="bol_hata_araligi_bos">Sayfa aralığı boş olamaz.</string>
+    <string name="bol_parca_ilerleme_etiket">Parça %1$d</string>
+    <string name="karart_hata_en_az_bir_alan_v2">Karartmak için en az bir alan seçin.</string>
+    <string name="karart_hata_gecersiz_sayfa">Belge %1$d sayfa, %2$d. sayfa karartılmak istendi.</string>
+    <string name="sirala_hata_en_az_bir_sayfa_v2">Çıktıda en az bir sayfa kalmalı.</string>
+    <string name="sirala_hata_gecersiz_sayfa">Sıralama geçersiz: belge %1$d sayfa, %2$d. sayfa istendi.</string>
+    <string name="ocr_hata_en_az_bir_sayfa">Metin çıkarmak için en az bir sayfa seçin.</string>
+    <string name="ocr_ilerleme_taraniyor">Sayfa %1$d taranıyor</string>
+    <string name="birlestir_hata_en_az_bir_pdf">Birleştirmek için en az bir PDF seçin.</string>
+    <string name="birlestir_hata_sayfa_yok">Seçilen dosyalarda hiç sayfa bulunamadı.</string>
+    <string name="dondur_hata_gecersiz_aci">Döndürme açısı 90\'ın katı olmalı (90, 180, 270).</string>
+    <string name="gunluk_dokum_baslik">PDF Kutusu - işlem günlüğü dökümü</string>
+    <string name="gunluk_dokum_kayit_sayisi">Kayıt sayısı: %1$d</string>
+    <string name="paylasim_baslik">Paylaş</string>
 </resources>

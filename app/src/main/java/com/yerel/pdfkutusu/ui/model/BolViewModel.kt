@@ -58,6 +58,7 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
                         )
                     },
                     ilerleme = ilerleme,
+                    baglam = baglam,
                 )
                 IslemCiktisi(
                     dosyalar = parcalar.map { it.dosya },

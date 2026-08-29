@@ -97,6 +97,7 @@ class KarartViewModel(bagimliliklar: Bagimliliklar) :
                 gecicilerDizini = calismaAlani.gecicilerDizini,
                 dpi = ayar.dpi,
                 ilerleme = ilerleme,
+                baglam = baglam,
             )
             IslemCiktisi(
                 dosyalar = listOf(cikti),

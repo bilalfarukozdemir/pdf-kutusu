@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,6 +10,7 @@ import com.tom_roush.pdfbox.pdmodel.PDPage
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.common.PDRectangle
 import com.tom_roush.pdfbox.pdmodel.graphics.image.JPEGFactory
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 import kotlin.math.ceil
@@ -95,10 +97,13 @@ object PdfKartici {
         jpegKalitesi: Float = 0.92f,
         parola: String? = null,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): KarartmaSonucu {
         val gecerliAlanlar = alanlar.map { it.duzelt() }.filter { it.gecerliMi }
         if (gecerliAlanlar.isEmpty()) {
-            throw PdfHatasi.GirdiYok("Karartmak için en az bir alan seçin.")
+            throw PdfHatasi.GirdiYok(
+                baglam?.getString(R.string.karart_hata_en_az_bir_alan_v2) ?: "Karartmak için en az bir alan seçin.",
+            )
         }
         val kullanilanDpi = max(ASGARI_DPI, dpi)
         val sayfayaGore = gecerliAlanlar.groupBy { it.sayfaIndeksi }
@@ -112,7 +117,8 @@ object PdfKartici {
                 val sinirDisi = sayfayaGore.keys.firstOrNull { it < 0 || it >= toplamSayfa }
                 if (sinirDisi != null) {
                     throw PdfHatasi.GecersizAralik(
-                        "Belge $toplamSayfa sayfa, ${sinirDisi + 1}. sayfa karartılmak istendi.",
+                        baglam?.getString(R.string.karart_hata_gecersiz_sayfa, toplamSayfa, sinirDisi + 1)
+                            ?: "Belge $toplamSayfa sayfa, ${sinirDisi + 1}. sayfa karartılmak istendi.",
                     )
                 }
 

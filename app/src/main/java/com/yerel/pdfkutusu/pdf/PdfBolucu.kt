@@ -1,5 +1,7 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
 import java.io.File
@@ -50,6 +52,7 @@ object PdfBolucu {
         parola: String? = null,
         ciktiAdiUret: (aralikSirasi: Int, indeksler: List<Int>) -> File,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): List<BolmeParcasi> {
         BelgeErisimi.ac(kaynak, parola).use { belge ->
             BelgeErisimi.guvenligiKaldir(belge)
@@ -61,18 +64,26 @@ object PdfBolucu {
                 .filter { it.isNotEmpty() }
                 .map { SayfaAraligi.ayristir(it, toplam) }
 
-            if (gruplar.isEmpty()) throw PdfHatasi.GecersizAralik("Sayfa aralığı boş olamaz.")
+            if (gruplar.isEmpty()) {
+                throw PdfHatasi.GecersizAralik(
+                    baglam?.getString(R.string.bol_hata_araligi_bos) ?: "Sayfa aralığı boş olamaz.",
+                )
+            }
+
+            val parcaEtiketi: (Int) -> String = { sira ->
+                baglam?.getString(R.string.bol_parca_ilerleme_etiket, sira + 1) ?: "Parça ${sira + 1}"
+            }
 
             val parcalar = mutableListOf<BolmeParcasi>()
             gruplar.forEachIndexed { sira, indeksler ->
-                ilerleme(Ilerleme(sira, gruplar.size, "Parça ${sira + 1}"))
+                ilerleme(Ilerleme(sira, gruplar.size, parcaEtiketi(sira)))
                 val hedefDosya = ciktiAdiUret(sira, indeksler)
                 SayfaKopyalayici.kopyala(belge, indeksler).use { hedef ->
                     MetaVeriTemizleyici.temizle(hedef)
                     hedef.save(hedefDosya)
                 }
                 parcalar += BolmeParcasi(hedefDosya, indeksler)
-                ilerleme(Ilerleme(sira + 1, gruplar.size, "Parça ${sira + 1}"))
+                ilerleme(Ilerleme(sira + 1, gruplar.size, parcaEtiketi(sira)))
             }
             return parcalar
         }

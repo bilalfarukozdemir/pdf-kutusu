@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.depo.CiktiDosyasi
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,11 @@ class DosyalarViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() 
                 bagimliliklar.onizleme.gecersizKil(dosya)
                 bagimliliklar.calismaAlani.sil(dosya)
             }
-            _bilgi.value = if (silindi) "Silindi: ${dosya.name}" else "Silinemedi: ${dosya.name}"
+            _bilgi.value = if (silindi) {
+                bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_silindi, dosya.name)
+            } else {
+                bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_silinemedi, dosya.name)
+            }
             yenile()
         }
     }
@@ -59,7 +64,7 @@ class DosyalarViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() 
                 bagimliliklar.onizleme.temizle()
                 bagimliliklar.calismaAlani.tumCiktilariSil()
             }
-            _bilgi.value = "$sayi dosya silindi."
+            _bilgi.value = bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_sayi_silindi, sayi)
             yenile()
         }
     }
@@ -68,9 +73,9 @@ class DosyalarViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() 
         viewModelScope.launch {
             val sonuc = runCatching { bagimliliklar.calismaAlani.disaAktar(kaynak, hedef) }
             _bilgi.value = if (sonuc.isSuccess) {
-                "Dışa aktarıldı: ${kaynak.name}"
+                bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_disa_aktarildi, kaynak.name)
             } else {
-                "Dışa aktarma başarısız: ${kaynak.name}"
+                bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_disa_aktarma_basarisiz, kaynak.name)
             }
         }
     }
@@ -82,17 +87,18 @@ class DosyalarViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() 
             _yukleniyor.value = true
             val sonuc = runCatching { bagimliliklar.calismaAlani.tumunuDisaAktar(agacUri, hepsi) }
             _yukleniyor.value = false
+            val baglam = bagimliliklar.uygulamaBaglami
             _bilgi.value = sonuc.fold(
                 onSuccess = { cikti ->
                     buildString {
-                        append("${cikti.basarili.size} dosya dışa aktarıldı")
+                        append(baglam.getString(R.string.dosyalar_toplu_disa_aktarildi, cikti.basarili.size))
                         if (cikti.basarisiz.isNotEmpty()) {
-                            append(", ${cikti.basarisiz.size} başarısız")
+                            append(baglam.getString(R.string.dosyalar_toplu_basarisiz_ek, cikti.basarisiz.size))
                         }
                         append(".")
                     }
                 },
-                onFailure = { "Dışa aktarma başarısız: ${it.message}" },
+                onFailure = { baglam.getString(R.string.dosyalar_toplu_disa_aktarma_hata, it.message ?: "") },
             )
         }
     }
@@ -101,7 +107,7 @@ class DosyalarViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() 
     fun calismaAlaniniTemizle() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) { bagimliliklar.calismaAlani.calismaGirdileriniTemizle() }
-            _bilgi.value = "Geçici çalışma dosyaları silindi."
+            _bilgi.value = bagimliliklar.uygulamaBaglami.getString(R.string.dosyalar_gecici_silindi)
         }
     }
 

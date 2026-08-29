@@ -42,9 +42,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.depo.Paylasim
 import com.yerel.pdfkutusu.ui.OkuyucuAktivite
 import com.yerel.pdfkutusu.ui.model.DosyalarViewModel
@@ -101,30 +103,28 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
     }
 
     AracIskeleti(
-        baslik = "Üretilen dosyalar",
+        baslik = stringResource(R.string.dosyalar_baslik),
         geriDon = geriDon,
         anlikMesajDurumu = anlikMesaj,
         eylemler = {
             IconButton(onClick = gorunum::yenile) {
-                Icon(Icons.Default.Refresh, contentDescription = "Yenile")
+                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.dosyalar_yenile_cd))
             }
             if (dosyalar.isNotEmpty()) {
                 IconButton(onClick = { silmeSorusu = true }) {
-                    Icon(Icons.Default.DeleteSweep, contentDescription = "Tümünü sil")
+                    Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.dosyalar_tumunu_sil_cd))
                 }
             }
         },
     ) { doldurma ->
         Column(Modifier.fillMaxSize().padding(doldurma)) {
-            if (yukleniyor) YukleniyorSatiri("Yükleniyor…")
+            if (yukleniyor) YukleniyorSatiri(stringResource(R.string.dosyalar_yukleniyor))
 
             if (dosyalar.isEmpty() && !yukleniyor) {
                 BosDurum(
                     simge = Icons.Default.Folder,
-                    baslik = "Henüz dosya yok",
-                    aciklama = "Bir araç çalıştırdığınızda çıktılar burada birikir. " +
-                        "Dosyalar uygulamaya özel alanda durur; dışa aktarmadıkça " +
-                        "başka uygulamalar göremez.",
+                    baslik = stringResource(R.string.dosyalar_bos_baslik),
+                    aciklama = stringResource(R.string.dosyalar_bos_aciklama),
                 )
             } else {
                 LazyColumn(
@@ -139,7 +139,7 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                         ) {
                             Icon(Icons.Default.FolderOpen, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Tümünü bir klasöre aktar (${dosyalar.size})")
+                            Text(stringResource(R.string.dosyalar_klasore_aktar, dosyalar.size))
                         }
                     }
                     items(dosyalar, key = { it.dosya.absolutePath }) { oge ->
@@ -174,8 +174,11 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                                         fontWeight = FontWeight.Medium,
                                     )
                                     Text(
-                                        "${bicimliBoyut(oge.boyut)} · " +
+                                        stringResource(
+                                            R.string.dosyalar_boyut_zaman,
+                                            bicimliBoyut(oge.boyut),
                                             bicimliZaman(oge.degistirilmeZamani),
+                                        ),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
@@ -186,13 +189,13 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                                         runCatching { baglam.startActivity(niyet) }
                                     }
                                 }) {
-                                    Icon(Icons.Default.Share, contentDescription = "Paylaş")
+                                    Icon(Icons.Default.Share, contentDescription = stringResource(R.string.ortak_paylas))
                                 }
                                 IconButton(onClick = { kaydet(oge.dosya) }) {
-                                    Icon(Icons.Default.Save, contentDescription = "Dışa aktar")
+                                    Icon(Icons.Default.Save, contentDescription = stringResource(R.string.dosyalar_disa_aktar_cd))
                                 }
                                 IconButton(onClick = { gorunum.sil(oge.dosya) }) {
-                                    Icon(Icons.Default.Delete, contentDescription = "Sil")
+                                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.ortak_sil))
                                 }
                             }
                         }
@@ -202,7 +205,7 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
                             onClick = gorunum::calismaAlaniniTemizle,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Text("Geçici çalışma dosyalarını temizle")
+                            Text(stringResource(R.string.dosyalar_gecici_temizle))
                         }
                     }
                 }
@@ -213,21 +216,18 @@ fun DosyalarEkrani(gorunum: DosyalarViewModel, geriDon: () -> Unit) {
     if (silmeSorusu) {
         AlertDialog(
             onDismissRequest = { silmeSorusu = false },
-            title = { Text("Tüm çıktılar silinsin mi?") },
+            title = { Text(stringResource(R.string.dosyalar_sil_dialog_baslik)) },
             text = {
-                Text(
-                    "${dosyalar.size} dosya kalıcı olarak silinecek. " +
-                        "Daha önce dışa aktardıklarınız etkilenmez.",
-                )
+                Text(stringResource(R.string.dosyalar_sil_dialog_govde, dosyalar.size))
             },
             confirmButton = {
                 Button(onClick = {
                     gorunum.tumunuSil()
                     silmeSorusu = false
-                }) { Text("Sil") }
+                }) { Text(stringResource(R.string.ortak_sil)) }
             },
             dismissButton = {
-                TextButton(onClick = { silmeSorusu = false }) { Text("Vazgeç") }
+                TextButton(onClick = { silmeSorusu = false }) { Text(stringResource(R.string.ortak_vazgec)) }
             },
         )
     }

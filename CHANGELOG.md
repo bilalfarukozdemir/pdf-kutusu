@@ -5,6 +5,20 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+### Eklendi
+
+- **İngilizce dil desteği.** Uygulama arayüzü artık Türkçe ve İngilizce
+  arasında sistem diline göre otomatik geçiş yapıyor; uygulama içinden de
+  manuel dil seçimi mümkün.
+
+- **İsteğe bağlı bağış (Google Play Billing).** Play Store sürümüne
+  "Geliştiriciyi Destekle" bölümünden tek seferlik bağış eklenecek. Ödeme
+  tamamen Google Play üzerinden yürüyecek; uygulama kart, kimlik ya da fatura
+  bilgisi görmeyecek. Bağış isteğe bağlı olacak ve hiçbir özelliği
+  kilitlemeyecek. Eklenen `com.android.vending.BILLING` izni bir ağ izni
+  değildir — uygulamanın `INTERNET` izni yok sayılmaya devam ediyor (bkz.
+  [PRIVACY.md](PRIVACY.md)).
+
 ## [1.2.0] — 2026-08-14
 
 ### Eklendi

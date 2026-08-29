@@ -18,15 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
 
 @Composable
 fun HakkindaEkrani(geriDon: () -> Unit) {
-    AracIskeleti(baslik = "Hakkında", geriDon = geriDon) { doldurma ->
+    AracIskeleti(baslik = stringResource(R.string.hakkinda_baslik), geriDon = geriDon) { doldurma ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -38,76 +40,44 @@ fun HakkindaEkrani(geriDon: () -> Unit) {
             UygulamaKimligi()
 
             Bolum(
-                baslik = "Düşük riskli kullanım uyarısı",
-                govde = "Bu araç kişisel ve düşük riskli kullanım içindir. Resmî, hukuki " +
-                    "veya regüle belgeler için tek başına güvenmeyin. Çıktıyı her zaman " +
-                    "açıp gözle kontrol edin.",
+                baslik = stringResource(R.string.hakkinda_risk_baslik),
+                govde = stringResource(R.string.hakkinda_risk_govde),
                 vurgulu = true,
             )
 
             Bolum(
-                baslik = "İzinler",
-                govde = "Bu uygulama HİÇBİR izin istemez. AndroidManifest.xml içinde " +
-                    "INTERNET izni bulunmaz; bağımlılıkların eklemeye çalıştığı ağ izinleri " +
-                    "manifest birleştirmede silinir ve derleme sırasında bir doğrulama " +
-                    "görevi bunu kontrol eder.\n\n" +
-                    "Dosya seçme ve dışa aktarma Storage Access Framework (SAF) ile yapılır; " +
-                    "SAF izin gerektirmez. MANAGE_EXTERNAL_STORAGE veya geniş depolama izni " +
-                    "hiçbir koşulda istenmez.",
+                baslik = stringResource(R.string.hakkinda_izinler_baslik),
+                govde = stringResource(R.string.hakkinda_izinler_govde),
             )
 
             Bolum(
-                baslik = "Verileriniz nerede duruyor",
-                govde = "• Seçtiğiniz dosyaların kopyaları: uygulama alanı / calisma\n" +
-                    "• Üretilen çıktılar: uygulama alanı / cikti\n" +
-                    "• Geçici dosyalar: önbellek / gecici\n" +
-                    "• İşlem günlüğü: uygulama alanı / pdf_kutusu.db (SQLite)\n\n" +
-                    "Hepsi uygulamaya özeldir; başka uygulamalar okuyamaz. Bulut yedeği ve " +
-                    "cihaz transferi kapalıdır. Uygulamayı kaldırdığınızda hepsi silinir.",
+                baslik = stringResource(R.string.hakkinda_veri_baslik),
+                govde = stringResource(R.string.hakkinda_veri_govde),
             )
 
             Bolum(
-                baslik = "Orijinal dosyalarınız",
-                govde = "Kaynak dosyaya asla yazılmaz. Her işlem yeni bir çıktı dosyası " +
-                    "üretir:\n\n<orijinal-ad>__<islem>__<yyyyMMdd-HHmmss>.pdf",
+                baslik = stringResource(R.string.hakkinda_orijinal_baslik),
+                govde = stringResource(R.string.hakkinda_orijinal_govde),
             )
 
             Bolum(
-                baslik = "Görselleriniz ve EXIF",
-                govde = "Resimden PDF aracı, görselleri çözüp yeniden kodlar. Fotoğrafların " +
-                    "taşıdığı EXIF verisi — GPS konumu, cihaz markası ve modeli, çekim " +
-                    "tarihi — çıktıya aktarılmaz. Yön etiketi ise okunup uygulanır, " +
-                    "böylece sayfalar yan yatmaz.",
+                baslik = stringResource(R.string.hakkinda_exif_baslik),
+                govde = stringResource(R.string.hakkinda_exif_govde),
             )
 
             Bolum(
-                baslik = "Kullanılan kütüphaneler",
-                govde = "• PdfBox-Android (Apache 2.0) — PDF okuma/yazma\n" +
-                    "• Android PdfRenderer (yerleşik) — sayfa görüntüleme ve rasterize\n" +
-                    "• ML Kit Text Recognition v2, paketli model (Apache 2.0) — cihaz üstü OCR\n" +
-                    "• AndroidX ExifInterface (Apache 2.0) — görsel yön etiketi\n" +
-                    "• Jetpack Compose, Material 3, Room (Apache 2.0)\n\n" +
-                    "AGPL lisanslı hiçbir bileşen kullanılmadı (MuPDF, iText vb. yok).",
+                baslik = stringResource(R.string.hakkinda_kutuphane_baslik),
+                govde = stringResource(R.string.hakkinda_kutuphane_govde),
             )
 
             Bolum(
-                baslik = "Paketli yazı tipi",
-                govde = "Filigran metni, uygulamayla birlikte gelen Noto Sans (statik sürüm) " +
-                    "ile yazılır ve PDF'e yalnızca kullanılan harfler gömülür. Böylece " +
-                    "ğ, ş, ı gibi harfler her cihazda doğru çıkar.\n\n" +
-                    "Noto Sans — Copyright The Noto Project Authors.\n" +
-                    "SIL Open Font License 1.1 ile lisanslıdır.\n" +
-                    "Lisans metni: assets/fonts/OFL.txt",
+                baslik = stringResource(R.string.hakkinda_yazitipi_baslik),
+                govde = stringResource(R.string.hakkinda_yazitipi_govde),
             )
 
             Bolum(
-                baslik = "Bilerek yapılmayanlar",
-                govde = "• Office → PDF dönüşümü: mobil cihazda güvenilir biçimde yapılamaz. " +
-                    "Bunu Microsoft Office uygulamasından yapın.\n" +
-                    "• İmza akışı (imzacı davet etme, onay kaydı): sunucu ve kimlik doğrulama " +
-                    "gerektirir; çevrimdışı bir telefon uygulamasında anlamsızdır.\n" +
-                    "• Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam: yok.\n" +
-                    "• PDF'e aranabilir OCR metin katmanı gömme: bu sürümün kapsamı dışında.",
+                baslik = stringResource(R.string.hakkinda_bilerek_yapilmayan_baslik),
+                govde = stringResource(R.string.hakkinda_bilerek_yapilmayan_govde),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -138,14 +108,14 @@ private fun UygulamaKimligi() {
         ),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("PDF Kutusu", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.hakkinda_uygulama_adi), style = MaterialTheme.typography.headlineSmall)
             if (surum.isNotBlank()) {
                 Spacer(Modifier.height(2.dp))
-                Text("Sürüm $surum", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.hakkinda_surum, surum), style = MaterialTheme.typography.bodySmall)
             }
             Spacer(Modifier.height(12.dp))
             Text(
-                "Yapımcı",
+                stringResource(R.string.hakkinda_yapimci_etiket),
                 style = MaterialTheme.typography.labelMedium,
             )
             BaglantiMetni(
@@ -158,7 +128,7 @@ private fun UygulamaKimligi() {
                 modifier = Modifier.offset(x = (-4).dp),
             )
             Text(
-                "Dokunmak tarayıcınızı açar. Uygulama hiçbir veri göndermez.",
+                stringResource(R.string.hakkinda_yapimci_govde),
                 style = MaterialTheme.typography.labelSmall,
             )
         }

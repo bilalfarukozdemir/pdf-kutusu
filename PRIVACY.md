@@ -83,11 +83,15 @@ Kendiniz doğrulamak isterseniz:
 aapt dump permissions app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Çıktıda `android.permission.*` ile başlayan hiçbir satır görünmemelidir. Tek
-görünen satır, androidx.core'un eklediği ve uygulamanın kendi paket adıyla
-imzalı olan, kullanıcıya gösterilmeyen ve hiçbir sistem kaynağına erişim
-vermeyen `signature` seviyesindeki
-`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`'dır.
+Çıktıda `android.permission.INTERNET` ve benzeri ağ izinleriyle başlayan
+hiçbir satır görünmemelidir. Görünmesi beklenen iki satır vardır: biri
+androidx.core'un eklediği, uygulamanın kendi paket adıyla imzalı olan,
+kullanıcıya gösterilmeyen ve hiçbir sistem kaynağına erişim vermeyen
+`signature` seviyesindeki `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`; diğeri
+Google Play Billing kütüphanesinin eklediği `com.android.vending.BILLING`
+iznidir — o da bir ağ izni değildir, yukarıda "Bağış" bölümünde açıklandığı
+gibi cihazdaki Play Store uygulamasıyla süreçler-arası iletişim (IPC) içindir
+ve kullanıcıya bir izin ekranında gösterilmez.
 
 ## Dosyalarınız cihazdan çıkmaz
 

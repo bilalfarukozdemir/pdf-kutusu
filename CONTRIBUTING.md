@@ -61,7 +61,12 @@ istisna `tumunuTemizle()`: ya hepsi durur ya hiçbiri.
 - **Office → PDF dönüşümü.** LibreOffice Android'de çalışmaz.
 - **İmza akışı** (imzacı davet etme, onay kaydı, teslimat takibi). Sunucu ve
   kimlik doğrulama gerektirir.
-- **Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam.**
+- **Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam.** Tek
+  istisna: isteğe bağlı, tekrarlanabilir "Geliştiriciyi Destekle" bağışı
+  (Google Play Billing). Bu bir abonelik değildir — hesap açmaz, kimlik
+  doğrulamaz, hiçbir özelliği kilitlemez/açmaz; sadece bir kerelik ödeme
+  akışıdır ve kural #1'deki `BILINCLI_KABUL_EDILEN` istisnasıyla aynı
+  gerekçeye dayanır (bkz. [PRIVACY.md](PRIVACY.md)).
 - **AGPL lisanslı kütüphane** (MuPDF, iText).
 
 ---

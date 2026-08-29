@@ -1,5 +1,7 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 
@@ -27,9 +29,13 @@ object PdfDondurucu {
         sayfaIndeksleri: List<Int>? = null,
         parola: String? = null,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): Int {
         if (aci % 90 != 0) {
-            throw PdfHatasi.GecersizAralik("Döndürme açısı 90'ın katı olmalı (90, 180, 270).")
+            throw PdfHatasi.GecersizAralik(
+                baglam?.getString(R.string.dondur_hata_gecersiz_aci)
+                    ?: "Döndürme açısı 90'ın katı olmalı (90, 180, 270).",
+            )
         }
 
         BelgeErisimi.ac(kaynak, parola).use { belge ->
@@ -39,14 +45,21 @@ object PdfDondurucu {
             val hataliIndeks = hedefler.firstOrNull { it < 0 || it >= toplam }
             if (hataliIndeks != null) {
                 throw PdfHatasi.GecersizAralik(
-                    "Belge $toplam sayfa, ${hataliIndeks + 1}. sayfa istendi.",
+                    baglam?.getString(R.string.dondur_hata_gecersiz_sayfa, toplam, hataliIndeks + 1)
+                        ?: "Belge $toplam sayfa, ${hataliIndeks + 1}. sayfa istendi.",
                 )
             }
 
             hedefler.forEachIndexed { sira, indeks ->
                 val sayfa = belge.getPage(indeks)
                 sayfa.rotation = normalize(sayfa.rotation + aci)
-                ilerleme(Ilerleme(sira + 1, hedefler.size, "Sayfa ${indeks + 1}"))
+                ilerleme(
+                    Ilerleme(
+                        sira + 1,
+                        hedefler.size,
+                        baglam?.getString(R.string.ortak_sayfa_cd, indeks + 1) ?: "Sayfa ${indeks + 1}",
+                    ),
+                )
             }
 
             MetaVeriTemizleyici.temizle(belge)

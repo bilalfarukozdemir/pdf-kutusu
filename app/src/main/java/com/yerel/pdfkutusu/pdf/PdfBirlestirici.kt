@@ -1,7 +1,9 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
 import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 
@@ -27,8 +29,13 @@ object PdfBirlestirici {
         cikti: File,
         metaVeriTemizle: Boolean = true,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): Int {
-        if (girdiler.isEmpty()) throw PdfHatasi.GirdiYok("Birleştirmek için en az bir PDF seçin.")
+        if (girdiler.isEmpty()) {
+            throw PdfHatasi.GirdiYok(
+                baglam?.getString(R.string.birlestir_hata_en_az_bir_pdf) ?: "Birleştirmek için en az bir PDF seçin.",
+            )
+        }
 
         PDDocument().use { hedef ->
             val birlestirici = PDFMergerUtility()
@@ -44,7 +51,9 @@ object PdfBirlestirici {
             }
 
             if (hedef.numberOfPages == 0) {
-                throw PdfHatasi.BozukBelge("Seçilen dosyalarda hiç sayfa bulunamadı.")
+                throw PdfHatasi.BozukBelge(
+                    baglam?.getString(R.string.birlestir_hata_sayfa_yok) ?: "Seçilen dosyalarda hiç sayfa bulunamadı.",
+                )
             }
             if (metaVeriTemizle) MetaVeriTemizleyici.temizle(hedef)
             hedef.save(cikti)

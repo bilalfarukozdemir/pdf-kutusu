@@ -58,6 +58,7 @@ class DondurViewModel(bagimliliklar: Bagimliliklar) :
                 cikti = cikti,
                 sayfaIndeksleri = indeksler,
                 ilerleme = ilerleme,
+                baglam = baglam,
             )
             IslemCiktisi(
                 dosyalar = listOf(cikti),

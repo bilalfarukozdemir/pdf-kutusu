@@ -27,12 +27,13 @@ class BirlestirViewModel(bagimliliklar: Bagimliliklar) :
         calistir { ilerleme ->
             val ad = DosyaAdi.cikti(girdiler.first().gorunenAd, IslemTuru.BIRLESTIR)
             val cikti = calismaAlani.ciktiDosyasi(ad)
+            val baglam = bagimliliklar.uygulamaBaglami
             val sayfaSayisi = PdfBirlestirici.birlestir(
                 girdiler = girdiler.map { BirlestirmeGirdisi(it.dosya, it.gorunenAd) },
                 cikti = cikti,
                 ilerleme = ilerleme,
+                baglam = baglam,
             )
-            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sayfaSayisi,

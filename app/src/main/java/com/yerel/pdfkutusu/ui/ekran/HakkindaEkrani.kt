@@ -173,6 +173,28 @@ private fun BagisBolumu(gorunum: BagisViewModel) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
     val activity = LocalContext.current.aktiviteyeCoz()
 
+    BagisIcerik(
+        durum = durum,
+        satinAl = { urunId -> activity?.let { gorunum.satinAl(it, urunId) } },
+        mesajiKapat = { gorunum.mesajiKapat() },
+    )
+}
+
+/**
+ * Bagis bolumunun durum-tabanli, saf (stateless) govdesi.
+ *
+ * BillingClient/ViewModel'e dogrudan bagimli degildir - yalnizca [BagisDurumu]
+ * ve iki geri cagirma alir. [BagisBolumu] bunu gercek [BagisViewModel]'e
+ * baglar; `BagisAkisiCihazTesti` ise dogrudan bu composable'i sahte
+ * durumlarla besleyip UI'yi dogrular (gercek BillingClient/ProductDetails
+ * hic devreye girmez).
+ */
+@Composable
+internal fun BagisIcerik(
+    durum: BagisDurumu,
+    satinAl: (urunId: String) -> Unit,
+    mesajiKapat: () -> Unit,
+) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
             Text(stringResource(R.string.hakkinda_bagis_baslik), style = MaterialTheme.typography.titleSmall)
@@ -180,7 +202,7 @@ private fun BagisBolumu(gorunum: BagisViewModel) {
             Text(stringResource(R.string.hakkinda_bagis_govde), style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(12.dp))
 
-            when (val guncelDurum = durum) {
+            when (durum) {
                 is BagisDurumu.Baglaniyor -> {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp))
                     Spacer(Modifier.height(8.dp))
@@ -201,12 +223,10 @@ private fun BagisBolumu(gorunum: BagisViewModel) {
 
                 is BagisDurumu.Hazir -> {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        guncelDurum.secenekler.forEach { secenek ->
+                        durum.secenekler.forEach { secenek ->
                             OutlinedButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    activity?.let { gorunum.satinAl(it, secenek.urunId) }
-                                },
+                                onClick = { satinAl(secenek.urunId) },
                             ) {
                                 Text(bagisEtiketi(secenek))
                             }
@@ -230,19 +250,19 @@ private fun BagisBolumu(gorunum: BagisViewModel) {
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Spacer(Modifier.height(8.dp))
-                    Button(onClick = { gorunum.mesajiKapat() }) {
+                    Button(onClick = mesajiKapat) {
                         Text(stringResource(R.string.hakkinda_bagis_tamam))
                     }
                 }
 
                 is BagisDurumu.Hata -> {
                     Text(
-                        stringResource(R.string.hakkinda_bagis_hata, guncelDurum.mesaj),
+                        stringResource(R.string.hakkinda_bagis_hata, durum.mesaj),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                     )
                     Spacer(Modifier.height(8.dp))
-                    Button(onClick = { gorunum.mesajiKapat() }) {
+                    Button(onClick = mesajiKapat) {
                         Text(stringResource(R.string.hakkinda_bagis_tamam))
                     }
                 }

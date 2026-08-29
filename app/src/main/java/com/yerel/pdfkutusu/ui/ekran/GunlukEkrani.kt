@@ -36,9 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.ui.model.GunlukViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
@@ -75,16 +77,16 @@ fun GunlukEkrani(gorunum: GunlukViewModel, geriDon: () -> Unit) {
     }
 
     AracIskeleti(
-        baslik = "İşlem günlüğü",
+        baslik = stringResource(R.string.gunluk_baslik),
         geriDon = geriDon,
         anlikMesajDurumu = anlikMesaj,
         eylemler = {
             if (kayitlar.isNotEmpty()) {
                 IconButton(onClick = gorunum::dokumHazirla) {
-                    Icon(Icons.Default.Save, contentDescription = "Dökümü dışa aktar")
+                    Icon(Icons.Default.Save, contentDescription = stringResource(R.string.gunluk_dokum_disa_aktar_cd))
                 }
                 IconButton(onClick = { temizlemeSorusu = true }) {
-                    Icon(Icons.Default.DeleteSweep, contentDescription = "Tümünü temizle")
+                    Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.gunluk_tumunu_temizle_cd))
                 }
             }
         },
@@ -93,9 +95,8 @@ fun GunlukEkrani(gorunum: GunlukViewModel, geriDon: () -> Unit) {
             Column(Modifier.fillMaxSize().padding(doldurma)) {
                 BosDurum(
                     simge = Icons.Default.History,
-                    baslik = "Günlük boş",
-                    aciklama = "Bir işlem yaptığınızda buraya kaydı düşer. " +
-                        "Kayıtlar yalnızca bu cihazda durur ve düzenlenemez.",
+                    baslik = stringResource(R.string.gunluk_bos_baslik),
+                    aciklama = stringResource(R.string.gunluk_bos_aciklama),
                 )
             }
         } else {
@@ -106,8 +107,7 @@ fun GunlukEkrani(gorunum: GunlukViewModel, geriDon: () -> Unit) {
             ) {
                 item {
                     Text(
-                        "${kayitlar.size} kayıt. Bu günlük salt-ekleme çalışır: " +
-                            "tek tek kayıt silinemez, yalnızca tamamı temizlenebilir.",
+                        stringResource(R.string.gunluk_kayit_sayisi_govde, kayitlar.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -120,22 +120,18 @@ fun GunlukEkrani(gorunum: GunlukViewModel, geriDon: () -> Unit) {
     if (temizlemeSorusu) {
         AlertDialog(
             onDismissRequest = { temizlemeSorusu = false },
-            title = { Text("Günlüğün tamamı silinsin mi?") },
+            title = { Text(stringResource(R.string.gunluk_temizle_dialog_baslik)) },
             text = {
-                Text(
-                    "${kayitlar.size} kayıt kalıcı olarak silinecek. " +
-                        "Üretilmiş dosyalar silinmez, yalnızca kayıtlar gider. " +
-                        "Önce dökümü dışa aktarmak isteyebilirsiniz.",
-                )
+                Text(stringResource(R.string.gunluk_temizle_dialog_govde, kayitlar.size))
             },
             confirmButton = {
                 Button(onClick = {
                     gorunum.tumunuTemizle()
                     temizlemeSorusu = false
-                }) { Text("Tümünü sil") }
+                }) { Text(stringResource(R.string.gunluk_tumunu_sil)) }
             },
             dismissButton = {
-                TextButton(onClick = { temizlemeSorusu = false }) { Text("Vazgeç") }
+                TextButton(onClick = { temizlemeSorusu = false }) { Text(stringResource(R.string.ortak_vazgec)) }
             },
         )
     }
@@ -174,11 +170,11 @@ private fun KayitKarti(kayit: IslemKaydi) {
             }
 
             Spacer(Modifier.padding(4.dp))
-            AlanSatiri("Girdi", kayit.girdiDosyaAdi)
-            AlanSatiri("Girdi SHA-256", kisaOzet(kayit.girdiSha256))
-            if (kayit.ciktiDosyaAdi != null) AlanSatiri("Çıktı", kayit.ciktiDosyaAdi)
-            AlanSatiri("Çıktı SHA-256", kisaOzet(kayit.ciktiSha256))
-            AlanSatiri("Sayfa sayısı", kayit.sayfaSayisi?.toString() ?: "-")
+            AlanSatiri(stringResource(R.string.gunluk_alan_girdi), kayit.girdiDosyaAdi)
+            AlanSatiri(stringResource(R.string.gunluk_alan_girdi_sha), kisaOzet(kayit.girdiSha256))
+            if (kayit.ciktiDosyaAdi != null) AlanSatiri(stringResource(R.string.gunluk_alan_cikti), kayit.ciktiDosyaAdi)
+            AlanSatiri(stringResource(R.string.gunluk_alan_cikti_sha), kisaOzet(kayit.ciktiSha256))
+            AlanSatiri(stringResource(R.string.gunluk_alan_sayfa_sayisi), kayit.sayfaSayisi?.toString() ?: "-")
             if (!kayit.basariliMi && kayit.hataMesaji != null) {
                 Spacer(Modifier.padding(2.dp))
                 Text(

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.veri.IslemKaydi
 import java.io.File
 import java.time.LocalDateTime
@@ -32,28 +33,31 @@ class GunlukViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
     fun tumunuTemizle() {
         viewModelScope.launch {
             val silinen = bagimliliklar.gunluk.tumunuTemizle()
-            _bilgi.value = "$silinen kayıt silindi."
+            _bilgi.value = bagimliliklar.uygulamaBaglami.getString(R.string.gunluk_silindi, silinen)
         }
     }
 
     /** Yedekleme icin gunlugun tamamini metin dosyasina yazar. */
     fun dokumHazirla() {
         viewModelScope.launch {
+            val baglam = bagimliliklar.uygulamaBaglami
             val dosya = withContext(Dispatchers.IO) {
                 runCatching {
                     val kayitlar = bagimliliklar.gunluk.tumunuOku()
                     val zaman = LocalDateTime.now()
                         .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss", Locale.ROOT))
-                    val hedef = bagimliliklar.calismaAlani.ciktiDosyasi("islem-gunlugu__$zaman.txt")
+                    val hedef = bagimliliklar.calismaAlani.ciktiDosyasi(
+                        baglam.getString(R.string.gunluk_dosya_adi, zaman),
+                    )
                     hedef.writeText(bagimliliklar.gunluk.metneCevir(kayitlar), Charsets.UTF_8)
                     hedef
                 }.getOrNull()
             }
             _dokumDosyasi.value = dosya
             _bilgi.value = if (dosya != null) {
-                "Döküm hazır: ${dosya.name}. Dışa aktarmak için kaydet."
+                baglam.getString(R.string.gunluk_dokum_hazir, dosya.name)
             } else {
-                "Döküm oluşturulamadı."
+                baglam.getString(R.string.gunluk_dokum_olusturulamadi)
             }
         }
     }
@@ -61,7 +65,11 @@ class GunlukViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
     fun disaAktar(kaynak: File, hedef: Uri) {
         viewModelScope.launch {
             val sonuc = runCatching { bagimliliklar.calismaAlani.disaAktar(kaynak, hedef) }
-            _bilgi.value = if (sonuc.isSuccess) "Günlük dışa aktarıldı." else "Dışa aktarma başarısız."
+            _bilgi.value = if (sonuc.isSuccess) {
+                bagimliliklar.uygulamaBaglami.getString(R.string.gunluk_disa_aktarildi)
+            } else {
+                bagimliliklar.uygulamaBaglami.getString(R.string.gunluk_disa_aktarma_basarisiz)
+            }
         }
     }
 

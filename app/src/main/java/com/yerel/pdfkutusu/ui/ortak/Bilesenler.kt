@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -210,6 +211,7 @@ fun HataKarti(
     kapat: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val baglam = LocalContext.current
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -221,10 +223,11 @@ fun HataKarti(
             Icon(Icons.Default.ErrorOutline, contentDescription = null)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(hata.kullaniciMesaji, style = MaterialTheme.typography.titleSmall)
-                if (hata.oneri != null) {
+                Text(hata.kullaniciMesajiUret(baglam), style = MaterialTheme.typography.titleSmall)
+                val oneri = hata.oneriUret(baglam)
+                if (oneri != null) {
                     Spacer(Modifier.height(4.dp))
-                    Text(hata.oneri, style = MaterialTheme.typography.bodySmall)
+                    Text(oneri, style = MaterialTheme.typography.bodySmall)
                 }
             }
             IconButton(onClick = kapat) {

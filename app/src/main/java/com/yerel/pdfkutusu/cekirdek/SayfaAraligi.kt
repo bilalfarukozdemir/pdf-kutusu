@@ -29,7 +29,7 @@ object SayfaAraligi {
      */
     fun ayristir(ifade: String, toplamSayfa: Int): List<Int> {
         if (toplamSayfa <= 0) {
-            throw PdfHatasi.GecersizAralik("Belgede sayfa yok.")
+            throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.BelgedeSayfaYok)
         }
         val duzeltilmis = ifade
             .replace('–', '-')
@@ -39,7 +39,7 @@ object SayfaAraligi {
             .trim()
 
         if (duzeltilmis.isEmpty()) {
-            throw PdfHatasi.GecersizAralik("Sayfa aralığı boş olamaz.")
+            throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.Bos)
         }
         if (duzeltilmis.lowercase(java.util.Locale.ROOT) in TUMU_ANAHTARLARI) {
             return tumu(toplamSayfa)
@@ -59,13 +59,13 @@ object SayfaAraligi {
             }
 
             if (parca.indexOf('-', tire + 1) >= 0) {
-                throw PdfHatasi.GecersizAralik("Geçersiz aralık: \"$parca\" (birden fazla tire var).")
+                throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.BirdenFazlaTire(parca))
             }
 
             val solMetin = parca.substring(0, tire).trim()
             val sagMetin = parca.substring(tire + 1).trim()
             if (solMetin.isEmpty() && sagMetin.isEmpty()) {
-                throw PdfHatasi.GecersizAralik("Geçersiz aralık: \"$parca\".")
+                throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.EksikSinir(parca))
             }
 
             val bas = if (solMetin.isEmpty()) 1 else sayiya(solMetin, parca)
@@ -75,14 +75,14 @@ object SayfaAraligi {
             dogrula(son, toplamSayfa, parca)
             if (bas > son) {
                 throw PdfHatasi.GecersizAralik(
-                    "Geçersiz aralık: \"$parca\" — başlangıç ($bas) bitişten ($son) büyük.",
+                    PdfHataKimligi.AralikNedeni.BasSondanBuyuk(parca, bas, son),
                 )
             }
             for (sayfa in bas..son) toplanan.add(sayfa - 1)
         }
 
         if (toplanan.isEmpty()) {
-            throw PdfHatasi.GecersizAralik("Hiçbir sayfa seçilmedi.")
+            throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.HicbiriSecilmedi)
         }
         return toplanan.toList()
     }
@@ -111,16 +111,16 @@ object SayfaAraligi {
 
     private fun sayiya(metin: String, parca: String): Int {
         if (metin.isEmpty() || metin.any { !it.isDigit() }) {
-            throw PdfHatasi.GecersizAralik("Geçersiz aralık: \"$parca\" — yalnızca sayı ve tire kullanın.")
+            throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.SayiDegil(parca))
         }
         return metin.toIntOrNull()
-            ?: throw PdfHatasi.GecersizAralik("Geçersiz aralık: \"$parca\" — sayı çok büyük.")
+            ?: throw PdfHatasi.GecersizAralik(PdfHataKimligi.AralikNedeni.SayiCokBuyuk(parca))
     }
 
     private fun dogrula(sayfa: Int, toplamSayfa: Int, parca: String) {
         if (sayfa < 1 || sayfa > toplamSayfa) {
             throw PdfHatasi.GecersizAralik(
-                "Geçersiz aralık: \"$parca\" — belge $toplamSayfa sayfa, $sayfa istendi.",
+                PdfHataKimligi.AralikNedeni.SinirDisi(parca, toplamSayfa, sayfa),
             )
         }
     }

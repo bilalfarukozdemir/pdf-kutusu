@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu
 
+import com.yerel.pdfkutusu.cekirdek.PdfHataKimligi
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
 import org.junit.Assert.assertEquals
@@ -90,7 +91,11 @@ class SayfaAraligiTesti {
         val hata = assertThrows(PdfHatasi.GecersizAralik::class.java) {
             SayfaAraligi.ayristir("5-2", 10)
         }
-        assertEquals(true, hata.kullaniciMesaji.contains("5"))
+        // Metin artik UI'da kimlikten uretiliyor; burada tasinan parametreyi dogruluyoruz.
+        val kimlik = hata.kimlik as PdfHataKimligi.AralikNedeni.BasSondanBuyuk
+        assertEquals("5-2", kimlik.parca)
+        assertEquals(5, kimlik.bas)
+        assertEquals(2, kimlik.son)
     }
 
     @Test

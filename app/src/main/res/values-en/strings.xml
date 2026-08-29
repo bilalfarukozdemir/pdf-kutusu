@@ -458,4 +458,24 @@
     <string name="belge_bulunamadi_bos">File not found or empty: %1$s</string>
     <string name="belge_pdf_acilamadi">Could not open the PDF: %1$s</string>
     <string name="belge_bellege_sigmadi">The document didn\'t fit in memory: %1$s</string>
+
+    <!-- cekirdek/PdfHataKimligi: UI text for errors coming from Context-free layers -->
+    <string name="cekirdek_hata_parola_gerekli_mesaj">This PDF is password protected.</string>
+    <string name="cekirdek_hata_parola_gerekli_oneri">Enter the document\'s opening password.</string>
+    <string name="cekirdek_hata_parola_yanlis_mesaj">The password could not be verified.</string>
+    <string name="cekirdek_hata_parola_yanlis_oneri">Check the password and try again. Watch out for upper/lowercase.</string>
+    <string name="cekirdek_hata_iptal_mesaj">Operation canceled.</string>
+    <string name="cekirdek_hata_beklenmeyen_mesaj">Operation could not be completed: %1$s</string>
+    <string name="cekirdek_hata_beklenmeyen_oneri">If this keeps happening, this tool may not be able to process the file.</string>
+    <string name="cekirdek_hata_girdi_yok_mesaj">Select at least one PDF first.</string>
+    <string name="cekirdek_hata_aralik_oneri">Example: 1-3, 5, 8-10</string>
+    <string name="cekirdek_hata_aralik_belgede_sayfa_yok">The document has no pages.</string>
+    <string name="cekirdek_hata_aralik_bos">The page range cannot be empty.</string>
+    <string name="cekirdek_hata_aralik_birden_fazla_tire">Invalid range: \"%1$s\" (more than one dash).</string>
+    <string name="cekirdek_hata_aralik_eksik_sinir">Invalid range: \"%1$s\".</string>
+    <string name="cekirdek_hata_aralik_bas_sondan_buyuk">Invalid range: \"%1$s\" — start (%2$d) is greater than end (%3$d).</string>
+    <string name="cekirdek_hata_aralik_hicbiri_secilmedi">No pages were selected.</string>
+    <string name="cekirdek_hata_aralik_sayi_degil">Invalid range: \"%1$s\" — use only digits and a dash.</string>
+    <string name="cekirdek_hata_aralik_sayi_cok_buyuk">Invalid range: \"%1$s\" — the number is too large.</string>
+    <string name="cekirdek_hata_aralik_sinir_disi">Invalid range: \"%1$s\" — the document has %2$d pages, %3$d was requested.</string>
 </resources>

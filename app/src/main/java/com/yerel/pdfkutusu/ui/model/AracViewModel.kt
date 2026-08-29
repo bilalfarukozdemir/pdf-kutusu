@@ -12,6 +12,7 @@ import com.yerel.pdfkutusu.depo.CalismaDosyasi
 import com.yerel.pdfkutusu.pdf.BelgeErisimi
 import com.yerel.pdfkutusu.pdf.BelgeIncelemesi
 import com.yerel.pdfkutusu.pdf.IlerlemeDinleyicisi
+import com.yerel.pdfkutusu.ui.ortak.kullaniciMesajiUret
 import java.io.File
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -237,7 +238,7 @@ abstract class AracViewModel(
                     guncelle {
                         it.copy(
                             dosyaYukleniyor = false,
-                            parolaHatasi = (hata as? PdfHatasi)?.kullaniciMesaji
+                            parolaHatasi = (hata as? PdfHatasi)?.kullaniciMesajiUret(bagimliliklar.uygulamaBaglami)
                                 ?: bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_parola_dogrulanamadi),
                         )
                     }
@@ -364,7 +365,7 @@ abstract class AracViewModel(
                     islem = islemTuru,
                     girdiDosyaAdi = girdiAdi,
                     girdiSha256 = girdiOzeti,
-                    hataMesaji = pdfHatasi.kullaniciMesaji,
+                    hataMesaji = pdfHatasi.kullaniciMesajiUret(bagimliliklar.uygulamaBaglami),
                 )
                 guncelle { it.copy(calisiyor = false, ilerleme = null, hata = pdfHatasi) }
             }

@@ -458,4 +458,24 @@
     <string name="belge_bulunamadi_bos">Dosya bulunamadı ya da boş: %1$s</string>
     <string name="belge_pdf_acilamadi">PDF açılamadı: %1$s</string>
     <string name="belge_bellege_sigmadi">Belge belleğe sığmadı: %1$s</string>
+
+    <!-- cekirdek/PdfHataKimligi: Context'siz katmanlardan gelen hatalarin UI karsiligi -->
+    <string name="cekirdek_hata_parola_gerekli_mesaj">Bu PDF parola korumalı.</string>
+    <string name="cekirdek_hata_parola_gerekli_oneri">Belgenin açılış parolasını girin.</string>
+    <string name="cekirdek_hata_parola_yanlis_mesaj">Parola doğrulanamadı.</string>
+    <string name="cekirdek_hata_parola_yanlis_oneri">Parolayı kontrol edip tekrar deneyin. Büyük/küçük harfe dikkat edin.</string>
+    <string name="cekirdek_hata_iptal_mesaj">İşlem iptal edildi.</string>
+    <string name="cekirdek_hata_beklenmeyen_mesaj">İşlem tamamlanamadı: %1$s</string>
+    <string name="cekirdek_hata_beklenmeyen_oneri">Aynı hata tekrarlıyorsa dosya bu araçla işlenemiyor olabilir.</string>
+    <string name="cekirdek_hata_girdi_yok_mesaj">Önce en az bir PDF seçin.</string>
+    <string name="cekirdek_hata_aralik_oneri">Örnek: 1-3, 5, 8-10</string>
+    <string name="cekirdek_hata_aralik_belgede_sayfa_yok">Belgede sayfa yok.</string>
+    <string name="cekirdek_hata_aralik_bos">Sayfa aralığı boş olamaz.</string>
+    <string name="cekirdek_hata_aralik_birden_fazla_tire">Geçersiz aralık: \"%1$s\" (birden fazla tire var).</string>
+    <string name="cekirdek_hata_aralik_eksik_sinir">Geçersiz aralık: \"%1$s\".</string>
+    <string name="cekirdek_hata_aralik_bas_sondan_buyuk">Geçersiz aralık: \"%1$s\" — başlangıç (%2$d) bitişten (%3$d) büyük.</string>
+    <string name="cekirdek_hata_aralik_hicbiri_secilmedi">Hiçbir sayfa seçilmedi.</string>
+    <string name="cekirdek_hata_aralik_sayi_degil">Geçersiz aralık: \"%1$s\" — yalnızca sayı ve tire kullanın.</string>
+    <string name="cekirdek_hata_aralik_sayi_cok_buyuk">Geçersiz aralık: \"%1$s\" — sayı çok büyük.</string>
+    <string name="cekirdek_hata_aralik_sinir_disi">Geçersiz aralık: \"%1$s\" — belge %2$d sayfa, %3$d istendi.</string>
 </resources>

@@ -143,8 +143,10 @@ class OkuyucuCihazTesti {
         val sifreli = sifreliPdfUret("sifreli3.pdf", "gizli123")
         val sonuc = BelgeKaynagi.coz(baglam, Uri.fromFile(sifreli), "yanlis", geciciler)
 
+        // Mesaj artik Context uzerinden yerellesiyor (Turkce/Ingilizce); sabit
+        // "Parola" kelimesi yerine mesajin bos olmadigi kontrol edilir.
         assertTrue("Beklenen Hata, gelen: $sonuc", sonuc is BelgeKaynagi.Sonuc.Hata)
-        assertTrue((sonuc as BelgeKaynagi.Sonuc.Hata).mesaj.contains("Parola", ignoreCase = true))
+        assertTrue((sonuc as BelgeKaynagi.Sonuc.Hata).mesaj.isNotBlank())
     }
 
     // =====================================================================

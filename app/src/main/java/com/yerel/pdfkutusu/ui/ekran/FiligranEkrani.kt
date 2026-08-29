@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.pdf.FiligranRengi
 import com.yerel.pdfkutusu.ui.model.FiligranViewModel
 import com.yerel.pdfkutusu.ui.ortak.AralikGirisi
@@ -31,61 +33,60 @@ fun FiligranEkrani(gorunum: FiligranViewModel, geriDon: () -> Unit) {
     val ayarlar by gorunum.ayarlar.collectAsStateWithLifecycle()
 
     AracGovdesi(
-        baslik = "Filigran",
-        bosBaslik = "Metin filigranı ekleyin",
-        bosAciklama = "Bir PDF seçin ve sayfalara çapraz bir metin ekleyin. " +
-            "Filigran içeriğin üstüne çizilir, altındaki metni gizlemez.",
+        baslik = stringResource(R.string.filigran_baslik),
+        bosBaslik = stringResource(R.string.filigran_bos_baslik),
+        bosAciklama = stringResource(R.string.filigran_bos_aciklama),
         simge = Icons.Default.BrandingWatermark,
         gorunum = gorunum,
         geriDon = geriDon,
-        calistirEtiketi = "Filigranı uygula",
+        calistirEtiketi = stringResource(R.string.filigran_calistir),
         calistirEtkin = durum.girdiler.isNotEmpty() && ayarlar.metin.isNotBlank(),
         calistir = gorunum::uygula,
         secenekler = {
             val girdi = durum.ilkGirdi
             if (girdi != null) {
-                SecenekKarti("Metin") {
+                SecenekKarti(stringResource(R.string.filigran_metin_baslik)) {
                     OutlinedTextField(
                         value = ayarlar.metin,
                         onValueChange = gorunum::metinDegistir,
-                        label = { Text("Filigran metni") },
+                        label = { Text(stringResource(R.string.filigran_metin_etiket)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         supportingText = {
-                            Text("Türkçe karakterler desteklenir; cihazın yazı tipi gömülür.")
+                            Text(stringResource(R.string.filigran_metin_aciklama))
                         },
                     )
                 }
 
-                SecenekKarti("Görünüm") {
-                    Text("Punto: ${ayarlar.punto.roundToInt()}")
+                SecenekKarti(stringResource(R.string.filigran_gorunum_baslik)) {
+                    Text(stringResource(R.string.filigran_punto, ayarlar.punto.roundToInt()))
                     Slider(
                         value = ayarlar.punto,
                         onValueChange = gorunum::puntoDegistir,
                         valueRange = 12f..140f,
                     )
 
-                    Text("Saydamlık: %${(ayarlar.saydamlik * 100).roundToInt()}")
+                    Text(stringResource(R.string.filigran_saydamlik, (ayarlar.saydamlik * 100).roundToInt()))
                     Slider(
                         value = ayarlar.saydamlik,
                         onValueChange = gorunum::saydamlikDegistir,
                         valueRange = 0.05f..1f,
                     )
 
-                    Text("Açı: ${ayarlar.aci.roundToInt()}°")
+                    Text(stringResource(R.string.filigran_aci, ayarlar.aci.roundToInt()))
                     Slider(
                         value = ayarlar.aci,
                         onValueChange = gorunum::aciDegistir,
                         valueRange = 0f..90f,
                     )
 
-                    Text("Renk", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.filigran_renk), style = MaterialTheme.typography.bodyMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FiligranRengi.entries.forEach { renk ->
                             FilterChip(
                                 selected = ayarlar.renk == renk,
                                 onClick = { gorunum.renkDegistir(renk) },
-                                label = { Text(renk.etiket) },
+                                label = { Text(stringResource(renk.etiketRes)) },
                             )
                         }
                     }
@@ -95,9 +96,9 @@ fun FiligranEkrani(gorunum: FiligranViewModel, geriDon: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
-                            Text("Döşe", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.filigran_dose_baslik), style = MaterialTheme.typography.bodyMedium)
                             Text(
-                                "Sayfayı baştan başa tekrarlayan filigranla kapla.",
+                                stringResource(R.string.filigran_dose_aciklama),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -107,12 +108,12 @@ fun FiligranEkrani(gorunum: FiligranViewModel, geriDon: () -> Unit) {
                     }
                 }
 
-                SecenekKarti("Hangi sayfalar") {
+                SecenekKarti(stringResource(R.string.dondur_hangi_sayfalar_baslik)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Tüm sayfalar", modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.filigran_hangi_sayfalar), modifier = Modifier.weight(1f))
                         Switch(
                             checked = ayarlar.tumSayfalar,
                             onCheckedChange = gorunum::tumSayfalarDegistir,
@@ -127,11 +128,9 @@ fun FiligranEkrani(gorunum: FiligranViewModel, geriDon: () -> Unit) {
                     }
                 }
 
-                SecenekKarti("Bilmeniz gereken") {
+                SecenekKarti(stringResource(R.string.filigran_bilmeniz_gereken_baslik)) {
                     Text(
-                        "Filigran bir gizleme aracı değildir. Altındaki metin PDF'in içerik " +
-                            "akışında kalır ve kopyalanabilir. Bilgiyi gerçekten kaldırmak için " +
-                            "Karart aracını kullanın.",
+                        stringResource(R.string.filigran_bilmeniz_gereken_govde),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class FiligranEkranAyarlari(
-    val metin: String = "TASLAK",
+    val metin: String,
     val punto: Float = 56f,
     val saydamlik: Float = 0.22f,
     val aci: Float = 45f,
@@ -26,7 +27,9 @@ data class FiligranEkranAyarlari(
 class FiligranViewModel(bagimliliklar: Bagimliliklar) :
     AracViewModel(bagimliliklar, IslemTuru.FILIGRAN) {
 
-    private val _ayarlar = MutableStateFlow(FiligranEkranAyarlari())
+    private val _ayarlar = MutableStateFlow(
+        FiligranEkranAyarlari(metin = bagimliliklar.uygulamaBaglami.getString(R.string.filigran_varsayilan_metin)),
+    )
     val ayarlar: StateFlow<FiligranEkranAyarlari> = _ayarlar.asStateFlow()
 
     fun metinDegistir(deger: String) = _ayarlar.update { it.copy(metin = deger) }
@@ -72,14 +75,20 @@ class FiligranViewModel(bagimliliklar: Bagimliliklar) :
                 sayfaIndeksleri = indeksler,
                 ilerleme = ilerleme,
             )
+            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = girdi.sayfaSayisi,
-                ozetSatiri = "${sonuc.islenenSayfa} sayfaya filigran eklendi",
+                ozetSatiri = baglam.getString(R.string.filigran_ozet_satiri, sonuc.islenenSayfa),
                 notlar = buildList {
-                    add("Filigran içeriğin üstüne çizilir; altındaki metin hâlâ seçilebilir. Bilgiyi gerçekten gizlemek için Karart aracını kullanın.")
+                    add(baglam.getString(R.string.filigran_not_gizleme_araci_degil))
                     if (!sonuc.tamTurkceDestegi) {
-                        add("Cihazda gömülebilir Unicode yazı tipi bulunamadı. ğ/ş/ı harfleri g/s/i olarak yazıldı (${sonuc.kullanilanYaziTipi}).")
+                        add(
+                            baglam.getString(
+                                R.string.filigran_not_yazi_tipi_dusmus,
+                                sonuc.kullanilanYaziTipi,
+                            ),
+                        )
                     }
                 },
             )

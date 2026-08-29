@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.Ozet
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
@@ -181,7 +182,7 @@ abstract class AracViewModel(
                 gorunenAd = calisma.gorunenAd,
                 boyut = calisma.boyut,
                 sha256 = calisma.sha256,
-                ozet = BelgeIncelemesi.incele(calisma.dosya),
+                ozet = BelgeIncelemesi.incele(calisma.dosya, bagimliliklar.uygulamaBaglami),
             )
         }
 
@@ -203,9 +204,11 @@ abstract class AracViewModel(
                     }
                     if (!istek.dosya.delete() || !gecici.renameTo(istek.dosya)) {
                         gecici.delete()
-                        throw PdfHatasi.DosyaOkunamadi("Çözülmüş kopya yazılamadı.")
+                        throw PdfHatasi.DosyaOkunamadi(
+                            bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_cozulmus_kopya_yazilamadi),
+                        )
                     }
-                    BelgeIncelemesi.incele(istek.dosya)
+                    BelgeIncelemesi.incele(istek.dosya, bagimliliklar.uygulamaBaglami)
                 }
             }
 
@@ -225,7 +228,7 @@ abstract class AracViewModel(
                         it.copy(
                             parolaIstegi = null,
                             parolaHatasi = null,
-                            bilgi = "Parola doğrulandı. Çıktı şifresiz üretilecek.",
+                            bilgi = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_parola_dogrulandi),
                         )
                     }
                     kuyruguIsle()
@@ -235,7 +238,7 @@ abstract class AracViewModel(
                         it.copy(
                             dosyaYukleniyor = false,
                             parolaHatasi = (hata as? PdfHatasi)?.kullaniciMesaji
-                                ?: "Parola doğrulanamadı.",
+                                ?: bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_parola_dogrulanamadi),
                         )
                     }
                 },
@@ -252,7 +255,7 @@ abstract class AracViewModel(
                 parolaIstegi = null,
                 parolaHatasi = null,
                 dosyaYukleniyor = false,
-                bilgi = "Şifreli belge atlandı.",
+                bilgi = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_sifreli_belge_atlandi),
             )
         }
     }
@@ -344,11 +347,15 @@ abstract class AracViewModel(
                         islem = islemTuru,
                         girdiDosyaAdi = girdiAdi,
                         girdiSha256 = girdiOzeti,
-                        hataMesaji = "İşlem kullanıcı tarafından iptal edildi.",
+                        hataMesaji = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_islem_iptal_kullanici),
                     )
                 }
                 _durum.update {
-                    it.copy(calisiyor = false, ilerleme = null, bilgi = "İşlem iptal edildi.")
+                    it.copy(
+                        calisiyor = false,
+                        ilerleme = null,
+                        bilgi = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_islem_iptal_edildi),
+                    )
                 }
                 throw iptal
             } catch (hata: Throwable) {
@@ -375,7 +382,7 @@ abstract class AracViewModel(
         viewModelScope.launch {
             try {
                 calismaAlani.disaAktar(kaynak, hedef)
-                guncelle { it.copy(bilgi = "Dışa aktarıldı: ${kaynak.name}") }
+                guncelle { it.copy(bilgi = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_disa_aktarildi, kaynak.name)) }
             } catch (hata: PdfHatasi) {
                 guncelle { it.copy(hata = hata) }
             }
@@ -404,7 +411,7 @@ abstract class AracViewModel(
                         sonuc = sonuc.copy(
                             dosyalar = sonuc.dosyalar.map { if (it == eski) yeni else it },
                         ),
-                        bilgi = "Yeni ad: ${yeni.name}",
+                        bilgi = bagimliliklar.uygulamaBaglami.getString(R.string.arac_vm_yeni_ad, yeni.name),
                     )
                 }
             } catch (hata: PdfHatasi) {
@@ -419,9 +426,12 @@ abstract class AracViewModel(
         viewModelScope.launch {
             try {
                 val sonuc = calismaAlani.tumunuDisaAktar(agacUri, dosyalar)
+                val baglam = bagimliliklar.uygulamaBaglami
                 val mesaj = buildString {
-                    append("${sonuc.basarili.size} dosya dışa aktarıldı")
-                    if (sonuc.basarisiz.isNotEmpty()) append(", ${sonuc.basarisiz.size} başarısız")
+                    append(baglam.getString(R.string.arac_vm_toplu_disa_aktarildi, sonuc.basarili.size))
+                    if (sonuc.basarisiz.isNotEmpty()) {
+                        append(baglam.getString(R.string.arac_vm_toplu_basarisiz_ek, sonuc.basarisiz.size))
+                    }
                     append(".")
                 }
                 guncelle { it.copy(bilgi = mesaj) }

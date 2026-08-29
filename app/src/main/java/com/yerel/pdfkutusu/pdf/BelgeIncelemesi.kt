@@ -1,6 +1,8 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.yerel.pdfkutusu.R
 import java.io.File
 
 data class BelgeOzeti(
@@ -24,39 +26,37 @@ object BelgeIncelemesi {
     /** Font taramasi icin bakilacak azami sayfa; buyuk belgelerde beklemeyelim. */
     private const val TARANACAK_SAYFA = 8
 
-    fun incele(dosya: File, parola: String? = null): BelgeOzeti =
-        BelgeErisimi.ac(dosya, parola).use { belge -> incele(belge) }
+    fun incele(dosya: File, baglam: Context, parola: String? = null): BelgeOzeti =
+        BelgeErisimi.ac(dosya, parola).use { belge -> incele(belge, baglam) }
 
-    fun incele(belge: PDDocument): BelgeOzeti {
+    fun incele(belge: PDDocument, baglam: Context): BelgeOzeti {
         val uyarilar = mutableListOf<String>()
         val sifreli = runCatching { belge.isEncrypted }.getOrDefault(false)
 
         if (sifreli) {
-            uyarilar += "Belge şifreli. Çıktı şifresiz üretilir; parolayı yeniden koymanız gerekir."
+            uyarilar += baglam.getString(R.string.inceleme_sifreli)
         }
 
         runCatching {
             val form = belge.documentCatalog?.acroForm
             if (form != null && form.fields.isNotEmpty()) {
-                uyarilar += "Belgede ${form.fields.size} form alanı var. " +
-                    "Sayfa kopyalayan işlemlerde (böl, sırala, birleştir) form doldurulabilirliği kaybolabilir."
+                uyarilar += baglam.getString(R.string.inceleme_form_alani, form.fields.size)
             }
             if (form?.isSignaturesExist == true) {
-                uyarilar += "Belgede imza alanı tanımlı."
+                uyarilar += baglam.getString(R.string.inceleme_imza_alani)
             }
         }
 
         runCatching {
             if (belge.signatureDictionaries.isNotEmpty()) {
-                uyarilar += "Belge dijital olarak imzalanmış. Herhangi bir değişiklik imzayı geçersiz kılar."
+                uyarilar += baglam.getString(R.string.inceleme_dijital_imzali)
             }
         }
 
         val gomulmeyenFontlar = gomulmeyenFontlar(belge)
         if (gomulmeyenFontlar.isNotEmpty()) {
             val ornek = gomulmeyenFontlar.take(3).joinToString(", ")
-            uyarilar += "Gömülü olmayan yazı tipi var ($ornek). " +
-                "Başka bir cihazda açıldığında harfler kayabilir."
+            uyarilar += baglam.getString(R.string.inceleme_gomulu_olmayan_font, ornek)
         }
 
         val metinVar = runCatching {

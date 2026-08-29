@@ -422,4 +422,14 @@
     <string name="inceleme_imza_alani">The document has a defined signature field.</string>
     <string name="inceleme_dijital_imzali">The document is digitally signed. Any change invalidates the signature.</string>
     <string name="inceleme_gomulu_olmayan_font">Non-embedded font found (%1$s). Letters may shift when opened on another device.</string>
+    <string name="arac_vm_cozulmus_kopya_yazilamadi">Could not write the decrypted copy.</string>
+    <string name="arac_vm_parola_dogrulandi">Password verified. The output will be produced unencrypted.</string>
+    <string name="arac_vm_parola_dogrulanamadi">Password could not be verified.</string>
+    <string name="arac_vm_sifreli_belge_atlandi">Encrypted document skipped.</string>
+    <string name="arac_vm_islem_iptal_kullanici">Operation canceled by the user.</string>
+    <string name="arac_vm_islem_iptal_edildi">Operation canceled.</string>
+    <string name="arac_vm_disa_aktarildi">Exported: %1$s</string>
+    <string name="arac_vm_yeni_ad">New name: %1$s</string>
+    <string name="arac_vm_toplu_disa_aktarildi">%1$d files exported</string>
+    <string name="arac_vm_toplu_basarisiz_ek">", %1$d failed"</string>
 </resources>

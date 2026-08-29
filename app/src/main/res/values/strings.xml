@@ -422,4 +422,14 @@
     <string name="inceleme_imza_alani">Belgede imza alanı tanımlı.</string>
     <string name="inceleme_dijital_imzali">Belge dijital olarak imzalanmış. Herhangi bir değişiklik imzayı geçersiz kılar.</string>
     <string name="inceleme_gomulu_olmayan_font">Gömülü olmayan yazı tipi var (%1$s). Başka bir cihazda açıldığında harfler kayabilir.</string>
+    <string name="arac_vm_cozulmus_kopya_yazilamadi">Çözülmüş kopya yazılamadı.</string>
+    <string name="arac_vm_parola_dogrulandi">Parola doğrulandı. Çıktı şifresiz üretilecek.</string>
+    <string name="arac_vm_parola_dogrulanamadi">Parola doğrulanamadı.</string>
+    <string name="arac_vm_sifreli_belge_atlandi">Şifreli belge atlandı.</string>
+    <string name="arac_vm_islem_iptal_kullanici">İşlem kullanıcı tarafından iptal edildi.</string>
+    <string name="arac_vm_islem_iptal_edildi">İşlem iptal edildi.</string>
+    <string name="arac_vm_disa_aktarildi">Dışa aktarıldı: %1$s</string>
+    <string name="arac_vm_yeni_ad">Yeni ad: %1$s</string>
+    <string name="arac_vm_toplu_disa_aktarildi">%1$d dosya dışa aktarıldı</string>
+    <string name="arac_vm_toplu_basarisiz_ek">", %1$d başarısız"</string>
 </resources>

@@ -188,6 +188,7 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
                 cikti = cikti,
                 gecicilerDizini = calismaAlani.gecicilerDizini,
                 ilerleme = ilerleme,
+                baglam = baglam,
             )
 
             IslemCiktisi(

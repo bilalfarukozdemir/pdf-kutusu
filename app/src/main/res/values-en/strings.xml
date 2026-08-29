@@ -411,4 +411,10 @@
     <string name="calisma_hedef_dosya_olusturulamadi">Could not create the destination file</string>
     <string name="calisma_hedef_akis_acilamadi">Could not open the destination stream</string>
     <string name="calisma_bilinmeyen_hata">unknown error</string>
+    <string name="resimden_en_az_bir_gorsel_gerekli">Choose at least one image to convert to PDF.</string>
+    <string name="resimden_bellek_yetmedi">Out of memory, the image is too large.</string>
+    <string name="resimden_gorsel_okunamadi">Could not read the image.</string>
+    <string name="resimden_hicbiri_islenemedi">No image could be processed. %1$s</string>
+    <string name="resimden_heic_desteklenmiyor">HEIC/HEIF images require Android 9 (API 28) or newer; this device runs Android %1$s. Convert the image to JPEG and try again.</string>
+    <string name="resimden_bicim_taninmadi">The image format wasn\'t recognized, or the file is corrupted.</string>
 </resources>

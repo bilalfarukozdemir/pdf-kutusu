@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -14,6 +15,7 @@ import com.tom_roush.pdfbox.pdmodel.PDPage
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.common.PDRectangle
 import com.tom_roush.pdfbox.pdmodel.graphics.image.JPEGFactory
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 import java.util.Locale
@@ -66,15 +68,24 @@ data class ResimdenPdfSonucu(
  */
 object ResimdenPdf {
 
+    /**
+     * @param baglam Kullanici mesajlarini yerellestirmek icin (opsiyonel).
+     *   `null` birakilirsa (ornegin enstrumante testlerde) sabit Turkce metne
+     *   duser - test kod yolu degismesin diye.
+     */
     fun olustur(
         girdiler: List<GorselGirdisi>,
         ayarlar: ResimdenPdfAyarlari,
         cikti: File,
         gecicilerDizini: File,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): ResimdenPdfSonucu {
         if (girdiler.isEmpty()) {
-            throw PdfHatasi.GirdiYok("PDF'e çevirmek için en az bir görsel seçin.")
+            throw PdfHatasi.GirdiYok(
+                baglam?.getString(R.string.resimden_en_az_bir_gorsel_gerekli)
+                    ?: "PDF'e çevirmek için en az bir görsel seçin.",
+            )
         }
 
         val atlananlar = mutableListOf<AtlananGorsel>()
@@ -92,7 +103,7 @@ object ResimdenPdf {
                 ilerleme(Ilerleme(sira, girdiler.size, girdi.gorunenAd))
 
                 try {
-                    val bitmap = bitmapHazirla(girdi.dosya, ayarlar.kalite.azamiKenarPiksel)
+                    val bitmap = bitmapHazirla(girdi.dosya, ayarlar.kalite.azamiKenarPiksel, baglam)
                     try {
                         sayfaEkle(hedef, bitmap, ayarlar)
                         sayfaSayisi++
@@ -102,13 +113,16 @@ object ResimdenPdf {
                 } catch (iptal: CancellationException) {
                     throw iptal
                 } catch (bellek: OutOfMemoryError) {
-                    atlananlar += AtlananGorsel(girdi.gorunenAd, "Bellek yetmedi, görsel çok büyük.")
+                    atlananlar += AtlananGorsel(
+                        girdi.gorunenAd,
+                        baglam?.getString(R.string.resimden_bellek_yetmedi) ?: "Bellek yetmedi, görsel çok büyük.",
+                    )
                 } catch (hata: PdfHatasi) {
                     atlananlar += AtlananGorsel(girdi.gorunenAd, hata.kullaniciMesaji)
                 } catch (hata: Exception) {
                     atlananlar += AtlananGorsel(
                         girdi.gorunenAd,
-                        hata.message ?: "Görsel okunamadı.",
+                        hata.message ?: baglam?.getString(R.string.resimden_gorsel_okunamadi) ?: "Görsel okunamadı.",
                     )
                 }
 
@@ -117,7 +131,10 @@ object ResimdenPdf {
 
             if (sayfaSayisi == 0) {
                 val ozet = atlananlar.joinToString("; ") { "${it.ad}: ${it.neden}" }.take(300)
-                throw PdfHatasi.BozukBelge("Hiçbir görsel işlenemedi. $ozet")
+                throw PdfHatasi.BozukBelge(
+                    baglam?.getString(R.string.resimden_hicbiri_islenemedi, ozet)
+                        ?: "Hiçbir görsel işlenemedi. $ozet",
+                )
             }
 
             MetaVeriTemizleyici.temizle(hedef)
@@ -134,11 +151,11 @@ object ResimdenPdf {
     // ------------------------------------------------------------- gorsel
 
     /** Coz, yonlendir, kucult, beyaza duzlestir. Cagiran geri vermekle yukumlu. */
-    internal fun bitmapHazirla(dosya: File, azamiKenar: Int): Bitmap {
+    internal fun bitmapHazirla(dosya: File, azamiKenar: Int, baglam: Context? = null): Bitmap {
         val olcum = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         runCatching { dosya.inputStream().use { BitmapFactory.decodeStream(it, null, olcum) } }
         if (olcum.outWidth <= 0 || olcum.outHeight <= 0) {
-            throw PdfHatasi.BozukBelge(desteklenmeyenNeden(dosya))
+            throw PdfHatasi.BozukBelge(desteklenmeyenNeden(dosya, baglam))
         }
 
         val cozumAyari = BitmapFactory.Options().apply {
@@ -146,7 +163,7 @@ object ResimdenPdf {
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
         val ham = dosya.inputStream().use { BitmapFactory.decodeStream(it, null, cozumAyari) }
-            ?: throw PdfHatasi.BozukBelge(desteklenmeyenNeden(dosya))
+            ?: throw PdfHatasi.BozukBelge(desteklenmeyenNeden(dosya, baglam))
 
         val yonlu = yonuUygula(dosya, ham)
         val kucuk = kucult(yonlu, azamiKenar)
@@ -234,13 +251,16 @@ object ResimdenPdf {
         }
     }
 
-    private fun desteklenmeyenNeden(dosya: File): String {
+    private fun desteklenmeyenNeden(dosya: File, baglam: Context?): String {
         val uzanti = dosya.extension.lowercase(Locale.ROOT)
         if (uzanti in setOf("heic", "heif") && Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            return "HEIC/HEIF görselleri Android 9 (API 28) ve üzeri gerektirir; " +
-                "bu cihaz Android ${Build.VERSION.RELEASE}. Görseli JPEG'e çevirip tekrar deneyin."
+            return baglam?.getString(R.string.resimden_heic_desteklenmiyor, Build.VERSION.RELEASE)
+                ?: (
+                    "HEIC/HEIF görselleri Android 9 (API 28) ve üzeri gerektirir; " +
+                        "bu cihaz Android ${Build.VERSION.RELEASE}. Görseli JPEG'e çevirip tekrar deneyin."
+                    )
         }
-        return "Görsel biçimi tanınmadı ya da dosya bozuk."
+        return baglam?.getString(R.string.resimden_bicim_taninmadi) ?: "Görsel biçimi tanınmadı ya da dosya bozuk."
     }
 
     // ------------------------------------------------------------- tahmin

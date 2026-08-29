@@ -411,4 +411,10 @@
     <string name="calisma_hedef_dosya_olusturulamadi">Hedef dosya oluşturulamadı</string>
     <string name="calisma_hedef_akis_acilamadi">Hedef akış açılamadı</string>
     <string name="calisma_bilinmeyen_hata">bilinmeyen hata</string>
+    <string name="resimden_en_az_bir_gorsel_gerekli">PDF\'e çevirmek için en az bir görsel seçin.</string>
+    <string name="resimden_bellek_yetmedi">Bellek yetmedi, görsel çok büyük.</string>
+    <string name="resimden_gorsel_okunamadi">Görsel okunamadı.</string>
+    <string name="resimden_hicbiri_islenemedi">Hiçbir görsel işlenemedi. %1$s</string>
+    <string name="resimden_heic_desteklenmiyor">HEIC/HEIF görselleri Android 9 (API 28) ve üzeri gerektirir; bu cihaz Android %1$s. Görseli JPEG\'e çevirip tekrar deneyin.</string>
+    <string name="resimden_bicim_taninmadi">Görsel biçimi tanınmadı ya da dosya bozuk.</string>
 </resources>

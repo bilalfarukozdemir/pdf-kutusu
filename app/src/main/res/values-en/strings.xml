@@ -417,4 +417,9 @@
     <string name="resimden_hicbiri_islenemedi">No image could be processed. %1$s</string>
     <string name="resimden_heic_desteklenmiyor">HEIC/HEIF images require Android 9 (API 28) or newer; this device runs Android %1$s. Convert the image to JPEG and try again.</string>
     <string name="resimden_bicim_taninmadi">The image format wasn\'t recognized, or the file is corrupted.</string>
+    <string name="inceleme_sifreli">The document is encrypted. The output is produced unencrypted; you\'ll need to re-apply a password.</string>
+    <string name="inceleme_form_alani">%1$d form fields. Page-copying operations (split, reorder, merge) may lose form fillability.</string>
+    <string name="inceleme_imza_alani">The document has a defined signature field.</string>
+    <string name="inceleme_dijital_imzali">The document is digitally signed. Any change invalidates the signature.</string>
+    <string name="inceleme_gomulu_olmayan_font">Non-embedded font found (%1$s). Letters may shift when opened on another device.</string>
 </resources>

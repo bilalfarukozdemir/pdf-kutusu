@@ -417,4 +417,9 @@
     <string name="resimden_hicbiri_islenemedi">Hiçbir görsel işlenemedi. %1$s</string>
     <string name="resimden_heic_desteklenmiyor">HEIC/HEIF görselleri Android 9 (API 28) ve üzeri gerektirir; bu cihaz Android %1$s. Görseli JPEG\'e çevirip tekrar deneyin.</string>
     <string name="resimden_bicim_taninmadi">Görsel biçimi tanınmadı ya da dosya bozuk.</string>
+    <string name="inceleme_sifreli">Belge şifreli. Çıktı şifresiz üretilir; parolayı yeniden koymanız gerekir.</string>
+    <string name="inceleme_form_alani">%1$d form alanı var. Sayfa kopyalayan işlemlerde (böl, sırala, birleştir) form doldurulabilirliği kaybolabilir.</string>
+    <string name="inceleme_imza_alani">Belgede imza alanı tanımlı.</string>
+    <string name="inceleme_dijital_imzali">Belge dijital olarak imzalanmış. Herhangi bir değişiklik imzayı geçersiz kılar.</string>
+    <string name="inceleme_gomulu_olmayan_font">Gömülü olmayan yazı tipi var (%1$s). Başka bir cihazda açıldığında harfler kayabilir.</string>
 </resources>

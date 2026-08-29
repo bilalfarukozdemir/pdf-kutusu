@@ -186,6 +186,9 @@ karar var:
 3. **ML Kit'in paketli (bundled) modeli** kullanılır. "Unbundled" varyant
    modeli Google Play Services üzerinden indirir; bu ağ erişimi gerektirirdi.
 
+Hangi verinin toplandığı (hiçbiri) ve bunun teknik garantisi için bkz.
+[**PRIVACY.md**](PRIVACY.md).
+
 ### INTERNET izninin olmadığı nasıl doğrulanır
 
 `app/src/main/AndroidManifest.xml` içinde `android.permission.INTERNET` satırı
@@ -800,9 +803,15 @@ kalıcıdır.
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/bilalfarukozdemir?label=sponsor&logo=githubsponsors&color=ea4aaa)](https://github.com/sponsors/bilalfarukozdemir)
 
-Bu proje ücretsiz ve ücretsiz kalacak. İşine yaradıysa
-[sponsor olabilirsin](https://github.com/sponsors/bilalfarukozdemir); bir yıldız
-ya da iyi bir hata bildirimi de en az onun kadar kıymetli.
+Bu proje ücretsiz ve ücretsiz kalacak. İşine yaradıysa iki yol var:
+
+- **GitHub Sponsors** — [sponsor olabilirsin](https://github.com/sponsors/bilalfarukozdemir),
+  aylık ya da tek seferlik. Repoyu bulan geliştiricilere yönelik.
+- **Uygulama içinden** — Play Store sürümünde "Geliştiriciyi Destekle"
+  bölümünden tek seferlik bağış. Ödeme tamamen Google Play üzerinden yürür,
+  kart bilgisi uygulamaya hiç ulaşmaz. Hiçbir özelliği kilitlemez.
+
+Bir yıldız ya da iyi bir hata bildirimi de en az onlar kadar kıymetli.
 
 ---
 
@@ -811,7 +820,7 @@ ya da iyi bir hata bildirimi de en az onun kadar kıymetli.
 | | |
 |---|---|
 | Bakım | Tek geliştirici, boş zamanlarında — [@bilalfarukozdemir](https://github.com/bilalfarukozdemir) |
-| Finansman | Yok. Reklam, telemetri ve ücretli sürüm yok; tek gelir kalemi [GitHub Sponsors](https://github.com/sponsors/bilalfarukozdemir) |
+| Finansman | Reklam, telemetri ve ücretli sürüm yok. İki isteğe bağlı kanal: [GitHub Sponsors](https://github.com/sponsors/bilalfarukozdemir) ve Play Store sürümünde uygulama içi bağış |
 | Durum | Aktif geliştiriliyor |
 | Lisans | MIT |
 | Destek | Hata bildirimleri okunur ve ele alınır. Yanıt süresi taahhüdü ve garanti yoktur |

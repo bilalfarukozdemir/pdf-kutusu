@@ -96,8 +96,10 @@ class OkuyucuCihazTesti {
         val bos = File(dizin, "bos.pdf").apply { writeBytes(ByteArray(0)) }
         val sonuc = BelgeKaynagi.coz(baglam, Uri.fromFile(bos), null, geciciler)
 
+        // Mesajin tam metnine degil varligina bakiyoruz: i18n sonrasi mesaj
+        // cihazin/uygulamanin diline gore Turkce ya da Ingilizce donebilir.
         assertTrue(sonuc is BelgeKaynagi.Sonuc.Hata)
-        assertTrue((sonuc as BelgeKaynagi.Sonuc.Hata).mesaj.contains("boş", ignoreCase = true))
+        assertTrue((sonuc as BelgeKaynagi.Sonuc.Hata).mesaj.isNotBlank())
     }
 
     @Test

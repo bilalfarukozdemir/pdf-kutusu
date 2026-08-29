@@ -81,6 +81,7 @@ class BolViewModel(bagimliliklar: Bagimliliklar) :
                     aralikIfadesi = ayarlar.aralikIfadesi,
                     cikti = cikti,
                     ilerleme = ilerleme,
+                    baglam = baglam,
                 )
                 IslemCiktisi(
                     dosyalar = listOf(cikti),

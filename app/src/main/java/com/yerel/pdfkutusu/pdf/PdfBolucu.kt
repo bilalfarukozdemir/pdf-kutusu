@@ -30,6 +30,7 @@ object PdfBolucu {
         cikti: File,
         parola: String? = null,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): BolmeParcasi {
         BelgeErisimi.ac(kaynak, parola, baglam).use { belge ->
             BelgeErisimi.guvenligiKaldir(belge)

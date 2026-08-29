@@ -27,7 +27,7 @@ object BelgeIncelemesi {
     private const val TARANACAK_SAYFA = 8
 
     fun incele(dosya: File, baglam: Context, parola: String? = null): BelgeOzeti =
-        BelgeErisimi.ac(dosya, parola).use { belge -> incele(belge, baglam) }
+        BelgeErisimi.ac(dosya, parola, baglam).use { belge -> incele(belge, baglam) }
 
     fun incele(belge: PDDocument, baglam: Context): BelgeOzeti {
         val uyarilar = mutableListOf<String>()

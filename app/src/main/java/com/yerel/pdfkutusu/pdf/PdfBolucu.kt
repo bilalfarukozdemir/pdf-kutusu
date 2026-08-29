@@ -31,7 +31,7 @@ object PdfBolucu {
         parola: String? = null,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
     ): BolmeParcasi {
-        BelgeErisimi.ac(kaynak, parola).use { belge ->
+        BelgeErisimi.ac(kaynak, parola, baglam).use { belge ->
             BelgeErisimi.guvenligiKaldir(belge)
             val indeksler = SayfaAraligi.ayristir(aralikIfadesi, belge.numberOfPages)
             SayfaKopyalayici.kopyala(belge, indeksler, ilerleme).use { hedef ->
@@ -54,7 +54,7 @@ object PdfBolucu {
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
         baglam: Context? = null,
     ): List<BolmeParcasi> {
-        BelgeErisimi.ac(kaynak, parola).use { belge ->
+        BelgeErisimi.ac(kaynak, parola, baglam).use { belge ->
             BelgeErisimi.guvenligiKaldir(belge)
             val toplam = belge.numberOfPages
             val gruplar = aralikIfadesi

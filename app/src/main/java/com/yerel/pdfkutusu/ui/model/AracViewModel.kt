@@ -198,7 +198,7 @@ abstract class AracViewModel(
             val sonuc = withContext(Dispatchers.IO) {
                 runCatching {
                     val gecici = File(istek.dosya.parentFile, "cozulmus_${istek.dosya.name}")
-                    BelgeErisimi.ac(istek.dosya, parola).use { belge ->
+                    BelgeErisimi.ac(istek.dosya, parola, bagimliliklar.uygulamaBaglami).use { belge ->
                         belge.isAllSecurityToBeRemoved = true
                         belge.save(gecici)
                     }

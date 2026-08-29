@@ -110,7 +110,7 @@ object PdfKartici {
 
         val (rasterKaynak, geciciMi) = RasterHazirligi.hazirla(kaynak, parola, gecicilerDizini)
         try {
-            BelgeErisimi.ac(kaynak, parola).use { kaynakBelge ->
+            BelgeErisimi.ac(kaynak, parola, baglam).use { kaynakBelge ->
                 BelgeErisimi.guvenligiKaldir(kaynakBelge)
                 val toplamSayfa = kaynakBelge.numberOfPages
 

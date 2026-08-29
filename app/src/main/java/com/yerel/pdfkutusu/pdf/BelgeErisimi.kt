@@ -1,7 +1,9 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.File
 import java.io.IOException
@@ -18,18 +20,26 @@ object BelgeErisimi {
      * @param parola null ise once parolasiz denenir. Belge sifreliyse
      *   [PdfHatasi.ParolaGerekli] firlatilir ve arayuz parola sorar.
      */
-    fun ac(dosya: File, parola: String? = null): PDDocument {
+    fun ac(dosya: File, parola: String? = null, baglam: Context? = null): PDDocument {
         if (!dosya.exists() || dosya.length() == 0L) {
-            throw PdfHatasi.DosyaOkunamadi("Dosya bulunamadı ya da boş: ${dosya.name}")
+            throw PdfHatasi.DosyaOkunamadi(
+                baglam?.getString(R.string.belge_bulunamadi_bos, dosya.name)
+                    ?: "Dosya bulunamadı ya da boş: ${dosya.name}",
+            )
         }
         return try {
             if (parola.isNullOrEmpty()) PDDocument.load(dosya) else PDDocument.load(dosya, parola)
         } catch (hata: InvalidPasswordException) {
             if (parola.isNullOrEmpty()) throw PdfHatasi.ParolaGerekli() else throw PdfHatasi.ParolaYanlis()
         } catch (hata: IOException) {
-            throw PdfHatasi.BozukBelge("PDF açılamadı: ${dosya.name}", hata)
+            throw PdfHatasi.BozukBelge(
+                baglam?.getString(R.string.belge_pdf_acilamadi, dosya.name) ?: "PDF açılamadı: ${dosya.name}",
+                hata,
+            )
         } catch (hata: OutOfMemoryError) {
-            throw PdfHatasi.BozukBelge("Belge bellege sığmadı: ${dosya.name}")
+            throw PdfHatasi.BozukBelge(
+                baglam?.getString(R.string.belge_bellege_sigmadi, dosya.name) ?: "Belge bellege sığmadı: ${dosya.name}",
+            )
         }
     }
 

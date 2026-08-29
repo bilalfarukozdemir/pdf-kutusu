@@ -95,7 +95,7 @@ object BelgeKaynagi {
                     return@withContext Sonuc.ParolaGerekli(gorunenAd)
                 }
                 val cozulmus = try {
-                    sifreyiCoz(yerel.dosya, parola, gecicilerDizini)
+                    sifreyiCoz(yerel.dosya, parola, gecicilerDizini, baglam)
                 } catch (hata: Exception) {
                     yerel.temizle()
                     return@withContext Sonuc.Hata(
@@ -197,9 +197,9 @@ object BelgeKaynagi {
         AcmaDenemesi.BOZUK
     }
 
-    private fun sifreyiCoz(kaynak: File, parola: String, gecicilerDizini: File): File {
+    private fun sifreyiCoz(kaynak: File, parola: String, gecicilerDizini: File, baglam: Context? = null): File {
         val hedef = File(gecicilerDizini, "cozulmus_${System.nanoTime()}.pdf")
-        BelgeErisimi.ac(kaynak, parola).use { belge ->
+        BelgeErisimi.ac(kaynak, parola, baglam).use { belge ->
             belge.isAllSecurityToBeRemoved = true
             belge.save(hedef)
         }

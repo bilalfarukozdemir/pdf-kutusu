@@ -61,7 +61,7 @@ object PdfFiligranci {
             )
         }
 
-        BelgeErisimi.ac(kaynak, parola).use { belge ->
+        BelgeErisimi.ac(kaynak, parola, baglam).use { belge ->
             BelgeErisimi.guvenligiKaldir(belge)
             val toplam = belge.numberOfPages
             val hedefler = sayfaIndeksleri ?: (0 until toplam).toList()

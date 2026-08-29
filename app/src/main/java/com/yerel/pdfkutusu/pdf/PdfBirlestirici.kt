@@ -41,7 +41,7 @@ object PdfBirlestirici {
             val birlestirici = PDFMergerUtility()
             girdiler.forEachIndexed { sira, girdi ->
                 ilerleme(Ilerleme(sira, girdiler.size, girdi.gorunenAd))
-                BelgeErisimi.ac(girdi.dosya, girdi.parola).use { kaynak ->
+                BelgeErisimi.ac(girdi.dosya, girdi.parola, baglam).use { kaynak ->
                     BelgeErisimi.guvenligiKaldir(kaynak)
                     // appendDocument COS nesnelerini hedefe klonlar; bu yuzden
                     // kaynagi hemen kapatmak guvenlidir.

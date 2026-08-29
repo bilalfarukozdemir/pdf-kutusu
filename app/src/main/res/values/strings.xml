@@ -455,4 +455,7 @@
     <string name="ocr_ilerleme_bitti">Sayfa %1$d bitti</string>
     <string name="dondur_hata_gecersiz_sayfa">Belge %1$d sayfa, %2$d. sayfa istendi.</string>
     <string name="rasterlestirici_hata">Sayfa görüntüsü oluşturulamadı: %1$s</string>
+    <string name="belge_bulunamadi_bos">Dosya bulunamadı ya da boş: %1$s</string>
+    <string name="belge_pdf_acilamadi">PDF açılamadı: %1$s</string>
+    <string name="belge_bellege_sigmadi">Belge belleğe sığmadı: %1$s</string>
 </resources>

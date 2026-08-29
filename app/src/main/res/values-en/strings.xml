@@ -455,4 +455,7 @@
     <string name="ocr_ilerleme_bitti">Page %1$d done</string>
     <string name="dondur_hata_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
     <string name="rasterlestirici_hata">Could not render the page: %1$s</string>
+    <string name="belge_bulunamadi_bos">File not found or empty: %1$s</string>
+    <string name="belge_pdf_acilamadi">Could not open the PDF: %1$s</string>
+    <string name="belge_bellege_sigmadi">The document didn\'t fit in memory: %1$s</string>
 </resources>

@@ -1,4 +1,374 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="uygulama_adi">PDF Kutusu</string>
+
+    <!-- ================= ortak: paylaşılan bileşenler (AracIskeleti, BosDurum, HataKarti, SonucKarti, ParolaDiyalogu, AralikGirisi, Onizleme, SurukleBirak...) ================= -->
+    <string name="ortak_geri_cd">Geri</string>
+    <string name="ortak_isleniyor">İşleniyor…</string>
+    <string name="ortak_iptal_et">İptal et</string>
+    <string name="ortak_kapat">Kapat</string>
+    <string name="ortak_islem_tamamlandi">İşlem tamamlandı</string>
+    <string name="ortak_kaydet">Kaydet</string>
+    <string name="ortak_paylas">Paylaş</string>
+    <string name="ortak_hepsini_paylas">Hepsini paylaş</string>
+    <string name="ortak_tumunu_klasore_aktar">Tümünü bir klasöre aktar</string>
+    <string name="ortak_kaydet_paylas_aciklama">"\"Kaydet\" dosyayı seçtiğiniz konuma yazar ve cihazda kalır. \"Paylaş\" ise dosyayı başka bir uygulamaya teslim eder — o uygulama onu istediği yere gönderebilir."</string>
+    <string name="ortak_not_madde">"• %1$s"</string>
+    <string name="ortak_dosya_adi_etiket">Dosya adı</string>
+    <string name="ortak_yeni_adi_onayla_cd">Yeni adı onayla</string>
+    <string name="ortak_onayla_ipucu">Onaylamak için ✓ dokunun</string>
+    <string name="ortak_ad_degistirme_ipucu">Kaydetmeden ya da paylaşmadan önce adı değiştirebilirsiniz</string>
+    <string name="ortak_islem_oncesi_dikkat">İşlem öncesi dikkat</string>
+    <string name="ortak_uyari_madde">"• %1$s"</string>
+    <string name="ortak_yukari_tasi_cd">Yukarı taşı</string>
+    <string name="ortak_asagi_tasi_cd">Aşağı taşı</string>
+    <string name="ortak_listeden_cikar_cd">Listeden çıkar</string>
+    <string name="ortak_sifresi_cozuldu_cd">Şifresi çözüldü</string>
+    <string name="ortak_girdi_ozet">%1$d sayfa · %2$s</string>
+    <string name="ortak_parola_gerekli_baslik">Parola gerekli</string>
+    <string name="ortak_parola_govde">"\"%1$s\" şifreli. Açmak için belgenin parolasını girin."</string>
+    <string name="ortak_parola_etiket">Parola</string>
+    <string name="ortak_parola_aciklama">Parola yalnızca bu belgeyi açmak için kullanılır, hiçbir yere kaydedilmez.</string>
+    <string name="ortak_ac">Aç</string>
+    <string name="ortak_vazgec">Vazgeç</string>
+    <string name="ortak_sil">Sil</string>
+    <string name="ortak_sayfa_araligi_etiket">Sayfa aralığı</string>
+    <string name="ortak_sayfa_araligi_placeholder">örn. 1-3, 5, 8-</string>
+    <string name="ortak_sayfa_araligi_yardim">"Belge %1$d sayfa. Virgülle ayırın; \"3-\" son sayfaya kadar demektir."</string>
+    <string name="ortak_baglanti_acma_etiketi">%1$s adresini tarayıcıda aç</string>
+    <string name="ortak_sayfa_onizleme_cd">Sayfa %1$d önizlemesi</string>
+    <string name="ortak_sayfa_cd">Sayfa %1$d</string>
+    <string name="ortak_cikar_cd">Çıkar</string>
+
+    <!-- ================= govde: AracGovdesi (tüm araç ekranlarının ortak gövdesi) ================= -->
+    <string name="govde_pdfleri_sec">PDF\'leri seç</string>
+    <string name="govde_pdf_sec">PDF seç</string>
+    <string name="govde_pdf_ekle">PDF ekle</string>
+    <string name="govde_baska_pdf_sec">Başka PDF seç</string>
+    <string name="govde_secimi_temizle_cd">Seçimi temizle</string>
+    <string name="govde_dosya_aliniyor">Dosya alınıyor…</string>
+    <string name="govde_paylasilacak_dosya_yok">Paylaşılacak dosya bulunamadı.</string>
+    <string name="govde_paylasan_uygulama_yok">Paylaşabilecek bir uygulama bulunamadı.</string>
+
+    <!-- ================= ana: AnaEkran ================= -->
+    <string name="ana_baslik">PDF Kutusu</string>
+    <string name="ana_hakkinda_cd">Hakkında</string>
+    <string name="ana_arac_resimden_pdf_baslik">Resimden PDF</string>
+    <string name="ana_arac_resimden_pdf_aciklama">Fotoğrafları tek PDF\'te topla</string>
+    <string name="ana_arac_birlestir_baslik">Birleştir</string>
+    <string name="ana_arac_birlestir_aciklama">Birden fazla PDF\'i tek dosyada topla</string>
+    <string name="ana_arac_bol_baslik">Böl</string>
+    <string name="ana_arac_bol_aciklama">Sayfa aralığı seçerek ayır</string>
+    <string name="ana_arac_sirala_baslik">Sırala</string>
+    <string name="ana_arac_sirala_aciklama">Sayfaları sürükleyerek yeniden diz</string>
+    <string name="ana_arac_dondur_baslik">Döndür</string>
+    <string name="ana_arac_dondur_aciklama">Yatay/dikey sayfaları düzelt</string>
+    <string name="ana_arac_sikistir_baslik">Sıkıştır</string>
+    <string name="ana_arac_sikistir_aciklama">Görselleri yeniden kodlayarak küçült</string>
+    <string name="ana_arac_filigran_baslik">Filigran</string>
+    <string name="ana_arac_filigran_aciklama">Çapraz metin filigranı ekle</string>
+    <string name="ana_arac_karart_baslik">Karart</string>
+    <string name="ana_arac_karart_aciklama">Bilgiyi gerçekten kaldır (rasterize)</string>
+    <string name="ana_arac_ocr_baslik">OCR</string>
+    <string name="ana_arac_ocr_aciklama">Sayfadaki metni cihaz üstünde oku</string>
+    <string name="ana_dosyalar_baslik">Dosyalar</string>
+    <string name="ana_dosyalar_aciklama">Üretilen çıktılar</string>
+    <string name="ana_gunluk_baslik">Günlük</string>
+    <string name="ana_gunluk_aciklama">İşlem geçmişi</string>
+    <string name="ana_yapimci_etiket">"Yapımcı · "</string>
+    <string name="ana_son_acilanlar_baslik">Son açılanlar</string>
+    <string name="ana_pdf_ac">PDF aç</string>
+    <string name="ana_listeyi_temizle_cd">Listeyi temizle</string>
+    <string name="ana_son_acilanlar_bos">Açtığınız PDF\'ler burada birikir; tek dokunuşla geri dönersiniz.</string>
+    <string name="ana_gecici_erisim">geçici erişim</string>
+    <string name="ana_listeyi_temizle_dialog_baslik">Listeyi temizle</string>
+    <string name="ana_listeyi_temizle_dialog_govde">Son açılanlar listesi silinecek. Belgelerin kendisine dokunulmaz, yalnızca bu liste temizlenir.</string>
+    <string name="ana_temizle">Temizle</string>
+    <string name="ana_araclara_hazir">Araçlara hazır</string>
+    <string name="ana_bir_arac_secin">Bir araç seçin; belge orada sizi bekliyor olacak.</string>
+    <string name="ana_belgeyi_birak_cd">Belgeyi bırak</string>
+    <string name="ana_tamamen_cevrimdisi">Tamamen çevrimdışı</string>
+    <string name="ana_cevrimdisi_aciklama">Uygulamanın internet izni yok. Dosyalarınız cihazdan çıkmaz.</string>
+    <string name="ana_ilk_acilis_baslik">Başlamadan önce</string>
+    <string name="ana_ilk_acilis_govde1">Bu araç kişisel ve düşük riskli kullanım içindir. Resmî, hukuki veya regüle belgeler için tek başına güvenmeyin.</string>
+    <string name="ana_ilk_acilis_govde2">"• Çıktıyı her zaman açıp gözle kontrol edin.\n• Karartma yaptıysanız çıktıdan metin aramayı deneyin.\n• Orijinal dosyanız hiçbir işlemde değiştirilmez.\n• Hiçbir veri cihazdan çıkmaz; uygulamanın internet izni yoktur."</string>
+    <string name="ana_ilk_acilis_anladim">Anladım</string>
+
+    <!-- ================= birlestir ================= -->
+    <string name="birlestir_baslik">Birleştir</string>
+    <string name="birlestir_bos_baslik">PDF\'leri tek dosyada birleştirin</string>
+    <string name="birlestir_bos_aciklama">En az iki PDF seçin. Çıktıdaki sıra, listedeki sıradır; okları kullanarak değiştirebilirsiniz.</string>
+    <string name="birlestir_calistir">Birleştir</string>
+    <string name="birlestir_ozet_baslik">Özet</string>
+    <string name="birlestir_ozet_metni">%1$d dosya · toplam %2$d sayfa · %3$s</string>
+    <string name="birlestir_daha_ekle">Birleştirmek için en az bir dosya daha ekleyin.</string>
+    <string name="birlestir_hata_en_az_iki">Birleştirmek için en az iki PDF seçin.</string>
+    <string name="birlestir_ozet_satiri">%1$d dosya birleştirildi · %2$d sayfa</string>
+    <string name="birlestir_not_sira">Sıra, listedeki sıradır. Değiştirmek için okları kullanın.</string>
+    <string name="birlestir_not_yer_imi">Yer imleri ve form alanları birleştirmede korunmayabilir.</string>
+
+    <!-- ================= bol ================= -->
+    <string name="bol_baslik">Böl</string>
+    <string name="bol_bos_baslik">Sayfa aralığı seçerek bölün</string>
+    <string name="bol_bos_aciklama">"Bir PDF seçin, ardından çıkarmak istediğiniz sayfaları \"1-3, 7, 10-\" biçiminde yazın."</string>
+    <string name="bol_calistir_ayri">Ayrı dosyalara böl</string>
+    <string name="bol_calistir_cikar">Sayfaları çıkar</string>
+    <string name="bol_sayfa_secimi_baslik">Sayfa seçimi</string>
+    <string name="bol_her_aralik_ayri">Her aralık ayrı dosya</string>
+    <string name="bol_ayri_aciklama">"\"1-3, 7-9\" iki ayrı PDF üretir."</string>
+    <string name="bol_tek_aciklama">Seçilen tüm sayfalar tek PDF olur.</string>
+    <string name="bol_onizleme_baslik">Önizleme</string>
+    <string name="bol_onizleme_ipucu">Sayfa numaralarını doğrulamak için kaydırın.</string>
+    <string name="bol_ozet_satiri_coklu">%1$d dosya üretildi · %2$s</string>
+    <string name="bol_ozet_satiri_tek">Sayfa %1$s çıkarıldı · %2$d sayfa</string>
+    <string name="bol_parca_ad_oneki">parca%1$d-%2$s</string>
+
+    <!-- ================= dondur ================= -->
+    <string name="dondur_baslik">Döndür</string>
+    <string name="dondur_bos_baslik">Sayfaları döndürün</string>
+    <string name="dondur_bos_aciklama">Bir PDF seçin, açıyı belirleyin. Tüm sayfaları ya da seçtiğiniz aralığı döndürebilirsiniz.</string>
+    <string name="dondur_calistir">%1$d° döndür</string>
+    <string name="dondur_aci_baslik">Açı</string>
+    <string name="dondur_aci_derece">%1$d°</string>
+    <string name="dondur_saat_yonu_aciklama">Saat yönünde döndürür. 270° = saat yönünün tersine 90°.</string>
+    <string name="dondur_hangi_sayfalar_baslik">Hangi sayfalar</string>
+    <string name="dondur_tum_sayfalar">Tüm sayfalar</string>
+    <string name="dondur_tum_sayfalar_aciklama">%1$d sayfanın tamamı döndürülür.</string>
+    <string name="dondur_onizleme_aciklama">Önizleme kaynak belgeyi gösterir; döndürme çıktıya uygulanır.</string>
+    <string name="dondur_ek_bilgi">%1$dderece</string>
+    <string name="dondur_ozet_satiri">%1$d sayfa %2$d° döndürüldü</string>
+    <string name="dondur_not">Döndürme sayfanın /Rotate değerini değiştirir; metin ve görseller yeniden çizilmez.</string>
+
+    <!-- ================= sirala ================= -->
+    <string name="sirala_baslik">Sayfaları sırala</string>
+    <string name="sirala_bos_baslik">Sayfaları yeniden sıralayın</string>
+    <string name="sirala_bos_aciklama">Bir PDF seçin. Sayfaları basılı tutup sürükleyerek taşıyabilir, istemediklerinizi çıkarabilirsiniz.</string>
+    <string name="sirala_calistir">Yeni sırayla kaydet</string>
+    <string name="sirala_sayfa_sirasi_baslik">Sayfa sırası</string>
+    <string name="sirala_ipucu">"Bir sayfayı basılı tutup yana sürükleyin. Etiketler “yeni konum ← kaynak sayfa” anlamına gelir."</string>
+    <string name="sirala_konum_etiket">%1$d ← s.%2$d</string>
+    <string name="sirala_ters_cevir">Ters çevir</string>
+    <string name="sirala_sifirla">Sıfırla</string>
+    <string name="sirala_cikti_ozet">Çıktı: %1$d sayfa (kaynakta %2$d sayfa)</string>
+    <string name="sirala_hata_en_az_bir_sayfa">Çıktıda en az bir sayfa kalmalı.</string>
+    <string name="sirala_ozet_satiri">%1$d sayfa yeniden sıralandı</string>
+    <string name="sirala_ozet_cikarilan">" · %1$d sayfa çıkarıldı"</string>
+
+    <!-- ================= sikistir ================= -->
+    <string name="sikistir_baslik">Sıkıştır</string>
+    <string name="sikistir_bos_baslik">Dosya boyutunu küçültün</string>
+    <string name="sikistir_bos_aciklama">Bir PDF seçin. Gömülü görseller yeniden örneklenip daha düşük kalitede kodlanır; metin ve yazı tipleri değişmez.</string>
+    <string name="sikistir_calistir">Sıkıştır</string>
+    <string name="sikistir_kalite_baslik">Kalite</string>
+    <string name="sikistir_tahmin_hesaplaniyor">Tahmini boyut hesaplanıyor…</string>
+    <string name="sikistir_tahmin_yaklasik">"≈ %1$s"</string>
+    <string name="sikistir_su_anki_boyut">Şu anki boyut: %1$s · %2$d sayfa</string>
+    <string name="sikistir_tahmin_aciklama">Tahminler yaklaşıktır (≈). Gerçek sonuç işlemden sonra gösterilir.</string>
+    <string name="sikistir_gorsel_yok">Bu belgede sıkıştırılabilir görsel görünmüyor. Kazanç çok az olacak; orijinali kullanmak daha iyi olabilir.</string>
+    <string name="sikistir_kucculdu">%%%1$d küçüldü · %2$s → %3$s</string>
+    <string name="sikistir_degismedi">Boyut değişmedi · %1$s</string>
+    <string name="sikistir_not_yeniden_kodlandi">%1$d/%2$d görsel yeniden kodlandı.</string>
+    <string name="sikistir_not_gomulu_gorsel_yok">Belgede gömülü görsel yok. Sıkıştırma yalnızca görseller üzerinde çalışır; metin ve yazı tipi verisi ellenmez.</string>
+    <string name="sikistir_not_zaten_sikistirilmis">Görseller zaten iyi sıkıştırılmış olabilir. Orijinali kullanmanız daha iyi olur.</string>
+
+    <!-- ================= resimden (Resimden PDF) ================= -->
+    <string name="resimden_baslik">Resimden PDF</string>
+    <string name="resimden_bos_baslik">Görselleri tek PDF\'te toplayın</string>
+    <string name="resimden_bos_aciklama">Birden fazla fotoğraf ya da ekran görüntüsü seçin. Konum ve cihaz bilgisi (EXIF) çıktıya aktarılmaz.</string>
+    <string name="resimden_gorselleri_sec">Görselleri seç</string>
+    <string name="resimden_gorsel_ekle">Görsel ekle</string>
+    <string name="resimden_calistir">PDF oluştur</string>
+    <string name="resimden_sira_baslik">Sıra — %1$d görsel</string>
+    <string name="resimden_sira_ipucu">Bir görseli basılı tutup yana sürükleyerek taşıyın.</string>
+    <string name="resimden_ada_gore">Ada göre</string>
+    <string name="resimden_tarihe_gore">Çekilme tarihine göre</string>
+    <string name="resimden_duzen_baslik">Sayfa düzeni</string>
+    <string name="resimden_kenar_boslugu">Kenar boşluğu</string>
+    <string name="resimden_kenar_yok">Yok</string>
+    <string name="resimden_mm">%1$d mm</string>
+    <string name="resimden_cozunurluk">Çözünürlük</string>
+    <string name="resimden_dpi">%1$d DPI</string>
+    <string name="resimden_dpi_aciklama">Sayfa boyutu = piksel × 72 / DPI. Yüksek DPI, aynı görseli daha küçük bir sayfaya sığdırır.</string>
+    <string name="resimden_oran_korunur">En-boy oranı hiçbir düzende bozulmaz.</string>
+    <string name="resimden_kalite_baslik">Kalite</string>
+    <string name="resimden_tahmini_cikti">"Tahmini çıktı: ≈ %1$s · kaynak toplamı %2$s"</string>
+    <string name="resimden_gizlilik_baslik">Gizlilik</string>
+    <string name="resimden_gizlilik_govde">Görseller bitmap\'e çözülüp yeniden kodlanır. Fotoğraflarınızın EXIF verisi — GPS konumu, cihaz modeli, çekim tarihi — çıktıya geçmez. Belge meta verileri de temizlenir.</string>
+    <string name="resimden_hata_gorsel_acilamadi">Görsel açılamadı: %1$s. Biçim tanınmadı ya da dosya bozuk.</string>
+    <string name="resimden_siralandi_tarihe_gore">Çekilme tarihine göre sıralandı.</string>
+    <string name="resimden_hata_en_az_bir_gorsel">En az bir görsel seçin.</string>
+    <string name="resimden_ozet_satiri">%1$d sayfa · %2$s</string>
+    <string name="resimden_not_exif">Görsellerin EXIF verisi (GPS konumu, cihaz modeli, çekim tarihi) çıktıya aktarılmadı.</string>
+    <string name="resimden_not_atlanan_baslik">%1$d görsel atlandı:</string>
+    <string name="resimden_not_atlanan_satir">"   %1$s — %2$s"</string>
+    <string name="resimden_not_atlanan_daha_fazla">"   … ve %1$d tane daha"</string>
+    <string name="resimden_varsayilan_ad">resimler</string>
+    <string name="resimden_girdi_ozet">"%1$d görsel: "</string>
+
+    <!-- ================= filigran ================= -->
+    <string name="filigran_baslik">Filigran</string>
+    <string name="filigran_bos_baslik">Metin filigranı ekleyin</string>
+    <string name="filigran_bos_aciklama">Bir PDF seçin ve sayfalara çapraz bir metin ekleyin. Filigran içeriğin üstüne çizilir, altındaki metni gizlemez.</string>
+    <string name="filigran_calistir">Filigranı uygula</string>
+    <string name="filigran_metin_baslik">Metin</string>
+    <string name="filigran_metin_etiket">Filigran metni</string>
+    <string name="filigran_metin_aciklama">Türkçe karakterler desteklenir; cihazın yazı tipi gömülür.</string>
+    <string name="filigran_gorunum_baslik">Görünüm</string>
+    <string name="filigran_punto">Punto: %1$d</string>
+    <string name="filigran_saydamlik">Saydamlık: %%%1$d</string>
+    <string name="filigran_aci">Açı: %1$d°</string>
+    <string name="filigran_renk">Renk</string>
+    <string name="filigran_dose_baslik">Döşe</string>
+    <string name="filigran_dose_aciklama">Sayfayı baştan başa tekrarlayan filigranla kapla.</string>
+    <string name="filigran_hangi_sayfalar">Tüm sayfalar</string>
+    <string name="filigran_bilmeniz_gereken_baslik">Bilmeniz gereken</string>
+    <string name="filigran_bilmeniz_gereken_govde">Filigran bir gizleme aracı değildir. Altındaki metin PDF\'in içerik akışında kalır ve kopyalanabilir. Bilgiyi gerçekten kaldırmak için Karart aracını kullanın.</string>
+    <string name="filigran_varsayilan_metin">TASLAK</string>
+    <string name="filigran_ozet_satiri">%1$d sayfaya filigran eklendi</string>
+    <string name="filigran_not_gizleme_araci_degil">Filigran içeriğin üstüne çizilir; altındaki metin hâlâ seçilebilir. Bilgiyi gerçekten gizlemek için Karart aracını kullanın.</string>
+    <string name="filigran_not_yazi_tipi_dusmus">Cihazda gömülebilir Unicode yazı tipi bulunamadı. ğ/ş/ı harfleri g/s/i olarak yazıldı (%1$s).</string>
+
+    <!-- ================= karart ================= -->
+    <string name="karart_baslik">Karart</string>
+    <string name="karart_bos_baslik">Bilgiyi gerçekten kaldırın</string>
+    <string name="karart_bos_aciklama">Bir PDF seçin, sayfayı açın ve gizlemek istediğiniz alanı parmağınızla çizin. Seçilen alanlar sayfa görüntüsünden silinir.</string>
+    <string name="karart_calistir">Karart ve kaydet</string>
+    <string name="karart_sayfa_sec_baslik">Sayfa seç</string>
+    <string name="karart_sayfa_etiket_isaretli">%1$d ●%2$d</string>
+    <string name="karart_alan_ciz_baslik">Alan çiz — sayfa %1$d</string>
+    <string name="karart_alan_ciz_ipucu">Gizlemek istediğiniz yerin üzerinde parmağınızı sürükleyin.</string>
+    <string name="karart_geri_al">Geri al</string>
+    <string name="karart_sayfayi_temizle">Bu sayfayı temizle</string>
+    <string name="karart_tumu">Tümü</string>
+    <string name="karart_secilen_alan">Seçilen alan: %1$d · %2$d sayfada</string>
+    <string name="karart_cozunurluk_baslik">Çözünürlük</string>
+    <string name="karart_dpi">%1$d DPI</string>
+    <string name="karart_cozunurluk_aciklama">"En düşük %1$d DPI. Yüksek çözünürlük daha okunaklı sayfa, daha büyük dosya demektir. Tahmini artış: %2$s"</string>
+    <string name="karart_hata_en_az_bir_alan">Karartmak için önizleme üzerinde en az bir alan çizin.</string>
+    <string name="karart_nasil_calisir_baslik">Karartma nasıl çalışır</string>
+    <string name="karart_nasil_calisir_govde">Karartılan sayfa görüntüye çevrilir, metni artık seçilemez ve dosya boyutu artar.</string>
+    <string name="karart_nasil_calisir_detay">"• Sayfa %1$d DPI\'da görüntüye dönüştürülür, seçtiğiniz alanlar piksellerin üzerine opak siyah boyanır.\n• Böylece metin PDF\'in içeriğinden gerçekten kalkar — üstüne dikdörtgen çizmekten farkı budur.\n• Dokunmadığınız sayfalar aynen kalır; metinleri seçilebilir olmayı sürdürür (%2$d / %3$d sayfa karartılacak).\n• Belge meta verileri (yazar, başlık, üretici) temizlenir."</string>
+    <string name="karart_ozet_satiri">"%1$d sayfa karartıldı · "</string>
+    <string name="karart_ozet_devam">Karartılan sayfalar %1$d DPI görüntüye çevrildi. Bu sayfalarda metin artık seçilemez ve aranamaz.</string>
+    <string name="karart_not_diger_sayfalar">Diğer sayfalara dokunulmadı; metinleri seçilebilir kaldı.</string>
+    <string name="karart_not_meta_veri">Belge meta verileri (yazar, başlık, üretici) temizlendi.</string>
+
+    <!-- ================= ocr ================= -->
+    <string name="ocr_baslik">OCR — metin çıkar</string>
+    <string name="ocr_bos_baslik">Sayfadaki metni okuyun</string>
+    <string name="ocr_bos_aciklama">Bir PDF seçin. Sayfalar cihaz üstünde taranır; hiçbir görüntü dışarı gönderilmez.</string>
+    <string name="ocr_calistir">Metni çıkar</string>
+    <string name="ocr_sayfalar_baslik">Sayfalar</string>
+    <string name="ocr_sure_ipucu">Tarama sayfa başına birkaç saniye sürer; geniş aralıklarda sabırlı olun.</string>
+    <string name="ocr_cozunurluk_baslik">Tarama çözünürlüğü</string>
+    <string name="ocr_dpi">%1$d DPI</string>
+    <string name="ocr_dpi_ipucu">Küçük punto ya da soluk taramalarda 400 DPI belirgin fark yaratır.</string>
+    <string name="ocr_not_baslik">Not</string>
+    <string name="ocr_not_metin_katmani_var">Bu belgede zaten seçilebilir metin var. OCR bir tahmindir; metni doğrudan bir PDF okuyucudan kopyalamak daha doğru sonuç verir.</string>
+    <string name="ocr_cikan_metin_baslik">Çıkan metin</string>
+    <string name="ocr_panoya_kopyala">Panoya kopyala</string>
+    <string name="ocr_temizle">Temizle</string>
+    <string name="ocr_kaydetme_ipucu">".txt olarak kaydetmek için aşağıdaki sonuç kartındaki \"Kaydet\" düğmesini kullanın."</string>
+    <string name="ocr_kapsam_disi_baslik">Kapsam dışı</string>
+    <string name="ocr_kapsam_disi_govde">PDF\'e aranabilir metin katmanı gömme bu sürümde yok. Çıkan metin ayrı bir .txt dosyası olarak verilir.</string>
+    <string name="ocr_pano_etiketi">PDF Kutusu OCR</string>
+    <string name="ocr_metin_bulunamadi">Metin bulunamadı</string>
+    <string name="ocr_ozet_satiri">%1$d sayfadan %2$d karakter okundu</string>
+    <string name="ocr_not_txt">Metin .txt olarak kaydedildi; dışa aktarabilir ya da panoya kopyalayabilirsiniz.</string>
+    <string name="ocr_not_ml_kit">ML Kit\'in Latin alfabesi modeli Türkçe\'ye özel eğitilmedi; ı/i ve ş/s ayrımında hata payı vardır.</string>
+    <string name="ocr_not_bos_sayfa">Sayfa boş, çok düşük çözünürlüklü ya da el yazısı olabilir. DPI\'ı artırıp deneyin.</string>
+    <string name="ocr_not_zaten_metin_var">Bu belgede zaten seçilebilir metin var; OCR yerine doğrudan kopyalamak daha doğru sonuç verir.</string>
+
+    <!-- ================= gunluk ================= -->
+    <string name="gunluk_baslik">İşlem günlüğü</string>
+    <string name="gunluk_dokum_disa_aktar_cd">Dökümü dışa aktar</string>
+    <string name="gunluk_tumunu_temizle_cd">Tümünü temizle</string>
+    <string name="gunluk_bos_baslik">Günlük boş</string>
+    <string name="gunluk_bos_aciklama">Bir işlem yaptığınızda buraya kaydı düşer. Kayıtlar yalnızca bu cihazda durur ve düzenlenemez.</string>
+    <string name="gunluk_kayit_sayisi_govde">%1$d kayıt. Bu günlük salt-ekleme çalışır: tek tek kayıt silinemez, yalnızca tamamı temizlenebilir.</string>
+    <string name="gunluk_temizle_dialog_baslik">Günlüğün tamamı silinsin mi?</string>
+    <string name="gunluk_temizle_dialog_govde">%1$d kayıt kalıcı olarak silinecek. Üretilmiş dosyalar silinmez, yalnızca kayıtlar gider. Önce dökümü dışa aktarmak isteyebilirsiniz.</string>
+    <string name="gunluk_tumunu_sil">Tümünü sil</string>
+    <string name="gunluk_alan_girdi">Girdi</string>
+    <string name="gunluk_alan_girdi_sha">Girdi SHA-256</string>
+    <string name="gunluk_alan_cikti">Çıktı</string>
+    <string name="gunluk_alan_cikti_sha">Çıktı SHA-256</string>
+    <string name="gunluk_alan_sayfa_sayisi">Sayfa sayısı</string>
+    <string name="gunluk_silindi">%1$d kayıt silindi.</string>
+    <string name="gunluk_dosya_adi">islem-gunlugu__%1$s.txt</string>
+    <string name="gunluk_dokum_hazir">Döküm hazır: %1$s. Dışa aktarmak için kaydet.</string>
+    <string name="gunluk_dokum_olusturulamadi">Döküm oluşturulamadı.</string>
+    <string name="gunluk_disa_aktarildi">Günlük dışa aktarıldı.</string>
+    <string name="gunluk_disa_aktarma_basarisiz">Dışa aktarma başarısız.</string>
+
+    <!-- ================= dosyalar ================= -->
+    <string name="dosyalar_baslik">Üretilen dosyalar</string>
+    <string name="dosyalar_yenile_cd">Yenile</string>
+    <string name="dosyalar_tumunu_sil_cd">Tümünü sil</string>
+    <string name="dosyalar_yukleniyor">Yükleniyor…</string>
+    <string name="dosyalar_bos_baslik">Henüz dosya yok</string>
+    <string name="dosyalar_bos_aciklama">Bir araç çalıştırdığınızda çıktılar burada birikir. Dosyalar uygulamaya özel alanda durur; dışa aktarmadıkça başka uygulamalar göremez.</string>
+    <string name="dosyalar_klasore_aktar">Tümünü bir klasöre aktar (%1$d)</string>
+    <string name="dosyalar_boyut_zaman">%1$s · %2$s</string>
+    <string name="dosyalar_disa_aktar_cd">Dışa aktar</string>
+    <string name="dosyalar_gecici_temizle">Geçici çalışma dosyalarını temizle</string>
+    <string name="dosyalar_sil_dialog_baslik">Tüm çıktılar silinsin mi?</string>
+    <string name="dosyalar_sil_dialog_govde">%1$d dosya kalıcı olarak silinecek. Daha önce dışa aktardıklarınız etkilenmez.</string>
+    <string name="dosyalar_silindi">Silindi: %1$s</string>
+    <string name="dosyalar_silinemedi">Silinemedi: %1$s</string>
+    <string name="dosyalar_sayi_silindi">%1$d dosya silindi.</string>
+    <string name="dosyalar_disa_aktarildi">Dışa aktarıldı: %1$s</string>
+    <string name="dosyalar_disa_aktarma_basarisiz">Dışa aktarma başarısız: %1$s</string>
+    <string name="dosyalar_toplu_disa_aktarildi">%1$d dosya dışa aktarıldı</string>
+    <string name="dosyalar_toplu_basarisiz_ek">", %1$d başarısız"</string>
+    <string name="dosyalar_toplu_disa_aktarma_hata">Dışa aktarma başarısız: %1$s</string>
+    <string name="dosyalar_gecici_silindi">Geçici çalışma dosyaları silindi.</string>
+
+    <!-- ================= hakkinda ================= -->
+    <string name="hakkinda_baslik">Hakkında</string>
+    <string name="hakkinda_uygulama_adi">PDF Kutusu</string>
+    <string name="hakkinda_surum">Sürüm %1$s</string>
+    <string name="hakkinda_yapimci_etiket">Yapımcı</string>
+    <string name="hakkinda_yapimci_govde">Dokunmak tarayıcınızı açar. Uygulama hiçbir veri göndermez.</string>
+    <string name="hakkinda_risk_baslik">Düşük riskli kullanım uyarısı</string>
+    <string name="hakkinda_risk_govde">Bu araç kişisel ve düşük riskli kullanım içindir. Resmî, hukuki veya regüle belgeler için tek başına güvenmeyin. Çıktıyı her zaman açıp gözle kontrol edin.</string>
+    <string name="hakkinda_izinler_baslik">İzinler</string>
+    <string name="hakkinda_izinler_govde">"Bu uygulama HİÇBİR izin istemez. AndroidManifest.xml içinde INTERNET izni bulunmaz; bağımlılıkların eklemeye çalıştığı ağ izinleri manifest birleştirmede silinir ve derleme sırasında bir doğrulama görevi bunu kontrol eder.\n\nDosya seçme ve dışa aktarma Storage Access Framework (SAF) ile yapılır; SAF izin gerektirmez. MANAGE_EXTERNAL_STORAGE veya geniş depolama izni hiçbir koşulda istenmez."</string>
+    <string name="hakkinda_veri_baslik">Verileriniz nerede duruyor</string>
+    <string name="hakkinda_veri_govde">"• Seçtiğiniz dosyaların kopyaları: uygulama alanı / calisma\n• Üretilen çıktılar: uygulama alanı / cikti\n• Geçici dosyalar: önbellek / gecici\n• İşlem günlüğü: uygulama alanı / pdf_kutusu.db (SQLite)\n\nHepsi uygulamaya özeldir; başka uygulamalar okuyamaz. Bulut yedeği ve cihaz transferi kapalıdır. Uygulamayı kaldırdığınızda hepsi silinir."</string>
+    <string name="hakkinda_orijinal_baslik">Orijinal dosyalarınız</string>
+    <string name="hakkinda_orijinal_govde">"Kaynak dosyaya asla yazılmaz. Her işlem yeni bir çıktı dosyası üretir:\n\n&lt;orijinal-ad&gt;__&lt;islem&gt;__&lt;yyyyMMdd-HHmmss&gt;.pdf"</string>
+    <string name="hakkinda_exif_baslik">Görselleriniz ve EXIF</string>
+    <string name="hakkinda_exif_govde">Resimden PDF aracı, görselleri çözüp yeniden kodlar. Fotoğrafların taşıdığı EXIF verisi — GPS konumu, cihaz markası ve modeli, çekim tarihi — çıktıya aktarılmaz. Yön etiketi ise okunup uygulanır, böylece sayfalar yan yatmaz.</string>
+    <string name="hakkinda_kutuphane_baslik">Kullanılan kütüphaneler</string>
+    <string name="hakkinda_kutuphane_govde">"• PdfBox-Android (Apache 2.0) — PDF okuma/yazma\n• Android PdfRenderer (yerleşik) — sayfa görüntüleme ve rasterize\n• ML Kit Text Recognition v2, paketli model (Apache 2.0) — cihaz üstü OCR\n• AndroidX ExifInterface (Apache 2.0) — görsel yön etiketi\n• Jetpack Compose, Material 3, Room (Apache 2.0)\n\nAGPL lisanslı hiçbir bileşen kullanılmadı (MuPDF, iText vb. yok)."</string>
+    <string name="hakkinda_yazitipi_baslik">Paketli yazı tipi</string>
+    <string name="hakkinda_yazitipi_govde">"Filigran metni, uygulamayla birlikte gelen Noto Sans (statik sürüm) ile yazılır ve PDF\'e yalnızca kullanılan harfler gömülür. Böylece ğ, ş, ı gibi harfler her cihazda doğru çıkar.\n\nNoto Sans — Copyright The Noto Project Authors.\nSIL Open Font License 1.1 ile lisanslıdır.\nLisans metni: assets/fonts/OFL.txt"</string>
+    <string name="hakkinda_bilerek_yapilmayan_baslik">Bilerek yapılmayanlar</string>
+    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF dönüşümü: mobil cihazda güvenilir biçimde yapılamaz. Bunu Microsoft Office uygulamasından yapın.\n• İmza akışı (imzacı davet etme, onay kaydı): sunucu ve kimlik doğrulama gerektirir; çevrimdışı bir telefon uygulamasında anlamsızdır.\n• Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam: yok.\n• PDF\'e aranabilir OCR metin katmanı gömme: bu sürümün kapsamı dışında."</string>
+    <string name="hakkinda_dil_baslik">Dil / Language</string>
+    <string name="hakkinda_dil_sistem">Sistem</string>
+    <string name="hakkinda_dil_turkce">Türkçe</string>
+    <string name="hakkinda_dil_ingilizce">English</string>
+    <string name="hakkinda_dil_eski_cihaz_bilgi">Dil değiştirme Android 13 ve üzeri gerektirir — bu cihazda otomatik sistem dili kullanılıyor.</string>
+
+    <!-- ================= okuyucu ================= -->
+    <string name="okuyucu_varsayilan_baslik">Okuyucu</string>
+    <string name="okuyucu_belge_aciliyor">Belge açılıyor…</string>
+    <string name="okuyucu_baska_dosya_dene">Başka bir dosyayla deneyin.</string>
+    <string name="okuyucu_kapat">Kapat</string>
+    <string name="okuyucu_parola_korumali">Bu belge parola korumalı.</string>
+    <string name="okuyucu_sayfaya_git_dialog_baslik">Sayfaya git</string>
+    <string name="okuyucu_sayfa_numarasi_etiket">Sayfa numarası</string>
+    <string name="okuyucu_sayfa_araligi_supporting">%1$d – %2$d arası</string>
+    <string name="okuyucu_git">Git</string>
+    <string name="okuyucu_araclar_cd">Araçlar</string>
+    <string name="okuyucu_araclarda_ac">Araçlarda aç</string>
+    <string name="okuyucu_paylasima_hazirlanamadi">Belge paylaşıma hazırlanamadı.</string>
+    <string name="okuyucu_araclara_aktarilamadi">Belge araçlara aktarılamadı.</string>
+    <string name="okuyucu_uzaklastir_cd">Uzaklaştır</string>
+    <string name="okuyucu_yakinlastir_cd">Yakınlaştır</string>
+    <string name="okuyucu_belge_bozuk_cizilmedi">Belge açıldı ama çizilemedi.</string>
+    <string name="okuyucu_dosya_bozuk_olabilir">Dosya bozuk olabilir.</string>
+    <string name="okuyucu_parola_dogrulanamadi">Parola doğrulanamadı.</string>
 </resources>

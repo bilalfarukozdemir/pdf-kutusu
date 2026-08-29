@@ -348,7 +348,7 @@
     <string name="hakkinda_risk_baslik">Düşük riskli kullanım uyarısı</string>
     <string name="hakkinda_risk_govde">Bu araç kişisel ve düşük riskli kullanım içindir. Resmî, hukuki veya regüle belgeler için tek başına güvenmeyin. Çıktıyı her zaman açıp gözle kontrol edin.</string>
     <string name="hakkinda_izinler_baslik">İzinler</string>
-    <string name="hakkinda_izinler_govde">"Bu uygulama HİÇBİR izin istemez. AndroidManifest.xml içinde INTERNET izni bulunmaz; bağımlılıkların eklemeye çalıştığı ağ izinleri manifest birleştirmede silinir ve derleme sırasında bir doğrulama görevi bunu kontrol eder.\n\nDosya seçme ve dışa aktarma Storage Access Framework (SAF) ile yapılır; SAF izin gerektirmez. MANAGE_EXTERNAL_STORAGE veya geniş depolama izni hiçbir koşulda istenmez."</string>
+    <string name="hakkinda_izinler_govde">"Bu uygulama ağ (internet) izni istemez. AndroidManifest.xml içinde INTERNET izni bulunmaz; bağımlılıkların eklemeye çalıştığı ağ izinleri manifest birleştirmede silinir ve derleme sırasında bir doğrulama görevi bunu kontrol eder.\n\nTek istisna: isteğe bağlı \'Geliştiriciyi Destekle\' bağış özelliği için Google Play Billing kütüphanesinin eklediği com.android.vending.BILLING izni. Bu bir ağ izni değildir — Play Billing internete kendi çıkmaz, cihazınızdaki Play Store uygulamasıyla aygıt içi (IPC) konuşur; sistem bu izni size bir onay ekranında göstermez.\n\nDosya seçme ve dışa aktarma Storage Access Framework (SAF) ile yapılır; SAF izin gerektirmez. MANAGE_EXTERNAL_STORAGE veya geniş depolama izni hiçbir koşulda istenmez."</string>
     <string name="hakkinda_veri_baslik">Verileriniz nerede duruyor</string>
     <string name="hakkinda_veri_govde">"• Seçtiğiniz dosyaların kopyaları: uygulama alanı / calisma\n• Üretilen çıktılar: uygulama alanı / cikti\n• Geçici dosyalar: önbellek / gecici\n• İşlem günlüğü: uygulama alanı / pdf_kutusu.db (SQLite)\n\nHepsi uygulamaya özeldir; başka uygulamalar okuyamaz. Bulut yedeği ve cihaz transferi kapalıdır. Uygulamayı kaldırdığınızda hepsi silinir."</string>
     <string name="hakkinda_orijinal_baslik">Orijinal dosyalarınız</string>
@@ -360,12 +360,26 @@
     <string name="hakkinda_yazitipi_baslik">Paketli yazı tipi</string>
     <string name="hakkinda_yazitipi_govde">"Filigran metni, uygulamayla birlikte gelen Noto Sans (statik sürüm) ile yazılır ve PDF\'e yalnızca kullanılan harfler gömülür. Böylece ğ, ş, ı gibi harfler her cihazda doğru çıkar.\n\nNoto Sans — Copyright The Noto Project Authors.\nSIL Open Font License 1.1 ile lisanslıdır.\nLisans metni: assets/fonts/OFL.txt"</string>
     <string name="hakkinda_bilerek_yapilmayan_baslik">Bilerek yapılmayanlar</string>
-    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF dönüşümü: mobil cihazda güvenilir biçimde yapılamaz. Bunu Microsoft Office uygulamasından yapın.\n• İmza akışı (imzacı davet etme, onay kaydı): sunucu ve kimlik doğrulama gerektirir; çevrimdışı bir telefon uygulamasında anlamsızdır.\n• Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam: yok.\n• PDF\'e aranabilir OCR metin katmanı gömme: bu sürümün kapsamı dışında."</string>
+    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF dönüşümü: mobil cihazda güvenilir biçimde yapılamaz. Bunu Microsoft Office uygulamasından yapın.\n• İmza akışı (imzacı davet etme, onay kaydı): sunucu ve kimlik doğrulama gerektirir; çevrimdışı bir telefon uygulamasında anlamsızdır.\n• Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam: yok. Tek istisna: isteğe bağlı \'Geliştiriciyi Destekle\' bağışı — Google Play\'in kendi ödeme sistemini kullanır, kart bilgisi uygulamaya hiç ulaşmaz, istediğiniz kadar tekrar edebilirsiniz.\n• PDF\'e aranabilir OCR metin katmanı gömme: bu sürümün kapsamı dışında."</string>
     <string name="hakkinda_dil_baslik">Dil / Language</string>
     <string name="hakkinda_dil_sistem">Sistem</string>
     <string name="hakkinda_dil_turkce">Türkçe</string>
     <string name="hakkinda_dil_ingilizce">English</string>
     <string name="hakkinda_dil_eski_cihaz_bilgi">Dil değiştirme Android 13 ve üzeri gerektirir — bu cihazda otomatik sistem dili kullanılıyor.</string>
+
+    <!-- ================= hakkinda: bagis ================= -->
+    <string name="hakkinda_bagis_baslik">Geliştiriciyi Destekle</string>
+    <string name="hakkinda_bagis_govde">İsteğe bağlı, tekrarlanabilir bir bağış. Ödeme tamamen Google Play üzerinden yürütülür; kart veya kimlik bilgisi uygulamaya hiç ulaşmaz.</string>
+    <string name="hakkinda_bagis_kahve">Bir kahve ısmarla</string>
+    <string name="hakkinda_bagis_ogun">Bir öğün ısmarla</string>
+    <string name="hakkinda_bagis_comert">Cömert destek</string>
+    <string name="hakkinda_bagis_baglaniyor">Mağazaya bağlanılıyor…</string>
+    <string name="hakkinda_bagis_magaza_yok">Bu cihazda Google Play Store bulunamadı; bağış özelliği kullanılamıyor.</string>
+    <string name="hakkinda_bagis_satin_aliniyor">Satın alma işlemi sürüyor…</string>
+    <string name="hakkinda_bagis_tesekkur">Teşekkürler! Desteğiniz için minnettarız.</string>
+    <string name="hakkinda_bagis_hata">Bağış sırasında bir sorun oluştu: %1$s</string>
+    <string name="hakkinda_bagis_tamam">Tamam</string>
+    <string name="hakkinda_bagis_secenek_etiketi">%1$s — %2$s</string>
 
     <!-- ================= okuyucu ================= -->
     <string name="okuyucu_varsayilan_baslik">Okuyucu</string>

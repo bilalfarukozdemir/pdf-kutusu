@@ -44,6 +44,7 @@ import com.yerel.pdfkutusu.ui.ekran.ResimdenPdfEkrani
 import com.yerel.pdfkutusu.ui.ekran.Rotalar
 import com.yerel.pdfkutusu.ui.ekran.SikistirEkrani
 import com.yerel.pdfkutusu.ui.ekran.SiralaEkrani
+import com.yerel.pdfkutusu.ui.model.BagisViewModel
 import com.yerel.pdfkutusu.ui.model.BirlestirViewModel
 import com.yerel.pdfkutusu.ui.model.BolViewModel
 import com.yerel.pdfkutusu.ui.model.DondurViewModel
@@ -224,7 +225,7 @@ private fun UygulamaGezinmesi(gezinme: NavHostController, bagimliliklar: Bagimli
             DosyalarEkrani(araci(bagimliliklar) { DosyalarViewModel(it) }, geriDon)
         }
         composable(Rotalar.HAKKINDA) {
-            HakkindaEkrani(geriDon)
+            HakkindaEkrani(araci(bagimliliklar) { BagisViewModel(it) }, geriDon)
         }
     }
 }

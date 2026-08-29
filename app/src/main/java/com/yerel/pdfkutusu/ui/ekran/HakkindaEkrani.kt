@@ -1,6 +1,9 @@
 package com.yerel.pdfkutusu.ui.ekran
 
+import android.app.Activity
 import android.app.LocaleManager
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -32,12 +39,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yerel.pdfkutusu.R
+import com.yerel.pdfkutusu.satinalma.BagisDurumu
+import com.yerel.pdfkutusu.satinalma.BagisSecenegi
+import com.yerel.pdfkutusu.ui.model.BagisViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
 
 @Composable
-fun HakkindaEkrani(geriDon: () -> Unit) {
+fun HakkindaEkrani(gorunum: BagisViewModel, geriDon: () -> Unit) {
     AracIskeleti(baslik = stringResource(R.string.hakkinda_baslik), geriDon = geriDon) { doldurma ->
         Column(
             modifier = Modifier
@@ -48,6 +59,8 @@ fun HakkindaEkrani(geriDon: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UygulamaKimligi()
+
+            BagisBolumu(gorunum)
 
             DilSecimBolumu()
 
@@ -145,6 +158,118 @@ private fun UygulamaKimligi() {
             )
         }
     }
+}
+
+/**
+ * Bagis (destek) bolumu: fiyat basamaklarini gosterir, secime gore Google
+ * Play'in kendi satin alma ekranini acar.
+ *
+ * Composable, [BagisDurumu]'nu dinler ama BillingClient'i hic gormez -
+ * tum magaza etkilesimi [BagisViewModel] uzerinden [BagisYoneticisi]'nda
+ * yasar (bkz. satinalma/BagisYoneticisi.kt).
+ */
+@Composable
+private fun BagisBolumu(gorunum: BagisViewModel) {
+    val durum by gorunum.durum.collectAsStateWithLifecycle()
+    val activity = LocalContext.current.aktiviteyeCoz()
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.hakkinda_bagis_baslik), style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.height(6.dp))
+            Text(stringResource(R.string.hakkinda_bagis_govde), style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(12.dp))
+
+            when (val guncelDurum = durum) {
+                is BagisDurumu.Baglaniyor -> {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.hakkinda_bagis_baglaniyor),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                is BagisDurumu.MagazaYok -> {
+                    Text(
+                        stringResource(R.string.hakkinda_bagis_magaza_yok),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                is BagisDurumu.Hazir -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        guncelDurum.secenekler.forEach { secenek ->
+                            OutlinedButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    activity?.let { gorunum.satinAl(it, secenek.urunId) }
+                                },
+                            ) {
+                                Text(bagisEtiketi(secenek))
+                            }
+                        }
+                    }
+                }
+
+                is BagisDurumu.SatinAliniyor -> {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.hakkinda_bagis_satin_aliniyor),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                is BagisDurumu.Tesekkur -> {
+                    Text(
+                        stringResource(R.string.hakkinda_bagis_tesekkur),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(onClick = { gorunum.mesajiKapat() }) {
+                        Text(stringResource(R.string.hakkinda_bagis_tamam))
+                    }
+                }
+
+                is BagisDurumu.Hata -> {
+                    Text(
+                        stringResource(R.string.hakkinda_bagis_hata, guncelDurum.mesaj),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(onClick = { gorunum.mesajiKapat() }) {
+                        Text(stringResource(R.string.hakkinda_bagis_tamam))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun bagisEtiketi(secenek: BagisSecenegi): String {
+    val ad = when (secenek.urunId) {
+        "destek_kahve" -> stringResource(R.string.hakkinda_bagis_kahve)
+        "destek_ogun" -> stringResource(R.string.hakkinda_bagis_ogun)
+        "destek_comert" -> stringResource(R.string.hakkinda_bagis_comert)
+        else -> secenek.urunId
+    }
+    return stringResource(R.string.hakkinda_bagis_secenek_etiketi, ad, secenek.fiyatMetni)
+}
+
+/** ContextWrapper zincirini cozup en yakin Activity'yi bulur (Compose Context'i saran katmanlar icin). */
+private fun Context.aktiviteyeCoz(): Activity? {
+    var guncelBaglam = this
+    while (guncelBaglam is ContextWrapper) {
+        if (guncelBaglam is Activity) return guncelBaglam
+        guncelBaglam = guncelBaglam.baseContext
+    }
+    return null
 }
 
 /**

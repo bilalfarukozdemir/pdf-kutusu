@@ -348,7 +348,7 @@
     <string name="hakkinda_risk_baslik">Low-risk use warning</string>
     <string name="hakkinda_risk_govde">This tool is for personal, low-risk use. Don\'t rely on it alone for official, legal, or regulated documents. Always open the output and check it visually.</string>
     <string name="hakkinda_izinler_baslik">Permissions</string>
-    <string name="hakkinda_izinler_govde">"This app requests NO permissions at all. AndroidManifest.xml contains no INTERNET permission; network permissions that dependencies try to add are stripped out during manifest merging, and a build-time verification task checks this.\n\nFile picking and export use the Storage Access Framework (SAF), which needs no permission. MANAGE_EXTERNAL_STORAGE or broad storage access is never requested."</string>
+    <string name="hakkinda_izinler_govde">"This app requests no network (internet) permission. AndroidManifest.xml contains no INTERNET permission; network permissions that dependencies try to add are stripped out during manifest merging, and a build-time verification task checks this.\n\nOne exception: the optional \'Support the developer\' donation feature adds the com.android.vending.BILLING permission via the Google Play Billing library. This is not a network permission — Play Billing never talks to the internet directly, it communicates on-device (IPC) with the Play Store app; the system never shows this permission to you on a consent screen.\n\nFile picking and export use the Storage Access Framework (SAF), which needs no permission. MANAGE_EXTERNAL_STORAGE or broad storage access is never requested."</string>
     <string name="hakkinda_veri_baslik">Where your data lives</string>
     <string name="hakkinda_veri_govde">"• Copies of files you choose: app storage / calisma\n• Generated outputs: app storage / cikti\n• Temporary files: cache / gecici\n• Operation log: app storage / pdf_kutusu.db (SQLite)\n\nAll of it is app-private; other apps can\'t read it. Cloud backup and device transfer are disabled. Uninstalling the app deletes all of it."</string>
     <string name="hakkinda_orijinal_baslik">Your original files</string>
@@ -360,12 +360,26 @@
     <string name="hakkinda_yazitipi_baslik">Bundled font</string>
     <string name="hakkinda_yazitipi_govde">"Watermark text is drawn with Noto Sans (static version), bundled with the app; only the characters actually used are embedded into the PDF. This keeps letters like ğ, ş, ı rendering correctly on every device.\n\nNoto Sans — Copyright The Noto Project Authors.\nLicensed under the SIL Open Font License 1.1.\nLicense text: assets/fonts/OFL.txt"</string>
     <string name="hakkinda_bilerek_yapilmayan_baslik">Deliberately not included</string>
-    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF conversion: can\'t be done reliably on a mobile device. Use the Microsoft Office app for that.\n• Signature flow (inviting signers, approval records): requires a server and authentication; meaningless in an offline phone app.\n• Accounts, subscriptions, telemetry, analytics, cloud sync, ads: none.\n• Embedding a searchable OCR text layer into the PDF: out of scope for this version."</string>
+    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF conversion: can\'t be done reliably on a mobile device. Use the Microsoft Office app for that.\n• Signature flow (inviting signers, approval records): requires a server and authentication; meaningless in an offline phone app.\n• Accounts, subscriptions, telemetry, analytics, cloud sync, ads: none. One exception: the optional \'Support the developer\' donation — it uses Google Play\'s own payment system, card details never reach the app, and you can repeat it as many times as you like.\n• Embedding a searchable OCR text layer into the PDF: out of scope for this version."</string>
     <string name="hakkinda_dil_baslik">Dil / Language</string>
     <string name="hakkinda_dil_sistem">System</string>
     <string name="hakkinda_dil_turkce">Türkçe</string>
     <string name="hakkinda_dil_ingilizce">English</string>
     <string name="hakkinda_dil_eski_cihaz_bilgi">Changing the language requires Android 13 or newer — this device uses the automatic system language.</string>
+
+    <!-- ================= about: donation ================= -->
+    <string name="hakkinda_bagis_baslik">Support the Developer</string>
+    <string name="hakkinda_bagis_govde">An optional, repeatable donation. Payment is handled entirely by Google Play; card or identity details never reach the app.</string>
+    <string name="hakkinda_bagis_kahve">Buy a coffee</string>
+    <string name="hakkinda_bagis_ogun">Buy a meal</string>
+    <string name="hakkinda_bagis_comert">Generous support</string>
+    <string name="hakkinda_bagis_baglaniyor">Connecting to the store…</string>
+    <string name="hakkinda_bagis_magaza_yok">Google Play Store wasn\'t found on this device; the donation feature isn\'t available.</string>
+    <string name="hakkinda_bagis_satin_aliniyor">Purchase in progress…</string>
+    <string name="hakkinda_bagis_tesekkur">Thank you! We really appreciate your support.</string>
+    <string name="hakkinda_bagis_hata">Something went wrong with the donation: %1$s</string>
+    <string name="hakkinda_bagis_tamam">OK</string>
+    <string name="hakkinda_bagis_secenek_etiketi">%1$s — %2$s</string>
 
     <!-- ================= reader ================= -->
     <string name="okuyucu_varsayilan_baslik">Reader</string>

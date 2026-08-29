@@ -242,6 +242,25 @@ abstract class AgIzniDenetimi : DefaultTask() {
             Regex("""^[\w.]+\.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION$"""),
         )
 
+        /**
+         * Bilincli olarak kabul edilmis izinler - IZIN_VERILEN_DESENLER'den
+         * FARKLI bir kategori. IZIN_VERILEN_DESENLER "signature seviyesinde,
+         * kullaniciya gorunmez, hicbir kaynaga erisim vermez" izinler icindir
+         * (androidx.core'un kendi kendine kullandigi izin gibi). Buradakiler
+         * onun tersi: kullaniciya gorunen, gercek bir yetenek veren izinler -
+         * ama proje sahibi tarafindan bilerek, gerekcesiyle kabul edilmisler.
+         *
+         * com.android.vending.BILLING: Google Play Billing kutuphanesinin
+         * kendi manifestinden ekledigi izin. Bir AG izni DEGILDIR - Billing
+         * internete dogrudan cikmaz, cihazdaki Play Store uygulamasiyla
+         * IPC/AIDL uzerinden konusur. Kullaniciya izin ekraninda GOSTERILMEZ
+         * (normal/otomatik izin sinifi). "Bagisla" ozelligi icin gerekli;
+         * PDF Kutusu'nun "sifir ag izni" iddiasini bozmaz (bkz. PRIVACY.md).
+         */
+        val BILINCLI_KABUL_EDILEN = listOf(
+            "com.android.vending.BILLING",
+        )
+
         val YASAKLI_IZINLER = listOf(
             "android.permission.INTERNET",
             "android.permission.ACCESS_NETWORK_STATE",
@@ -266,19 +285,27 @@ abstract class AgIzniDenetimi : DefaultTask() {
         ).findAll(metin).map { it.groupValues[1] }.toSortedSet()
 
         val beklenen = talepEdilen.filter { izin -> IZIN_VERILEN_DESENLER.any { it.matches(izin) } }
-        val kalanlar = talepEdilen - beklenen.toSet()
+        val kabulEdilen = talepEdilen.filter { it in BILINCLI_KABUL_EDILEN }
+        val kalanlar = talepEdilen - beklenen.toSet() - kabulEdilen.toSet()
         val agirIhlaller = kalanlar.filter { it in YASAKLI_IZINLER }
 
         val raporMetni = buildString {
             appendLine("Birlesmis manifest: ${manifest.absolutePath}")
             appendLine()
-            appendLine("Kullaniciya gorunen / yetenek veren izin: ${kalanlar.size}")
+            appendLine("Kullaniciya gorunen / yetenek veren izin (ihlal): ${kalanlar.size}")
             if (kalanlar.isEmpty()) {
                 appendLine("  YOK — hedeflenen durum.")
             } else {
                 kalanlar.forEach {
                     appendLine("  - $it" + if (it in YASAKLI_IZINLER) "   <== YASAKLI" else "")
                 }
+            }
+            appendLine()
+            appendLine("Bilincli kabul edilen izinler: ${kabulEdilen.size}")
+            if (kabulEdilen.isEmpty()) {
+                appendLine("  YOK.")
+            } else {
+                kabulEdilen.forEach { appendLine("  - $it (BILINCLI_KABUL_EDILEN listesinde, gerekcesi app/build.gradle.kts icinde)") }
             }
             appendLine()
             appendLine("Beklenen uygulama-ici imza izinleri: ${beklenen.size}")
@@ -290,8 +317,9 @@ abstract class AgIzniDenetimi : DefaultTask() {
         raporDosyasi.parentFile.mkdirs()
         raporDosyasi.writeText(raporMetni)
 
-        // Hedef SIFIR izin. Yeni bir bagimlilik zararsiz gorunen bir izin
-        // eklese bile burada duruyoruz: karar bilincli verilmeli.
+        // Hedef SIFIR IZIN, BILINCLI_KABUL_EDILEN'de olmayan her izin icin
+        // gecerlidir. Yeni bir bagimlilik zararsiz gorunen bir izin eklese
+        // bile burada duruyoruz: karar bilincli verilmeli.
         if (kalanlar.isNotEmpty()) {
             throw GradleException(
                 buildString {

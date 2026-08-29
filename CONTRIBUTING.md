@@ -10,22 +10,34 @@ ve **nelerin tartışmaya kapalı olduğunu** anlatır.
 Bu projenin varlık sebebi bunlar. Bunları gevşeten PR'lar, ne kadar iyi
 yazılmış olursa olsun kapatılır.
 
-### 1. `INTERNET` izni eklenmez
+### 1. Ağ ve yetenek izni eklenmez
 
-`app/src/main/AndroidManifest.xml` içinde hiçbir ağ izni **talep edilmez**.
-Oradaki `INTERNET` satırları `tools:node="remove"` direktifidir — bağımlılıkların
-eklediği izinleri siler.
+`app/src/main/AndroidManifest.xml` içinde hiçbir **ağ** izni **talep edilmez**
+(`INTERNET`, `ACCESS_NETWORK_STATE` vb.). Oradaki satırlar `tools:node="remove"`
+direktifidir — bağımlılıkların eklediği izinleri siler.
 
 `app/build.gradle.kts` içindeki `AgIzniDenetimi` görevi, birleşmiş manifestte
-yetenek veren tek bir izin bulursa derlemeyi durdurur ve `assembleDebug` bu
+yetenek veren bir izin bulursa derlemeyi durdurur ve `assembleDebug` bu
 göreve bağlıdır.
 
 Bir bağımlılık izin enjekte ediyorsa çözüm **izin listesine istisna eklemek
 değildir**. Önce issue açın; ya bağımlılığı değiştiririz ya da kaldırırız.
-`IZIN_VERILEN_DESENLER` listesindeki tek istisna (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`)
-androidx.core'un eklediği, uygulamanın kendi paket adıyla isimlendirilmiş
-`signature` seviyesindeki izindir; kullanıcıya gösterilmez ve hiçbir kaynağa
-erişim vermez.
+
+Bu kuralın istisnaları iki ayrı listede, ayrı gerekçelerle yaşar — birbirine
+karıştırılmaz:
+
+- `IZIN_VERILEN_DESENLER`: `signature` seviyesinde, kullanıcıya hiç
+  gösterilmeyen, hiçbir kaynağa erişim vermeyen izinler. Tek örneği
+  androidx.core'un eklediği, uygulamanın kendi paket adıyla isimlendirilmiş
+  `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
+- `BILINCLI_KABUL_EDILEN`: proje sahibinin **bilerek, gerekçesiyle** kabul
+  ettiği, gerçek bir yetenek veren istisnalar. Tek örneği
+  `com.android.vending.BILLING` (Google Play Billing — "bağış" özelliği
+  için gerekli; internete kendi çıkmaz, cihazdaki Play Store uygulamasıyla
+  IPC üzerinden konuşur, kullanıcıya izin ekranında gösterilmez). Bu liste
+  "artık her yeni izin buraya eklenebilir" anlamına gelmez — her yeni giriş
+  ayrı bir tartışma ve gerekçe gerektirir; varsayılan hâlâ reddir. Yasaklı
+  ağ/depolama izinleri (`YASAKLI_IZINLER`) bu listeye hiçbir koşulda giremez.
 
 ### 2. Karartma yalnızca rasterize ederek yapılır
 

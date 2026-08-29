@@ -74,12 +74,14 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.okuyucu.OkuyucuMotoru
 import com.yerel.pdfkutusu.okuyucu.SayfaYerlesimBilgisi
 import com.yerel.pdfkutusu.ui.model.OkuyucuDurumu
@@ -150,7 +152,7 @@ fun OkuyucuEkrani(
         onDispose { gorunumNesnesi.keepScreenOn = false }
     }
 
-    val baslik = (durum as? OkuyucuDurumu.Hazir)?.gorunenAd ?: "Okuyucu"
+    val baslik = (durum as? OkuyucuDurumu.Hazir)?.gorunenAd ?: stringResource(R.string.okuyucu_varsayilan_baslik)
 
     AracIskeleti(
         baslik = baslik,
@@ -169,7 +171,7 @@ fun OkuyucuEkrani(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(16.dp))
-                            Text("Belge açılıyor…", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.okuyucu_belge_aciliyor), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
 
@@ -177,15 +179,15 @@ fun OkuyucuEkrani(
                     BosDurum(
                         simge = Icons.Default.ErrorOutline,
                         baslik = anlik.mesaj,
-                        aciklama = anlik.oneri ?: "Başka bir dosyayla deneyin.",
-                        eylemEtiketi = "Kapat",
+                        aciklama = anlik.oneri ?: stringResource(R.string.okuyucu_baska_dosya_dene),
+                        eylemEtiketi = stringResource(R.string.okuyucu_kapat),
                         eylem = geriDon,
                     )
 
                 is OkuyucuDurumu.ParolaGerekli ->
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
-                            "Bu belge parola korumalı.",
+                            stringResource(R.string.okuyucu_parola_korumali),
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
                         )
@@ -516,7 +518,7 @@ private fun SayfaGorunumu(
         if (anlik != null && !anlik.isRecycled) {
             Image(
                 bitmap = anlik.asImageBitmap(),
-                contentDescription = "Sayfa ${indeks + 1}",
+                contentDescription = stringResource(R.string.ortak_sayfa_cd, indeks + 1),
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.fillMaxSize(),
             )
@@ -572,13 +574,13 @@ private fun AltCubuk(
                 onClick = { yakinlastirmaDegistir(yakinlastirma - 0.5f) },
                 enabled = yakinlastirma > ASGARI_YAKINLASTIRMA,
             ) {
-                Icon(Icons.Default.ZoomOut, contentDescription = "Uzaklaştır")
+                Icon(Icons.Default.ZoomOut, contentDescription = stringResource(R.string.okuyucu_uzaklastir_cd))
             }
             IconButton(
                 onClick = { yakinlastirmaDegistir(yakinlastirma + 0.5f) },
                 enabled = yakinlastirma < AZAMI_YAKINLASTIRMA,
             ) {
-                Icon(Icons.Default.ZoomIn, contentDescription = "Yakınlaştır")
+                Icon(Icons.Default.ZoomIn, contentDescription = stringResource(R.string.okuyucu_yakinlastir_cd))
             }
         }
     }
@@ -606,15 +608,15 @@ private fun SayfayaGitDiyalogu(
 
     AlertDialog(
         onDismissRequest = kapat,
-        title = { Text("Sayfaya git") },
+        title = { Text(stringResource(R.string.okuyucu_sayfaya_git_dialog_baslik)) },
         text = {
             OutlinedTextField(
                 value = metin,
                 onValueChange = { yeni -> metin = yeni.filter { it.isDigit() }.take(6) },
                 singleLine = true,
                 isError = metin.isNotEmpty() && !gecerli,
-                label = { Text("Sayfa numarası") },
-                supportingText = { Text("1 – $toplamSayfa arası") },
+                label = { Text(stringResource(R.string.okuyucu_sayfa_numarasi_etiket)) },
+                supportingText = { Text(stringResource(R.string.okuyucu_sayfa_araligi_supporting, 1, toplamSayfa)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Go,
@@ -624,9 +626,9 @@ private fun SayfayaGitDiyalogu(
             )
         },
         confirmButton = {
-            TextButton(onClick = { git(numara!!) }, enabled = gecerli) { Text("Git") }
+            TextButton(onClick = { git(numara!!) }, enabled = gecerli) { Text(stringResource(R.string.okuyucu_git)) }
         },
-        dismissButton = { TextButton(onClick = kapat) { Text("Vazgeç") } },
+        dismissButton = { TextButton(onClick = kapat) { Text(stringResource(R.string.ortak_vazgec)) } },
     )
 }
 
@@ -639,6 +641,8 @@ private fun OkuyucuEylemleri(
     var menuAcik by remember { mutableStateOf(false) }
     var mesgul by remember { mutableStateOf(false) }
     val kapsam = rememberCoroutineScope()
+    val paylasimHazirlanamadiMesaji = stringResource(R.string.okuyucu_paylasima_hazirlanamadi)
+    val araclaraAktarilamadiMesaji = stringResource(R.string.okuyucu_araclara_aktarilamadi)
 
     IconButton(
         enabled = !mesgul,
@@ -650,21 +654,21 @@ private fun OkuyucuEylemleri(
                 if (dosya != null) {
                     paylas(dosya)
                 } else {
-                    gorunum.mesajGoster("Belge paylaşıma hazırlanamadı.")
+                    gorunum.mesajGoster(paylasimHazirlanamadiMesaji)
                 }
             }
         },
     ) {
-        Icon(Icons.Default.Share, contentDescription = "Paylaş")
+        Icon(Icons.Default.Share, contentDescription = stringResource(R.string.ortak_paylas))
     }
 
     IconButton(enabled = !mesgul, onClick = { menuAcik = true }) {
-        Icon(Icons.Default.Build, contentDescription = "Araçlar")
+        Icon(Icons.Default.Build, contentDescription = stringResource(R.string.okuyucu_araclar_cd))
     }
 
     DropdownMenu(expanded = menuAcik, onDismissRequest = { menuAcik = false }) {
         DropdownMenuItem(
-            text = { Text("Araçlarda aç") },
+            text = { Text(stringResource(R.string.okuyucu_araclarda_ac)) },
             onClick = {
                 menuAcik = false
                 mesgul = true
@@ -674,7 +678,7 @@ private fun OkuyucuEylemleri(
                     if (dosya != null) {
                         araclardaAc(dosya)
                     } else {
-                        gorunum.mesajGoster("Belge araçlara aktarılamadı.")
+                        gorunum.mesajGoster(araclaraAktarilamadiMesaji)
                     }
                 }
             },

@@ -5,6 +5,7 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.pdf.BelgeErisimi
 import java.io.File
@@ -60,24 +61,27 @@ object BelgeKaynagi {
             yerelDosyaElde(baglam, uri, gorunenAd, gecicilerDizini)
         } catch (hata: SecurityException) {
             return@withContext Sonuc.Hata(
-                "Bu dosyaya erişim izni yok.",
-                "Dosyayı gönderen uygulama izni geri çekmiş olabilir. Yeniden açmayı deneyin.",
+                baglam.getString(R.string.okuyucu_erisim_izni_yok),
+                baglam.getString(R.string.okuyucu_erisim_izni_oneri),
             )
         } catch (hata: FileNotFoundException) {
             return@withContext Sonuc.Hata(
-                "Dosya bulunamadı.",
-                "Taşınmış ya da silinmiş olabilir.",
+                baglam.getString(R.string.okuyucu_dosya_bulunamadi),
+                baglam.getString(R.string.okuyucu_dosya_bulunamadi_oneri),
             )
         } catch (hata: Exception) {
             return@withContext Sonuc.Hata(
-                "Dosya açılamadı.",
+                baglam.getString(R.string.okuyucu_dosya_acilamadi),
                 hata.message?.take(120),
             )
         }
 
         if (yerel.dosya.length() == 0L) {
             yerel.temizle()
-            return@withContext Sonuc.Hata("Dosya boş.", "İçeriği olmayan bir dosya seçilmiş.")
+            return@withContext Sonuc.Hata(
+                baglam.getString(R.string.okuyucu_dosya_bos),
+                baglam.getString(R.string.okuyucu_dosya_bos_oneri),
+            )
         }
 
         // 2) PdfRenderer gercekten acabiliyor mu? Asil dogrulama bu.
@@ -95,8 +99,8 @@ object BelgeKaynagi {
                 } catch (hata: Exception) {
                     yerel.temizle()
                     return@withContext Sonuc.Hata(
-                        "Parola doğrulanamadı.",
-                        "Büyük/küçük harfe dikkat edip tekrar deneyin.",
+                        baglam.getString(R.string.okuyucu_parola_dogrulanamadi),
+                        baglam.getString(R.string.okuyucu_parola_oneri),
                     )
                 }
                 yerel.temizle()
@@ -104,15 +108,18 @@ object BelgeKaynagi {
                     Sonuc.Hazir(cozulmus, gorunenAd, gecici = true, sifresiCozuldu = true)
                 } else {
                     runCatching { cozulmus.delete() }
-                    Sonuc.Hata("Belge çözüldü ama açılamadı.", "Dosya bozuk olabilir.")
+                    Sonuc.Hata(
+                        baglam.getString(R.string.okuyucu_belge_cozuldu_acilamadi),
+                        baglam.getString(R.string.okuyucu_dosya_bozuk_olabilir),
+                    )
                 }
             }
 
             AcmaDenemesi.BOZUK -> {
                 yerel.temizle()
                 return@withContext Sonuc.Hata(
-                    "Bu dosya açılamıyor.",
-                    "Geçerli bir PDF olmayabilir ya da bozuk olabilir.",
+                    baglam.getString(R.string.okuyucu_dosya_acilamiyor),
+                    baglam.getString(R.string.okuyucu_dosya_acilamiyor_oneri),
                 )
             }
         }
@@ -169,7 +176,7 @@ object BelgeKaynagi {
         if (!gecicilerDizini.exists()) gecicilerDizini.mkdirs()
         val hedef = File(gecicilerDizini, "okunan_${System.nanoTime()}_$gorunenAd")
         baglam.contentResolver.openInputStream(uri).use { girdi ->
-            requireNotNull(girdi) { "Akış açılamadı" }
+            requireNotNull(girdi) { baglam.getString(R.string.okuyucu_akis_acilamadi) }
             hedef.outputStream().use { cikti -> girdi.copyTo(cikti, 256 * 1024) }
         }
         return YerelDosya(hedef, gecici = true)

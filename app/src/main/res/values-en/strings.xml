@@ -386,4 +386,16 @@
     <string name="okuyucu_belge_bozuk_cizilmedi">Document opened but couldn\'t be rendered.</string>
     <string name="okuyucu_dosya_bozuk_olabilir">The file may be corrupted.</string>
     <string name="okuyucu_parola_dogrulanamadi">Password could not be verified.</string>
+    <string name="okuyucu_erisim_izni_yok">No access permission for this file.</string>
+    <string name="okuyucu_erisim_izni_oneri">The app that sent this file may have revoked access. Try opening it again.</string>
+    <string name="okuyucu_dosya_bulunamadi">File not found.</string>
+    <string name="okuyucu_dosya_bulunamadi_oneri">It may have been moved or deleted.</string>
+    <string name="okuyucu_dosya_acilamadi">Could not open the file.</string>
+    <string name="okuyucu_dosya_bos">The file is empty.</string>
+    <string name="okuyucu_dosya_bos_oneri">The selected file has no content.</string>
+    <string name="okuyucu_parola_oneri">Check upper/lower case and try again.</string>
+    <string name="okuyucu_belge_cozuldu_acilamadi">The document was decrypted but couldn\'t be opened.</string>
+    <string name="okuyucu_dosya_acilamiyor">This file can\'t be opened.</string>
+    <string name="okuyucu_dosya_acilamiyor_oneri">It may not be a valid PDF, or it may be corrupted.</string>
+    <string name="okuyucu_akis_acilamadi">Could not open the stream</string>
 </resources>

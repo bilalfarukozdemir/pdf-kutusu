@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.okuyucu.BelgeKaynagi
 import com.yerel.pdfkutusu.okuyucu.OkuyucuMotoru
@@ -76,7 +77,11 @@ class OkuyucuViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
                 is BelgeKaynagi.Sonuc.ParolaGerekli ->
                     _durum.value = OkuyucuDurumu.ParolaGerekli(
                         gorunenAd = sonuc.gorunenAd,
-                        hataMesaji = if (parola.isNullOrEmpty()) null else "Parola doğrulanamadı.",
+                        hataMesaji = if (parola.isNullOrEmpty()) {
+                            null
+                        } else {
+                            bagimliliklar.uygulamaBaglami.getString(R.string.okuyucu_parola_dogrulanamadi)
+                        },
                     )
 
                 is BelgeKaynagi.Sonuc.Hata ->
@@ -89,8 +94,8 @@ class OkuyucuViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
                     if (yeniMotor == null) {
                         if (sonuc.gecici) runCatching { sonuc.dosya.delete() }
                         _durum.value = OkuyucuDurumu.Hata(
-                            "Belge açıldı ama çizilemedi.",
-                            "Dosya bozuk olabilir.",
+                            bagimliliklar.uygulamaBaglami.getString(R.string.okuyucu_belge_bozuk_cizilmedi),
+                            bagimliliklar.uygulamaBaglami.getString(R.string.okuyucu_dosya_bozuk_olabilir),
                         )
                     } else {
                         motor = yeniMotor

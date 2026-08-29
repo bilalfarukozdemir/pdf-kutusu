@@ -386,4 +386,16 @@
     <string name="okuyucu_belge_bozuk_cizilmedi">Belge açıldı ama çizilemedi.</string>
     <string name="okuyucu_dosya_bozuk_olabilir">Dosya bozuk olabilir.</string>
     <string name="okuyucu_parola_dogrulanamadi">Parola doğrulanamadı.</string>
+    <string name="okuyucu_erisim_izni_yok">Bu dosyaya erişim izni yok.</string>
+    <string name="okuyucu_erisim_izni_oneri">Dosyayı gönderen uygulama izni geri çekmiş olabilir. Yeniden açmayı deneyin.</string>
+    <string name="okuyucu_dosya_bulunamadi">Dosya bulunamadı.</string>
+    <string name="okuyucu_dosya_bulunamadi_oneri">Taşınmış ya da silinmiş olabilir.</string>
+    <string name="okuyucu_dosya_acilamadi">Dosya açılamadı.</string>
+    <string name="okuyucu_dosya_bos">Dosya boş.</string>
+    <string name="okuyucu_dosya_bos_oneri">İçeriği olmayan bir dosya seçilmiş.</string>
+    <string name="okuyucu_parola_oneri">Büyük/küçük harfe dikkat edip tekrar deneyin.</string>
+    <string name="okuyucu_belge_cozuldu_acilamadi">Belge çözüldü ama açılamadı.</string>
+    <string name="okuyucu_dosya_acilamiyor">Bu dosya açılamıyor.</string>
+    <string name="okuyucu_dosya_acilamiyor_oneri">Geçerli bir PDF olmayabilir ya da bozuk olabilir.</string>
+    <string name="okuyucu_akis_acilamadi">Akış açılamadı</string>
 </resources>

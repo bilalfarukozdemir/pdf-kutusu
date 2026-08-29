@@ -398,4 +398,17 @@
     <string name="okuyucu_dosya_acilamiyor">Bu dosya açılamıyor.</string>
     <string name="okuyucu_dosya_acilamiyor_oneri">Geçerli bir PDF olmayabilir ya da bozuk olabilir.</string>
     <string name="okuyucu_akis_acilamadi">Akış açılamadı</string>
+    <string name="calisma_dosya_acilamadi">Dosya açılamadı: %1$s</string>
+    <string name="calisma_dosya_kopyalanamadi">Dosya kopyalanamadı: %1$s</string>
+    <string name="calisma_dosya_bos">Dosya boş görünüyor: %1$s</string>
+    <string name="calisma_dosya_adi_bos">Dosya adı boş olamaz.</string>
+    <string name="calisma_ayni_adda_dosya_var">Bu adda bir dosya zaten var: %1$s</string>
+    <string name="calisma_yeniden_adlandirilamadi">Dosya yeniden adlandırılamadı.</string>
+    <string name="calisma_hedefe_yazilamadi">Hedef konuma yazılamadı.</string>
+    <string name="calisma_disa_aktarma_basarisiz">Dışa aktarma başarısız: %1$s</string>
+    <string name="calisma_klasor_acilamadi">Klasör açılamadı.</string>
+    <string name="calisma_klasore_yazma_izni_yok">Seçilen klasöre yazma izni yok.</string>
+    <string name="calisma_hedef_dosya_olusturulamadi">Hedef dosya oluşturulamadı</string>
+    <string name="calisma_hedef_akis_acilamadi">Hedef akış açılamadı</string>
+    <string name="calisma_bilinmeyen_hata">bilinmeyen hata</string>
 </resources>

@@ -398,4 +398,17 @@
     <string name="okuyucu_dosya_acilamiyor">This file can\'t be opened.</string>
     <string name="okuyucu_dosya_acilamiyor_oneri">It may not be a valid PDF, or it may be corrupted.</string>
     <string name="okuyucu_akis_acilamadi">Could not open the stream</string>
+    <string name="calisma_dosya_acilamadi">Could not open the file: %1$s</string>
+    <string name="calisma_dosya_kopyalanamadi">Could not copy the file: %1$s</string>
+    <string name="calisma_dosya_bos">The file appears to be empty: %1$s</string>
+    <string name="calisma_dosya_adi_bos">The file name can\'t be empty.</string>
+    <string name="calisma_ayni_adda_dosya_var">A file with this name already exists: %1$s</string>
+    <string name="calisma_yeniden_adlandirilamadi">Could not rename the file.</string>
+    <string name="calisma_hedefe_yazilamadi">Could not write to the destination.</string>
+    <string name="calisma_disa_aktarma_basarisiz">Export failed: %1$s</string>
+    <string name="calisma_klasor_acilamadi">Could not open the folder.</string>
+    <string name="calisma_klasore_yazma_izni_yok">No write permission for the chosen folder.</string>
+    <string name="calisma_hedef_dosya_olusturulamadi">Could not create the destination file</string>
+    <string name="calisma_hedef_akis_acilamadi">Could not open the destination stream</string>
+    <string name="calisma_bilinmeyen_hata">unknown error</string>
 </resources>

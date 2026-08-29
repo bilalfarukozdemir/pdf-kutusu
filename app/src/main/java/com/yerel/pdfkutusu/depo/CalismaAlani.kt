@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.documentfile.provider.DocumentFile
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.Ozet
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
@@ -69,19 +70,21 @@ class CalismaAlani(private val baglam: Context) {
 
         try {
             baglam.contentResolver.openInputStream(uri).use { girdi ->
-                if (girdi == null) throw PdfHatasi.DosyaOkunamadi("Dosya açılamadı: $guvenliAd")
+                if (girdi == null) {
+                    throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_dosya_acilamadi, guvenliAd))
+                }
                 hedef.outputStream().use { cikti -> girdi.copyTo(cikti, 128 * 1024) }
             }
         } catch (hata: PdfHatasi) {
             throw hata
         } catch (hata: Exception) {
             runCatching { hedef.delete() }
-            throw PdfHatasi.DosyaOkunamadi("Dosya kopyalanamadı: $guvenliAd", hata)
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_dosya_kopyalanamadi, guvenliAd), hata)
         }
 
         if (hedef.length() == 0L) {
             hedef.delete()
-            throw PdfHatasi.DosyaOkunamadi("Dosya boş görünüyor: $guvenliAd")
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_dosya_bos, guvenliAd))
         }
 
         CalismaDosyasi(
@@ -140,7 +143,7 @@ class CalismaAlani(private val baglam: Context) {
         val eskiUzanti = DosyaAdi.uzantisi(dosya.name)
         val temiz = DosyaAdi.guvenli(istenenAd.trim(), varsayilan = "")
         if (temiz.isBlank() || DosyaAdi.tabani(temiz).isBlank()) {
-            throw PdfHatasi.GirdiYok("Dosya adı boş olamaz.")
+            throw PdfHatasi.GirdiYok(baglam.getString(R.string.calisma_dosya_adi_bos))
         }
 
         val yeniAd = if (DosyaAdi.uzantisi(temiz).isEmpty() && eskiUzanti.isNotEmpty()) {
@@ -153,10 +156,10 @@ class CalismaAlani(private val baglam: Context) {
 
         val hedef = File(dosya.parentFile, yeniAd)
         if (hedef.exists()) {
-            throw PdfHatasi.DosyaOkunamadi("Bu adda bir dosya zaten var: $yeniAd")
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_ayni_adda_dosya_var, yeniAd))
         }
         if (!dosya.renameTo(hedef)) {
-            throw PdfHatasi.DosyaOkunamadi("Dosya yeniden adlandırılamadı.")
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_yeniden_adlandirilamadi))
         }
         return hedef
     }
@@ -178,14 +181,14 @@ class CalismaAlani(private val baglam: Context) {
     suspend fun disaAktar(kaynak: File, hedefUri: Uri): Long = withContext(Dispatchers.IO) {
         try {
             baglam.contentResolver.openOutputStream(hedefUri, "wt").use { cikti ->
-                if (cikti == null) throw PdfHatasi.DosyaOkunamadi("Hedef konuma yazılamadı.")
+                if (cikti == null) throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_hedefe_yazilamadi))
                 kaynak.inputStream().use { girdi -> girdi.copyTo(cikti, 128 * 1024) }
             }
             kaynak.length()
         } catch (hata: PdfHatasi) {
             throw hata
         } catch (hata: Exception) {
-            throw PdfHatasi.DosyaOkunamadi("Dışa aktarma başarısız: ${kaynak.name}", hata)
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_disa_aktarma_basarisiz, kaynak.name), hata)
         }
     }
 
@@ -196,9 +199,9 @@ class CalismaAlani(private val baglam: Context) {
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
     ): DisaAktarimSonucu = withContext(Dispatchers.IO) {
         val klasor = DocumentFile.fromTreeUri(baglam, agacUri)
-            ?: throw PdfHatasi.DosyaOkunamadi("Klasör açılamadı.")
+            ?: throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_klasor_acilamadi))
         if (!klasor.canWrite()) {
-            throw PdfHatasi.DosyaOkunamadi("Seçilen klasöre yazma izni yok.")
+            throw PdfHatasi.DosyaOkunamadi(baglam.getString(R.string.calisma_klasore_yazma_izni_yok))
         }
 
         val basarili = mutableListOf<String>()
@@ -209,16 +212,19 @@ class CalismaAlani(private val baglam: Context) {
             val sonuc = runCatching {
                 val tur = if (dosya.extension.equals("txt", true)) "text/plain" else "application/pdf"
                 val hedef = klasor.createFile(tur, dosya.name)
-                    ?: error("Hedef dosya oluşturulamadı")
+                    ?: error(baglam.getString(R.string.calisma_hedef_dosya_olusturulamadi))
                 baglam.contentResolver.openOutputStream(hedef.uri, "wt").use { cikti ->
-                    if (cikti == null) error("Hedef akış açılamadı")
+                    if (cikti == null) error(baglam.getString(R.string.calisma_hedef_akis_acilamadi))
                     dosya.inputStream().use { girdi -> girdi.copyTo(cikti, 128 * 1024) }
                 }
             }
             if (sonuc.isSuccess) {
                 basarili += dosya.name
             } else {
-                basarisiz += dosya.name to (sonuc.exceptionOrNull()?.message ?: "bilinmeyen hata")
+                basarisiz += dosya.name to (
+                    sonuc.exceptionOrNull()?.message
+                        ?: baglam.getString(R.string.calisma_bilinmeyen_hata)
+                    )
             }
             ilerleme(Ilerleme(sira + 1, dosyalar.size, dosya.name))
         }

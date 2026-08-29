@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 13+ (API 33) icin desteklenen dil listesi.
+
+  Bu dosya, sistemin "Uygulama dilleri" ayarinda (Settings > Apps > PDF Kutusu
+  > Language) hangi secenekleri gosterecegini belirler ve
+  LocaleManager.applicationLocales ile programatik dil degisiminin calismasi
+  icin gereklidir. AndroidManifest.xml'deki <application android:localeConfig>
+  bu dosyayi gosterir.
+
+  minSdk 26 oldugu icin API 33 altindaki cihazlarda bu dosya ve ilgili API
+  hicbir etki yapmaz; sistem dili otomatik olarak values-en/ qualifier'i ile
+  zaten calisir, sadece manuel secici o cihazlarda gizlenir.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="tr" />
+    <locale android:name="en" />
+</locale-config>

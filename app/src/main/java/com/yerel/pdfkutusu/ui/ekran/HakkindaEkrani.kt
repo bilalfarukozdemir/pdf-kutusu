@@ -1,5 +1,8 @@
 package com.yerel.pdfkutusu.ui.ekran
 
+import android.app.LocaleManager
+import android.os.Build
+import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +15,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,6 +48,8 @@ fun HakkindaEkrani(geriDon: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UygulamaKimligi()
+
+            DilSecimBolumu()
 
             Bolum(
                 baslik = stringResource(R.string.hakkinda_risk_baslik),
@@ -131,6 +143,78 @@ private fun UygulamaKimligi() {
                 stringResource(R.string.hakkinda_yapimci_govde),
                 style = MaterialTheme.typography.labelSmall,
             )
+        }
+    }
+}
+
+/**
+ * Dil secici: Sistem / Turkce / English.
+ *
+ * Android 13+ (API 33) `LocaleManager.setApplicationLocales` kullanir - bu,
+ * AppCompat gibi buyuk bir bagimlilik eklemeden per-app dil degistirme saglayan
+ * yerlesik API'dir. minSdk 26 oldugu icin daha eski cihazlarda secici
+ * calismaz; onun yerine bilgilendirici bir not gosterilir. Sistem dili
+ * tespiti (values-en/ qualifier) her surumde zaten otomatik calisir, bu
+ * yalnizca manuel override'i sinirlar.
+ *
+ * Secim, sistemin kendi "Uygulama dilleri" mekanizmasi tarafindan kalici
+ * olarak saklanir; burada ayrica bir tercih dosyasi tutulmasina gerek yoktur.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DilSecimBolumu() {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.hakkinda_dil_baslik), style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.height(10.dp))
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val baglam = LocalContext.current
+                val yonetici = remember(baglam) { baglam.getSystemService(LocaleManager::class.java) }
+
+                fun gecerliKod(): String {
+                    val etiketler = yonetici?.applicationLocales?.toLanguageTags().orEmpty()
+                    return when {
+                        etiketler.isEmpty() -> ""
+                        etiketler.startsWith("tr") -> "tr"
+                        etiketler.startsWith("en") -> "en"
+                        else -> ""
+                    }
+                }
+
+                var secili by remember(baglam) { mutableStateOf(gecerliKod()) }
+
+                val secenekler = listOf(
+                    "" to stringResource(R.string.hakkinda_dil_sistem),
+                    "tr" to stringResource(R.string.hakkinda_dil_turkce),
+                    "en" to stringResource(R.string.hakkinda_dil_ingilizce),
+                )
+
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    secenekler.forEachIndexed { indeks, (kod, etiket) ->
+                        SegmentedButton(
+                            selected = secili == kod,
+                            onClick = {
+                                secili = kod
+                                yonetici?.applicationLocales = if (kod.isEmpty()) {
+                                    LocaleList.getEmptyLocaleList()
+                                } else {
+                                    LocaleList.forLanguageTags(kod)
+                                }
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(index = indeks, count = secenekler.size),
+                        ) {
+                            Text(etiket)
+                        }
+                    }
+                }
+            } else {
+                Text(
+                    stringResource(R.string.hakkinda_dil_eski_cihaz_bilgi),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

@@ -74,6 +74,7 @@ class FiligranViewModel(bagimliliklar: Bagimliliklar) :
                 cikti = cikti,
                 sayfaIndeksleri = indeksler,
                 ilerleme = ilerleme,
+                baglam = bagimliliklar.uygulamaBaglami,
             )
             val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(

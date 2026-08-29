@@ -6,6 +6,7 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.font.PDFont
 import com.tom_roush.pdfbox.pdmodel.font.PDType0Font
 import com.tom_roush.pdfbox.pdmodel.font.PDType1Font
+import com.yerel.pdfkutusu.R
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.Locale
@@ -107,19 +108,20 @@ class YaziTipi private constructor(
             varliklar = baglam.applicationContext.assets
         }
 
-        fun yukle(belge: PDDocument): YaziTipi {
-            paketliDene(belge)?.let { return it }
+        fun yukle(belge: PDDocument, baglam: Context? = null): YaziTipi {
+            paketliDene(belge, baglam)?.let { return it }
             sistemdenDene(belge)?.let { return it }
             return YaziTipi(
                 font = PDType1Font.HELVETICA_BOLD,
                 tamTurkceDestegi = false,
-                kaynakAdi = "Helvetica (gömülü değil)",
+                kaynakAdi = baglam?.getString(R.string.yazitipi_helvetica_gomulu_degil)
+                    ?: "Helvetica (gömülü değil)",
             )
         }
 
         // ------------------------------------------------------------ 1. kademe
 
-        private fun paketliDene(belge: PDDocument): YaziTipi? {
+        private fun paketliDene(belge: PDDocument, baglam: Context?): YaziTipi? {
             val yonetici = varliklar ?: return null
             return runCatching {
                 val gomulu = yonetici.open(PAKETLI_YOL).use { akis ->
@@ -128,7 +130,11 @@ class YaziTipi private constructor(
                     PDType0Font.load(belge, akis, true)
                 }
                 require(yazilabilir(gomulu, SINAMA_METNI)) { "Türkçe karakterler eksik" }
-                YaziTipi(gomulu, tamTurkceDestegi = true, kaynakAdi = "Noto Sans (paketli)")
+                YaziTipi(
+                    gomulu,
+                    tamTurkceDestegi = true,
+                    kaynakAdi = baglam?.getString(R.string.yazitipi_noto_sans_paketli) ?: "Noto Sans (paketli)",
+                )
             }.getOrNull()
         }
 

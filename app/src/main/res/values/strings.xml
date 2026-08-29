@@ -432,4 +432,8 @@
     <string name="arac_vm_yeni_ad">Yeni ad: %1$s</string>
     <string name="arac_vm_toplu_disa_aktarildi">%1$d dosya dışa aktarıldı</string>
     <string name="arac_vm_toplu_basarisiz_ek">", %1$d başarısız"</string>
+    <string name="filigran_metin_bos_olamaz">Filigran metni boş olamaz.</string>
+    <string name="filigran_gecersiz_sayfa">Belge %1$d sayfa, %2$d. sayfa istendi.</string>
+    <string name="yazitipi_helvetica_gomulu_degil">Helvetica (gömülü değil)</string>
+    <string name="yazitipi_noto_sans_paketli">Noto Sans (paketli)</string>
 </resources>

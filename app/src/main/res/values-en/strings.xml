@@ -432,4 +432,8 @@
     <string name="arac_vm_yeni_ad">New name: %1$s</string>
     <string name="arac_vm_toplu_disa_aktarildi">%1$d files exported</string>
     <string name="arac_vm_toplu_basarisiz_ek">", %1$d failed"</string>
+    <string name="filigran_metin_bos_olamaz">The watermark text can\'t be empty.</string>
+    <string name="filigran_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
+    <string name="yazitipi_helvetica_gomulu_degil">Helvetica (not embedded)</string>
+    <string name="yazitipi_noto_sans_paketli">Noto Sans (bundled)</string>
 </resources>

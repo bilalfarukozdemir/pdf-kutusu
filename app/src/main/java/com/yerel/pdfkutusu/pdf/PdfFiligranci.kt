@@ -1,5 +1,6 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import androidx.annotation.StringRes
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState
@@ -52,9 +53,12 @@ object PdfFiligranci {
         sayfaIndeksleri: List<Int>? = null,
         parola: String? = null,
         ilerleme: IlerlemeDinleyicisi = IlerlemeYok,
+        baglam: Context? = null,
     ): FiligranSonucu {
         if (ayarlar.metin.isBlank()) {
-            throw PdfHatasi.GirdiYok("Filigran metni boş olamaz.")
+            throw PdfHatasi.GirdiYok(
+                baglam?.getString(R.string.filigran_metin_bos_olamaz) ?: "Filigran metni boş olamaz.",
+            )
         }
 
         BelgeErisimi.ac(kaynak, parola).use { belge ->
@@ -63,10 +67,13 @@ object PdfFiligranci {
             val hedefler = sayfaIndeksleri ?: (0 until toplam).toList()
             val hatali = hedefler.firstOrNull { it < 0 || it >= toplam }
             if (hatali != null) {
-                throw PdfHatasi.GecersizAralik("Belge $toplam sayfa, ${hatali + 1}. sayfa istendi.")
+                throw PdfHatasi.GecersizAralik(
+                    baglam?.getString(R.string.filigran_gecersiz_sayfa, toplam, hatali + 1)
+                        ?: "Belge $toplam sayfa, ${hatali + 1}. sayfa istendi.",
+                )
             }
 
-            val yaziTipi = YaziTipi.yukle(belge)
+            val yaziTipi = YaziTipi.yukle(belge, baglam)
             val metin = yaziTipi.hazirla(ayarlar.metin)
 
             val grafikDurumu = PDExtendedGraphicsState().apply {

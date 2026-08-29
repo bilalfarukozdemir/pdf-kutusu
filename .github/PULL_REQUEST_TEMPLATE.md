@@ -9,7 +9,9 @@
 - [ ] Davranış değiştiyse test eklendi
 - [ ] Piksel/kodlayıcı gerektiren doğrulamalar `androidTest` içinde
       (Robolectric'in LEGACY grafik kipinde bu testler kod bozukken de geçer)
-- [ ] Kullanıcıya görünen yeni metinler Türkçe
+- [ ] Kullanıcıya görünen yeni metinler `values/strings.xml` (TR) **ve**
+      `values-en/strings.xml` (EN) içine anahtarla eklendi, kodda hardcoded
+      metin yok
 - [ ] Yeni bağımlılık yok — varsa önce issue açıldı ve gerekçesi konuşuldu
 - [ ] README / CHANGELOG gerekiyorsa güncellendi
 

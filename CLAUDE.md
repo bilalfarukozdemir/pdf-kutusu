@@ -24,7 +24,12 @@ OCR dahil bütün işlem cihaz üzerinde yapılır.
 
 ## Diğer kararlar
 
-- Kullanıcıya görünen tüm metinler Türkçe
+- Varsayılan dil Türkçe; uygulama Play Store'a küresel açılma kararı
+  gereğince Türkçe + İngilizce'yi destekler (sistem diline göre otomatik +
+  "Hakkında" ekranındaki isteğe bağlı manuel seçici, Android 13+
+  `LocaleManager`). Kullanıcıya görünen metin koda hardcoded yazılmaz;
+  `values/strings.xml` (TR) ve `values-en/strings.xml` (EN) içine anahtarla
+  eklenir — ayrıntı `CONTRIBUTING.md`'de.
 - Tema sistem ayarını izler, renkler duvar kâğıdından türetilir (Material You)
 - `CHANGELOG.md` sürüm başına güncellenir, `surum/` klasörü sürüm varlıklarını tutar
 

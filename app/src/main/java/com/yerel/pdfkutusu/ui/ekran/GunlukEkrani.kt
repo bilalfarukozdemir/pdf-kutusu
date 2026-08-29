@@ -46,6 +46,7 @@ import com.yerel.pdfkutusu.ui.model.GunlukViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BosDurum
 import com.yerel.pdfkutusu.ui.ortak.bicimliZaman
+import com.yerel.pdfkutusu.ui.ortak.etiket
 import com.yerel.pdfkutusu.ui.ortak.kisaOzet
 import com.yerel.pdfkutusu.veri.IslemKaydi
 
@@ -158,7 +159,7 @@ private fun KayitKarti(kayit: IslemKaydi) {
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    IslemTuru.adindan(kayit.islemTuru)?.let { stringResource(it.etiketRes) } ?: kayit.islemTuru,
+                    IslemTuru.adindan(kayit.islemTuru)?.let { it.etiket() } ?: kayit.islemTuru,
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )

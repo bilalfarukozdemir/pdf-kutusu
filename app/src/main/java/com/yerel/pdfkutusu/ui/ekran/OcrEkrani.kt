@@ -23,8 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.ui.model.OcrViewModel
 import com.yerel.pdfkutusu.ui.ortak.AralikGirisi
 
@@ -33,63 +35,62 @@ fun OcrEkrani(gorunum: OcrViewModel, geriDon: () -> Unit) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
     val secenekler by gorunum.secenekler.collectAsStateWithLifecycle()
     val baglam = LocalContext.current
+    val panoEtiketi = stringResource(R.string.ocr_pano_etiketi)
 
     AracGovdesi(
-        baslik = "OCR — metin çıkar",
-        bosBaslik = "Sayfadaki metni okuyun",
-        bosAciklama = "Bir PDF seçin. Sayfalar cihaz üstünde taranır; " +
-            "hiçbir görüntü dışarı gönderilmez.",
+        baslik = stringResource(R.string.ocr_baslik),
+        bosBaslik = stringResource(R.string.ocr_bos_baslik),
+        bosAciklama = stringResource(R.string.ocr_bos_aciklama),
         simge = Icons.Default.TextFields,
         gorunum = gorunum,
         geriDon = geriDon,
-        calistirEtiketi = "Metni çıkar",
+        calistirEtiketi = stringResource(R.string.ocr_calistir),
         calistirEtkin = durum.girdiler.isNotEmpty() && secenekler.aralikIfadesi.isNotBlank(),
         calistir = gorunum::tani,
         secenekler = {
             val girdi = durum.ilkGirdi
             if (girdi != null) {
-                SecenekKarti("Sayfalar") {
+                SecenekKarti(stringResource(R.string.ocr_sayfalar_baslik)) {
                     AralikGirisi(
                         deger = secenekler.aralikIfadesi,
                         degisti = gorunum::aralikDegistir,
                         toplamSayfa = girdi.sayfaSayisi,
                     )
                     Text(
-                        "Tarama sayfa başına birkaç saniye sürer; geniş aralıklarda sabırlı olun.",
+                        stringResource(R.string.ocr_sure_ipucu),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
-                SecenekKarti("Tarama çözünürlüğü") {
+                SecenekKarti(stringResource(R.string.ocr_cozunurluk_baslik)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         gorunum.dpiSecenekleri.forEach { dpi ->
                             FilterChip(
                                 selected = secenekler.dpi == dpi,
                                 onClick = { gorunum.dpiDegistir(dpi) },
-                                label = { Text("$dpi DPI") },
+                                label = { Text(stringResource(R.string.ocr_dpi, dpi)) },
                             )
                         }
                     }
                     Text(
-                        "Küçük punto ya da soluk taramalarda 400 DPI belirgin fark yaratır.",
+                        stringResource(R.string.ocr_dpi_ipucu),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
                 if (girdi.ozet.metinKatmaniVar) {
-                    SecenekKarti("Not") {
+                    SecenekKarti(stringResource(R.string.ocr_not_baslik)) {
                         Text(
-                            "Bu belgede zaten seçilebilir metin var. OCR bir tahmindir; " +
-                                "metni doğrudan bir PDF okuyucudan kopyalamak daha doğru sonuç verir.",
+                            stringResource(R.string.ocr_not_metin_katmani_var),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
                 }
 
                 if (secenekler.cikanMetin.isNotBlank()) {
-                    SecenekKarti("Çıkan metin") {
+                    SecenekKarti(stringResource(R.string.ocr_cikan_metin_baslik)) {
                         OutlinedTextField(
                             value = secenekler.cikanMetin,
                             onValueChange = {},
@@ -98,26 +99,24 @@ fun OcrEkrani(gorunum: OcrViewModel, geriDon: () -> Unit) {
                             textStyle = MaterialTheme.typography.bodySmall,
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            TextButton(onClick = { panoyaKopyala(baglam, secenekler.cikanMetin) }) {
+                            TextButton(onClick = { panoyaKopyala(baglam, panoEtiketi, secenekler.cikanMetin) }) {
                                 Icon(Icons.Default.ContentCopy, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(6.dp))
-                                Text("Panoya kopyala")
+                                Text(stringResource(R.string.ocr_panoya_kopyala))
                             }
-                            TextButton(onClick = gorunum::metniTemizle) { Text("Temizle") }
+                            TextButton(onClick = gorunum::metniTemizle) { Text(stringResource(R.string.ocr_temizle)) }
                         }
                         Text(
-                            ".txt olarak kaydetmek için aşağıdaki sonuç kartındaki " +
-                                "\"Kaydet\" düğmesini kullanın.",
+                            stringResource(R.string.ocr_kaydetme_ipucu),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
 
-                SecenekKarti("Kapsam dışı") {
+                SecenekKarti(stringResource(R.string.ocr_kapsam_disi_baslik)) {
                     Text(
-                        "PDF'e aranabilir metin katmanı gömme bu sürümde yok. " +
-                            "Çıkan metin ayrı bir .txt dosyası olarak verilir.",
+                        stringResource(R.string.ocr_kapsam_disi_govde),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -126,7 +125,7 @@ fun OcrEkrani(gorunum: OcrViewModel, geriDon: () -> Unit) {
     )
 }
 
-private fun panoyaKopyala(baglam: Context, metin: String) {
+private fun panoyaKopyala(baglam: Context, etiket: String, metin: String) {
     val pano = baglam.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
-    pano.setPrimaryClip(ClipData.newPlainText("PDF Kutusu OCR", metin))
+    pano.setPrimaryClip(ClipData.newPlainText(etiket, metin))
 }

@@ -1,6 +1,7 @@
 package com.yerel.pdfkutusu.ui.model
 
 import com.yerel.pdfkutusu.Bagimliliklar
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.DosyaAdi
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.SayfaAraligi
@@ -70,22 +71,23 @@ class OcrViewModel(bagimliliklar: Bagimliliklar) :
             )
             cikti.writeText(sonuc.tumMetin, Charsets.UTF_8)
 
+            val baglam = bagimliliklar.uygulamaBaglami
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = indeksler.size,
                 ozetSatiri = if (sonuc.bosMu) {
-                    "Metin bulunamadı"
+                    baglam.getString(R.string.ocr_metin_bulunamadi)
                 } else {
-                    "${indeksler.size} sayfadan ${sonuc.karakterSayisi} karakter okundu"
+                    baglam.getString(R.string.ocr_ozet_satiri, indeksler.size, sonuc.karakterSayisi)
                 },
                 notlar = buildList {
-                    add("Metin .txt olarak kaydedildi; dışa aktarabilir ya da panoya kopyalayabilirsiniz.")
-                    add("ML Kit'in Latin alfabesi modeli Türkçe'ye özel eğitilmedi; ı/i ve ş/s ayrımında hata payı vardır.")
+                    add(baglam.getString(R.string.ocr_not_txt))
+                    add(baglam.getString(R.string.ocr_not_ml_kit))
                     if (sonuc.bosMu) {
-                        add("Sayfa boş, çok düşük çözünürlüklü ya da el yazısı olabilir. DPI'ı artırıp deneyin.")
+                        add(baglam.getString(R.string.ocr_not_bos_sayfa))
                     }
                     if (girdi.ozet.metinKatmaniVar) {
-                        add("Bu belgede zaten seçilebilir metin var; OCR yerine doğrudan kopyalamak daha doğru sonuç verir.")
+                        add(baglam.getString(R.string.ocr_not_zaten_metin_var))
                     }
                 },
             )

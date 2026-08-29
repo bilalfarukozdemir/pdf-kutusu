@@ -360,8 +360,13 @@ androidComponents {
         }
 
         // Hem paketleme hem de dogrulama akislarina bagla.
+        // bundle$buyukAd DAHIL: Play'e giden artefakt AAB'dir. Yalnizca
+        // assemble/package'a baglanirsa APK denetlenir ama kullaniciya
+        // ulasan AAB denetimsiz cikar - denetimin asil korumasi gereken
+        // yol tam da odur.
         tasks.matching { it.name == "assemble$buyukAd" }.configureEach { dependsOn(denetim) }
         tasks.matching { it.name == "package$buyukAd" }.configureEach { dependsOn(denetim) }
+        tasks.matching { it.name == "bundle$buyukAd" }.configureEach { dependsOn(denetim) }
     }
 }
 

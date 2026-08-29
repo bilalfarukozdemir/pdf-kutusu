@@ -68,7 +68,10 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
             }
             if (olcum.outWidth <= 0 || olcum.outHeight <= 0) {
                 throw PdfHatasi.BozukBelge(
-                    "Görsel açılamadı: ${calisma.gorunenAd}. Biçim tanınmadı ya da dosya bozuk.",
+                    bagimliliklar.uygulamaBaglami.getString(
+                        R.string.resimden_hata_gorsel_acilamadi,
+                        calisma.gorunenAd,
+                    ),
                 )
             }
             GirdiOgesi(
@@ -120,7 +123,7 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
             girdileriYenidenSirala { liste ->
                 liste.sortedBy { damgalar[it.dosya.absolutePath] ?: "9999" }
             }
-            bilgiVer("Çekilme tarihine göre sıralandı.")
+            bilgiVer(bagimliliklar.uygulamaBaglami.getString(R.string.resimden_siralandi_tarihe_gore))
         }
     }
 
@@ -160,10 +163,17 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
     fun olustur() {
         val girdiler = durum.value.girdiler
         if (girdiler.isEmpty()) {
-            guncelle { it.copy(hata = PdfHatasi.GirdiYok("En az bir görsel seçin.")) }
+            guncelle {
+                it.copy(
+                    hata = PdfHatasi.GirdiYok(
+                        bagimliliklar.uygulamaBaglami.getString(R.string.resimden_hata_en_az_bir_gorsel),
+                    ),
+                )
+            }
             return
         }
         val ayarlar = _secenekler.value
+        val baglam = bagimliliklar.uygulamaBaglami
 
         calistir { ilerleme ->
             val cikti = calismaAlani.ciktiDosyasi(ciktiAdiUret(girdiler.first().gorunenAd))
@@ -183,14 +193,25 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
             IslemCiktisi(
                 dosyalar = listOf(cikti),
                 sayfaSayisi = sonuc.sayfaSayisi,
-                ozetSatiri = "${sonuc.sayfaSayisi} sayfa · " + bicimliBoyut(sonuc.ciktiBoyutuBayt),
+                ozetSatiri = baglam.getString(
+                    R.string.resimden_ozet_satiri,
+                    sonuc.sayfaSayisi,
+                    bicimliBoyut(sonuc.ciktiBoyutuBayt),
+                ),
                 notlar = buildList {
-                    add("Görsellerin EXIF verisi (GPS konumu, cihaz modeli, çekim tarihi) çıktıya aktarılmadı.")
+                    add(baglam.getString(R.string.resimden_not_exif))
                     if (sonuc.atlananlar.isNotEmpty()) {
-                        add("${sonuc.atlananlar.size} görsel atlandı:")
-                        sonuc.atlananlar.take(10).forEach { add("   ${it.ad} — ${it.neden}") }
+                        add(baglam.getString(R.string.resimden_not_atlanan_baslik, sonuc.atlananlar.size))
+                        sonuc.atlananlar.take(10).forEach {
+                            add(baglam.getString(R.string.resimden_not_atlanan_satir, it.ad, it.neden))
+                        }
                         if (sonuc.atlananlar.size > 10) {
-                            add("   … ve ${sonuc.atlananlar.size - 10} tane daha")
+                            add(
+                                baglam.getString(
+                                    R.string.resimden_not_atlanan_daha_fazla,
+                                    sonuc.atlananlar.size - 10,
+                                ),
+                            )
                         }
                     }
                 },
@@ -205,13 +226,17 @@ class ResimdenPdfViewModel(bagimliliklar: Bagimliliklar) :
             !taban.equals("belge", ignoreCase = true) &&
             taban.any { it.isLetterOrDigit() }
         return DosyaAdi.cikti(
-            kaynakDosyaAdi = if (kullanilabilir) ilkAd else "resimler",
+            kaynakDosyaAdi = if (kullanilabilir) {
+                ilkAd
+            } else {
+                bagimliliklar.uygulamaBaglami.getString(R.string.resimden_varsayilan_ad)
+            },
             islem = IslemTuru.RESIMDEN_PDF,
         )
     }
 
     override fun gunlukGirdiAdi(girdiler: List<GirdiOgesi>): String =
-        "${girdiler.size} görsel: " +
+        bagimliliklar.uygulamaBaglami.getString(R.string.resimden_girdi_ozet, girdiler.size) +
             girdiler.joinToString(", ") { it.gorunenAd }.take(240)
 
     private companion object {

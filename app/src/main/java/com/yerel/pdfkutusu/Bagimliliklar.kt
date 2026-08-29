@@ -24,7 +24,7 @@ class Bagimliliklar(baglam: Context) {
 
     val calismaAlani: CalismaAlani by lazy { CalismaAlani(uygulamaBaglami) }
     val tercihler: Tercihler by lazy { Tercihler(uygulamaBaglami) }
-    val rasterlestirici: SayfaRasterlestirici by lazy { PdfRendererRasterlestirici() }
+    val rasterlestirici: SayfaRasterlestirici by lazy { PdfRendererRasterlestirici(uygulamaBaglami) }
     val onizleme: OnizlemeDeposu by lazy { OnizlemeDeposu(rasterlestirici) }
     val gorselOnizleme: GorselOnizlemeDeposu by lazy { GorselOnizlemeDeposu() }
     val gunluk: GunlukDeposu by lazy { GunlukDeposu(PdfVeritabani.al(uygulamaBaglami).gunlukDao()) }

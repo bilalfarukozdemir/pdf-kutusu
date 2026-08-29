@@ -49,7 +49,7 @@ class GunlukViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
                     val hedef = bagimliliklar.calismaAlani.ciktiDosyasi(
                         baglam.getString(R.string.gunluk_dosya_adi, zaman),
                     )
-                    hedef.writeText(bagimliliklar.gunluk.metneCevir(kayitlar), Charsets.UTF_8)
+                    hedef.writeText(bagimliliklar.gunluk.metneCevir(kayitlar, baglam), Charsets.UTF_8)
                     hedef
                 }.getOrNull()
             }

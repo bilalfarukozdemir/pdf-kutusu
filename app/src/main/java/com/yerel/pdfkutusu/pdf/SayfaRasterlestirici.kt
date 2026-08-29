@@ -1,10 +1,12 @@
 package com.yerel.pdfkutusu.pdf
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 import java.io.Closeable
 import java.io.File
@@ -43,12 +45,15 @@ interface SayfaRasterlestirici {
  *  - Dosya tanimlayicisi (fd) aranabilir olmali; bu yuzden her zaman
  *    uygulamaya ozel dizindeki gercek bir dosyayla calisiriz.
  */
-class PdfRendererRasterlestirici : SayfaRasterlestirici {
+class PdfRendererRasterlestirici(private val baglam: Context? = null) : SayfaRasterlestirici {
 
     override fun ac(kaynak: File): SayfaRasterlestirici.Oturum = try {
         PdfRendererOturumu(kaynak)
     } catch (hata: Exception) {
-        throw PdfHatasi.BozukBelge("Sayfa görüntüsü oluşturulamadı: ${kaynak.name}", hata)
+        throw PdfHatasi.BozukBelge(
+            baglam?.getString(R.string.rasterlestirici_hata, kaynak.name) ?: "Sayfa görüntüsü oluşturulamadı: ${kaynak.name}",
+            hata,
+        )
     }
 
     private class PdfRendererOturumu(kaynak: File) : SayfaRasterlestirici.Oturum {

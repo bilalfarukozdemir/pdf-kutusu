@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.yerel.pdfkutusu.Bagimliliklar
 import com.yerel.pdfkutusu.PdfKutusuUygulamasi
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.depo.BelgeYetkisi
 import com.yerel.pdfkutusu.depo.Paylasim
 import com.yerel.pdfkutusu.depo.SonAcilanBelge
@@ -120,7 +121,9 @@ class OkuyucuAktivite : ComponentActivity() {
                             val niyet = Paylasim.niyet(this@OkuyucuAktivite, listOf(dosya))
                             if (niyet != null) {
                                 runCatching { startActivity(niyet) }
-                                    .onFailure { gorunum.mesajGoster("Paylaşabilecek bir uygulama bulunamadı.") }
+                                    .onFailure {
+                                        gorunum.mesajGoster(getString(R.string.govde_paylasan_uygulama_yok))
+                                    }
                             }
                         },
                     )

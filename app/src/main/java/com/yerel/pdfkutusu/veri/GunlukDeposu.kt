@@ -1,5 +1,7 @@
 package com.yerel.pdfkutusu.veri
 
+import android.content.Context
+import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.cekirdek.IslemTuru
 import com.yerel.pdfkutusu.cekirdek.Ozet
 import java.io.File
@@ -72,9 +74,9 @@ class GunlukDeposu(private val dao: IslemGunluguDao) {
     suspend fun tumunuTemizle(): Int = runCatching { dao.tumunuTemizle() }.getOrDefault(0)
 
     /** Yedekleme icin dosyaya yazilabilir duz metin dokum. */
-    fun metneCevir(kayitlar: List<IslemKaydi>): String = buildString {
-        appendLine("PDF Kutusu - işlem günlüğü dökümü")
-        appendLine("Kayıt sayısı: ${kayitlar.size}")
+    fun metneCevir(kayitlar: List<IslemKaydi>, baglam: Context? = null): String = buildString {
+        appendLine(baglam?.getString(R.string.gunluk_dokum_baslik) ?: "PDF Kutusu - işlem günlüğü dökümü")
+        appendLine(baglam?.getString(R.string.gunluk_dokum_kayit_sayisi, kayitlar.size) ?: "Kayıt sayısı: ${kayitlar.size}")
         appendLine()
         appendLine(
             listOf(

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.yerel.pdfkutusu.R
 import java.io.File
 
 /**
@@ -38,9 +39,10 @@ object Paylasim {
      *
      * @return secici (chooser) niyeti; dosya listesi bossa null
      */
-    fun niyet(baglam: Context, dosyalar: List<File>, baslik: String = "Paylaş"): Intent? {
+    fun niyet(baglam: Context, dosyalar: List<File>, baslik: String? = null): Intent? {
         val gecerli = dosyalar.filter { it.exists() && it.length() > 0 }
         if (gecerli.isEmpty()) return null
+        val secimBasligi = baslik ?: baglam.getString(R.string.paylasim_baslik)
 
         val uriler = gecerli.map { uri(baglam, it) }
         val turler = gecerli.map { mimeTuru(it) }.distinct()
@@ -61,7 +63,7 @@ object Paylasim {
         gonder.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         gonder.putExtra(Intent.EXTRA_TITLE, gecerli.first().name)
 
-        return Intent.createChooser(gonder, baslik).apply {
+        return Intent.createChooser(gonder, secimBasligi).apply {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }

@@ -454,4 +454,5 @@
     <string name="ocr_hata_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
     <string name="ocr_ilerleme_bitti">Page %1$d done</string>
     <string name="dondur_hata_gecersiz_sayfa">The document has %1$d pages, page %2$d was requested.</string>
+    <string name="rasterlestirici_hata">Could not render the page: %1$s</string>
 </resources>

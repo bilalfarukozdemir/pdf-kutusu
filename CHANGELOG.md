@@ -5,6 +5,14 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+## [1.3.1] — 2026-08-31
+
+### Değişti
+
+- **Hedef Android sürümü Android 16 (API 36).** Google Play'in zorunlu
+  hedefleme şartı gereği `compileSdk` ve `targetSdk` 35'ten 36'ya çıkarıldı.
+  Uygulamanın davranışında bilinçli bir değişiklik yok.
+
 ## [1.3.0] — 2026-08-29
 
 ### Eklendi
@@ -175,7 +183,8 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - Zorunlu karartma doğrulaması hem birim hem cihaz testinde
 - EXIF sızıntısı, EXIF dönüşü ve saydam PNG doğrulamaları piksel düzeyinde
 
-[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.0...HEAD
+[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.0.0...v1.1.0

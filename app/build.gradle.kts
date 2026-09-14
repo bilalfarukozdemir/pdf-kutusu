@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "com.yerel.pdfkutusu"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.yerel.pdfkutusu"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 4
-        versionName = "1.3.0"
+        targetSdk = 36
+        versionCode = 5
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

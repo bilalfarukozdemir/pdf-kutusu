@@ -5,6 +5,27 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+## [1.3.2] — 2026-09-14
+
+### Değişti
+
+- **Varsayılan dil İngilizce.** Telefonun dili için çeviri olmadığında
+  uygulama artık İngilizce açılıyor; önceden Türkçe açılıyordu (Hintçe,
+  Portekizce gibi telefonlarda uygulama Türkçe görünüyordu). Türkçe
+  telefonlarda Türkçe açılmaya devam ediyor. İngilizce (varsayılan) metinler
+  `values/`, Türkçe metinler `values-tr/` altında.
+
+### Düzeltildi
+
+- **Play'den kurulan uygulamada dil seçici.** Play uygulamayı telefona dil
+  dil bölerek kuruyor ve yalnızca telefonun kendi dillerini gönderiyordu; bu
+  yüzden örneğin Hintçe bir telefonda "Hakkında" ekranından English seçmek
+  hiçbir şeyi değiştirmiyordu. AAB dil bölmesi kapatıldı, iki dil de her
+  kuruluma giriyor.
+- **Hata kartındaki öneri satırı** (parola, bozuk belge, okunamayan dosya,
+  geçersiz aralık, beklenmeyen hata) İngilizce arayüzde de Türkçe
+  görünüyordu. Artık arayüzün dilinde.
+
 ## [1.3.1] — 2026-08-31
 
 ### Değişti
@@ -183,7 +204,8 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 - Zorunlu karartma doğrulaması hem birim hem cihaz testinde
 - EXIF sızıntısı, EXIF dönüşü ve saydam PNG doğrulamaları piksel düzeyinde
 
-[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.1...HEAD
+[Yayımlanmamış]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/bilalfarukozdemir/pdf-kutusu/compare/v1.1.0...v1.2.0

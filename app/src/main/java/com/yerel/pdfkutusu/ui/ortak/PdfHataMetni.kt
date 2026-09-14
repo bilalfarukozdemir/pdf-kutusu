@@ -18,14 +18,23 @@ import com.yerel.pdfkutusu.cekirdek.PdfHatasi
 fun PdfHatasi.kullaniciMesajiUret(baglam: Context): String =
     kimlik?.let { baglam.pdfHataKimligiMetni(it) } ?: kullaniciMesaji
 
-/** [kullaniciMesajiUret] ile ayni mantik, ama [PdfHatasi.oneri] icin. */
-fun PdfHatasi.oneriUret(baglam: Context): String? {
-    val kimlik = kimlik ?: return oneri
-    return if (kimlik is PdfHataKimligi.AralikNedeni) {
-        baglam.getString(R.string.cekirdek_hata_aralik_oneri)
-    } else {
-        oneri
-    }
+/**
+ * [PdfHatasi.oneri]'nin ekranda gosterilecek karsiligi.
+ *
+ * Mesajin aksine oneri hata TURUNE baglidir: her alt sinif sabit bir oneri
+ * tasir ve bu metin `cekirdek/` icinde Turkce yazilidir. Bu yuzden oneri
+ * [PdfHatasi.kimlik]'e bakilmadan, her zaman turun R.string karsiligindan
+ * uretilir; ham [PdfHatasi.oneri] ekrana cikarsa Ingilizce arayuzde Turkce kalir.
+ */
+fun PdfHatasi.oneriUret(baglam: Context): String? = when (this) {
+    is PdfHatasi.ParolaGerekli -> baglam.getString(R.string.cekirdek_hata_parola_gerekli_oneri)
+    is PdfHatasi.ParolaYanlis -> baglam.getString(R.string.cekirdek_hata_parola_yanlis_oneri)
+    is PdfHatasi.GecersizAralik -> baglam.getString(R.string.cekirdek_hata_aralik_oneri)
+    is PdfHatasi.BozukBelge -> baglam.getString(R.string.cekirdek_hata_bozuk_belge_oneri)
+    is PdfHatasi.DosyaOkunamadi -> baglam.getString(R.string.cekirdek_hata_dosya_okunamadi_oneri)
+    is PdfHatasi.Beklenmeyen -> baglam.getString(R.string.cekirdek_hata_beklenmeyen_oneri)
+    // Bu iki hatanin onerisi yok.
+    is PdfHatasi.GirdiYok, is PdfHatasi.Iptal -> null
 }
 
 private fun Context.pdfHataKimligiMetni(kimlik: PdfHataKimligi): String = when (kimlik) {

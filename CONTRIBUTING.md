@@ -104,13 +104,15 @@ fun sayfalariTani(kaynak: File, sayfaIndeksleri: List<Int>): OcrSonucu
 ```
 
 - Kod içi tanımlayıcılarda ASCII kullanın (`sikistir`, `dondur`). Bu değişmedi.
-- **Kullanıcıya görünen metin koda hardcoded yazılmaz.** Varsayılan dil
-  Türkçe; uygulama Türkçe ve İngilizce'yi destekler (bkz. `LocaleManager`
+- **Kullanıcıya görünen metin koda hardcoded yazılmaz.** Varsayılan (yedek)
+  dil İngilizce; uygulama İngilizce ve Türkçe'yi destekler (bkz. `LocaleManager`
   tabanlı dil seçici, "Hakkında" ekranı). Her kullanıcıya görünen metin bir
-  anahtarla `app/src/main/res/values/strings.xml` (TR) içine ve karşılığıyla
-  `app/src/main/res/values-en/strings.xml` (EN) içine eklenir; Composable
-  içinde `stringResource(R.string.anahtar)`, Composable dışında (ViewModel,
-  `pdf/*`) `context.getString(R.string.anahtar)` kullanılır.
+  anahtarla `app/src/main/res/values/strings.xml` (EN, varsayılan) içine ve
+  karşılığıyla `app/src/main/res/values-tr/strings.xml` (TR) içine eklenir;
+  Composable içinde `stringResource(R.string.anahtar)`, Composable dışında
+  (ViewModel, `pdf/*`) `context.getString(R.string.anahtar)` kullanılır. Bir
+  anahtar yalnızca tek dosyaya eklenirse ya da iki dildeki yer tutucuları
+  (`%1$s` gibi) farklıysa `DilKaynaklariTesti` kırılır.
 - Yorumlar *neden*i anlatsın, *ne*yi değil. Kodun kendisi ne yaptığını söylüyor.
 - 4 boşluk girinti, satır sonu virgülü (trailing comma), ~100 karakter satır.
 - Yeni bir bağımlılık eklemeden önce issue açın. Her bağımlılık, izin denetiminin
@@ -165,8 +167,8 @@ adb shell am instrument -w com.yerel.pdfkutusu.test/androidx.test.runner.Android
 - [ ] `./gradlew testDebugUnitTest` geçiyor
 - [ ] `./gradlew assembleDebug` geçiyor (izin denetimi dahil)
 - [ ] Davranış değiştiyse test eklendi
-- [ ] Kullanıcıya görünen yeni metinler `values/strings.xml` (TR) ve
-      `values-en/strings.xml` (EN) içine anahtarla eklendi, kodda hardcoded
+- [ ] Kullanıcıya görünen yeni metinler `values/strings.xml` (EN) ve
+      `values-tr/strings.xml` (TR) içine anahtarla eklendi, kodda hardcoded
       metin bırakılmadı
 - [ ] Yeni bağımlılık yoksa — varsa önce issue açıldı
 - [ ] README / CHANGELOG gerekiyorsa güncellendi

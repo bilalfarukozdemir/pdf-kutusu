@@ -16,8 +16,8 @@ android {
         applicationId = "com.yerel.pdfkutusu"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.3.1"
+        versionCode = 6
+        versionName = "1.3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -34,8 +34,10 @@ android {
             }
         }
 
-        // Uygulama yedeklemeye kapali: gecmis gunlugu ve calisma dosyalari
-        // cihazdan disari (bulut yedegine) cikmasin.
+        // Yalnizca uygulamanin dilleri paketlenir; kutuphanelerin (AndroidX,
+        // ML Kit, Play Billing) baska dillerdeki metinleri atilir. Varsayilan
+        // dil Ingilizce (values/), Turkce values-tr/ altinda. Yeni bir dil
+        // eklenirse res/xml/locales_config.xml'e de eklenmeli.
         resourceConfigurations += listOf("tr", "en")
     }
 
@@ -120,6 +122,20 @@ android {
     androidResources {
         // ML Kit paketli modeli sikistirilmadan paketlenmeli.
         noCompress += listOf("tflite", "lite")
+    }
+
+    // AAB dil bolmesi KAPALI. Acik olsaydi Play uygulamayi telefona dil dil
+    // bolup yalnizca telefonun kendi dillerini kurardi. Hakkinda ekranindaki
+    // dil secici (LocaleManager) ise telefonun dilinden bagimsiz bir dil secer:
+    // Hintce bir telefonda English secilince o dilin metinleri cihazda olmaz ve
+    // secim hicbir sey degistirmez (1.3.0 AAB'si Play gibi bolunup emulatorde
+    // olculdu). Diller resourceConfigurations ile ikiyle sinirli; 1.3.0'da dil
+    // parcalari 54 KB (en) ve 21 KB (tr) tutuyordu.
+    // Bkz. https://developer.android.com/guide/app-bundle/configure-base
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 
     packaging {

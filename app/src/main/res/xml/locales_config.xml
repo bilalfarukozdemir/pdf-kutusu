@@ -8,11 +8,16 @@
   icin gereklidir. AndroidManifest.xml'deki <application android:localeConfig>
   bu dosyayi gosterir.
 
+  Varsayilan dil Ingilizcedir (values/): telefonun dili icin ceviri yoksa
+  uygulama Ingilizce acilir. Turkce metinler values-tr/ icindedir. Yeni bir
+  dil eklenirse app/build.gradle.kts'teki resourceConfigurations listesine de
+  eklenmelidir.
+
   minSdk 26 oldugu icin API 33 altindaki cihazlarda bu dosya ve ilgili API
-  hicbir etki yapmaz; sistem dili otomatik olarak values-en/ qualifier'i ile
-  zaten calisir, sadece manuel secici o cihazlarda gizlenir.
+  hicbir etki yapmaz; sistem diline gore otomatik secim orada da calisir,
+  sadece manuel secici o cihazlarda gizlenir.
 -->
 <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
-    <locale android:name="tr" />
     <locale android:name="en" />
+    <locale android:name="tr" />
 </locale-config>

@@ -42,8 +42,9 @@ rejected by a mandatory test.
 Files never leave the device; the original file is never modified. Built with
 Kotlin, Jetpack Compose, PdfBox-Android and bundled ML Kit — no AGPL components.
 
-The UI, source identifiers and documentation are in Turkish. Issues and PRs in
-English are welcome.
+The UI is in English (the default) and Turkish: it follows the phone's language
+and can be switched in-app on Android 13+. Source identifiers and documentation
+are in Turkish. Issues and PRs in English are welcome.
 
 **Download:** [latest release](https://github.com/bilalfarukozdemir/pdf-kutusu/releases/latest)
 — pick `arm64-v8a` (21 MB) unless you have an older 32-bit device, in which case
@@ -602,7 +603,7 @@ adb exec-out run-as com.yerel.pdfkutusu cat databases/pdf_kutusu.db > pdf_kutusu
 
 Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 
-### Birim testleri — 131 test
+### Birim testleri — 145 test
 
 | Dosya | Test | Neyi doğruluyor |
 |---|---|---|
@@ -615,6 +616,9 @@ Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 | `OkuyucuYerlesimTesti` | 24 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfaya gitme, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
 | `BekleyenGirdiTesti` | 6 | Okuyucudan araçlara devredilen belge: okumanın kutuyu boşaltmaması (aynı belge birden fazla araca girebilmeli), silinmiş dosyanın sunulmaması |
 | `SonAcilanlarTesti` | 12 | Son açılanlar listesi: sıralama, aynı belgenin kopyalanmaması, kapasite aşımında düşen kaydın **döndürülmesi** (URI yetkisi bırakılabilsin diye), bozuk kayıtların yok sayılması, ayracın ada sızmaması |
+| `BagisDurumuTesti` | 5 | Bağış bölümünün durum eşlemesi: boş ürün listesinin "mağaza yok"a, dolu listenin "hazır"a dönmesi, seçenek sırasının korunması, seçenek eşitliğinin ürün kimliği ve fiyata göre çalışması |
+| `DilKaynaklariTesti` | 7 | Hangi telefon dilinde hangi dilin açıldığı (İngilizce, Türkçe; çevirisi olmayan Hintçe/Portekizce/Almanca'da İngilizce), iki dil dosyasında anahtarların ve yer tutucuların (`%1$s`) birebir aynı olması |
+| `HataOnerisiTesti` | 2 | Hata kartındaki öneri satırının arayüz dilinde gelmesi: İngilizce arayüzde Türkçe öneri kalmaması, Türkçe karşılıkların çekirdekteki metinle aynı olması |
 
 PDF'e dokunan testler Robolectric altında koşar: PdfBox-Android font
 kaynaklarını AAR `assets` klasöründen okur ve bunun için gerçek bir Android

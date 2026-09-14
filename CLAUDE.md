@@ -24,12 +24,16 @@ OCR dahil bütün işlem cihaz üzerinde yapılır.
 
 ## Diğer kararlar
 
-- Varsayılan dil Türkçe; uygulama Play Store'a küresel açılma kararı
-  gereğince Türkçe + İngilizce'yi destekler (sistem diline göre otomatik +
+- Varsayılan (yedek) dil **İngilizce**; uygulama Play Store'a küresel açılma
+  kararı gereğince İngilizce + Türkçe'yi destekler (sistem diline göre otomatik +
   "Hakkında" ekranındaki isteğe bağlı manuel seçici, Android 13+
-  `LocaleManager`). Kullanıcıya görünen metin koda hardcoded yazılmaz;
-  `values/strings.xml` (TR) ve `values-en/strings.xml` (EN) içine anahtarla
-  eklenir — ayrıntı `CONTRIBUTING.md`'de.
+  `LocaleManager`). Telefonun dili için çeviri yoksa uygulama İngilizce açılır.
+  Kullanıcıya görünen metin koda hardcoded yazılmaz; `values/strings.xml` (EN,
+  varsayılan) ve `values-tr/strings.xml` (TR) içine anahtarla eklenir —
+  ayrıntı `CONTRIBUTING.md`'de.
+- AAB dil bölmesi kapalı (`bundle { language { enableSplit = false } }`).
+  Açılırsa Play telefona yalnızca telefonun kendi dillerini kurar ve manuel
+  dil seçici Play kurulumunda sessizce çalışmaz olur — açma.
 - Tema sistem ayarını izler, renkler duvar kâğıdından türetilir (Material You)
 - `CHANGELOG.md` sürüm başına güncellenir, `surum/` klasörü sürüm varlıklarını tutar
 

@@ -298,9 +298,13 @@ private fun Context.aktiviteyeCoz(): Activity? {
  * Android 13+ (API 33) `LocaleManager.setApplicationLocales` kullanir - bu,
  * AppCompat gibi buyuk bir bagimlilik eklemeden per-app dil degistirme saglayan
  * yerlesik API'dir. minSdk 26 oldugu icin daha eski cihazlarda secici
- * calismaz; onun yerine bilgilendirici bir not gosterilir. Sistem dili
- * tespiti (values-en/ qualifier) her surumde zaten otomatik calisir, bu
- * yalnizca manuel override'i sinirlar.
+ * calismaz; onun yerine bilgilendirici bir not gosterilir. Sistem diline gore
+ * secim (values-tr/, yoksa varsayilan Ingilizce values/) her surumde zaten
+ * otomatik calisir, bu yalnizca manuel override'i sinirlar.
+ *
+ * Secicinin Play'den kurulan uygulamada da calismasi AAB dil bolmesinin kapali
+ * olmasina baglidir (bkz. app/build.gradle.kts > bundle.language): acik olsaydi
+ * telefonun dili disindaki bir dilin metinleri cihaza hic inmezdi.
  *
  * Secim, sistemin kendi "Uygulama dilleri" mekanizmasi tarafindan kalici
  * olarak saklanir; burada ayrica bir tercih dosyasi tutulmasina gerek yoktur.

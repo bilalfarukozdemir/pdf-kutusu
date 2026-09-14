@@ -3,14 +3,17 @@ package com.yerel.pdfkutusu.cekirdek
 /**
  * Kullaniciya gosterilebilir, kurtarilabilir hatalar.
  *
- * Cogu alt sinif [kullaniciMesaji] ve [oneri] alanlarini, cagiran tarafin
- * (Context'i olan bir katmanin) zaten yerellestirdigi hazir metinle doldurur.
+ * Cogu alt sinif [kullaniciMesaji] alanini, cagiran tarafin (Context'i olan
+ * bir katmanin) zaten yerellestirdigi hazir metinle doldurur.
  *
  * Bazi durumlarda hatayi fırlatan kod Context'e erisemez (`cekirdek/` saf
  * Kotlin'dir) ya da metin cagiri noktasinda hicbir zaman verilmemistir
  * (ornegin bu sinifin kendi varsayilan degerleri). Bu durumlarda [kimlik] dolu
  * gelir; UI katmani [kimlik] varsa onu R.string karsiligina cevirir, yoksa
- * [kullaniciMesaji]/[oneri]'yi oldugu gibi kullanir (bkz. `ui/ortak/PdfHataMetni.kt`).
+ * [kullaniciMesaji]'ni oldugu gibi kullanir.
+ *
+ * [oneri] ise her alt sinifta sabit, Turkce bir metindir; ekranda oldugu gibi
+ * gosterilmez, UI turun R.string karsiligini kullanir (bkz. `ui/ortak/PdfHataMetni.kt`).
  */
 sealed class PdfHatasi(
     val kullaniciMesaji: String,

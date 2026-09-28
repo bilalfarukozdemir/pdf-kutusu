@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   test:
-    name: Birim testleri, APK ve izin denetimi
+    name: Birim testleri, enstrümante test derlemesi, APK ve izin denetimi
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -43,6 +43,17 @@ jobs:
 
       - name: Birim testleri
         run: ./gradlew testDebugUnitTest --no-daemon
+
+      # ---------------------------------------------------------------
+      # Enstrumante testler burada KOSULMAZ (cihaz/emulator yok) ama
+      # DERLENMELERI sart. androidTest kaynaklari bozuldugunda - ornegin
+      # kaldirilan bir sealed interface uyesine ya da silinen bir string
+      # kaynagina referans kaldiginda - hata yalnizca connectedAndroidTest
+      # calistirilirken cikar ve o ana kadar boru hatti sessizce yesil
+      # gorunur. Bu adim o kirigi derleme aninda yakalar; cihaz gerektirmez.
+      # ---------------------------------------------------------------
+      - name: Enstrümante test APK'sı — derleme denetimi
+        run: ./gradlew :app:assembleDebugAndroidTest --no-daemon
 
       - name: Debug APK
         run: ./gradlew assembleDebug --no-daemon

@@ -30,6 +30,15 @@ class BagisViewModel(private val bagimliliklar: Bagimliliklar) : ViewModel() {
         bagimliliklar.bagisYoneticisi.satinAlmayiBaslat(activity, urunId)
     }
 
+    fun talebiTamamla(referans: String) {
+        bagimliliklar.bagisYoneticisi.talebiTamamla(referans)
+    }
+
+    /** Magaza baglantisi veya bagis katalogu gecici olarak bos geldiyse tekrar sorgular. */
+    fun tekrarDene() {
+        bagimliliklar.bagisYoneticisi.baglan()
+    }
+
     /** Tesekkur/hata mesaji kapatildiginda secenek listesine geri doner. */
     fun mesajiKapat() {
         bagimliliklar.bagisYoneticisi.mevcutDurumaDon()

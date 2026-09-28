@@ -353,7 +353,7 @@
     <string name="hakkinda_risk_baslik">Low-risk use warning</string>
     <string name="hakkinda_risk_govde">This tool is for personal, low-risk use. Don\'t rely on it alone for official, legal, or regulated documents. Always open the output and check it visually.</string>
     <string name="hakkinda_izinler_baslik">Permissions</string>
-    <string name="hakkinda_izinler_govde">"This app requests no network (internet) permission. AndroidManifest.xml contains no INTERNET permission; network permissions that dependencies try to add are stripped out during manifest merging, and a build-time verification task checks this.\n\nOne exception: the optional \'Support the developer\' donation feature adds the com.android.vending.BILLING permission via the Google Play Billing library. This is not a network permission — Play Billing never talks to the internet directly, it communicates on-device (IPC) with the Play Store app; the system never shows this permission to you on a consent screen.\n\nFile picking and export use the Storage Access Framework (SAF), which needs no permission. MANAGE_EXTERNAL_STORAGE or broad storage access is never requested."</string>
+    <string name="hakkinda_izinler_govde">"This app requests no network (internet) permission. AndroidManifest.xml contains no INTERNET permission; network permissions that dependencies try to add are stripped out during manifest merging, and a build-time verification task checks this.\n\nOne exception: optional priority review services use the com.android.vending.BILLING permission through the Google Play Billing library. This is not a network permission — Play Billing never talks to the internet directly, it communicates on-device (IPC) with the Play Store app; the system never shows this permission to you on a consent screen.\n\nFile picking and export use the Storage Access Framework (SAF), which needs no permission. MANAGE_EXTERNAL_STORAGE or broad storage access is never requested."</string>
     <string name="hakkinda_veri_baslik">Where your data lives</string>
     <string name="hakkinda_veri_govde">"• Copies of files you choose: app storage / calisma\n• Generated outputs: app storage / cikti\n• Temporary files: cache / gecici\n• Operation log: app storage / pdf_kutusu.db (SQLite)\n\nAll of it is app-private; other apps can\'t read it. Cloud backup and device transfer are disabled. Uninstalling the app deletes all of it."</string>
     <string name="hakkinda_orijinal_baslik">Your original files</string>
@@ -365,26 +365,39 @@
     <string name="hakkinda_yazitipi_baslik">Bundled font</string>
     <string name="hakkinda_yazitipi_govde">"Watermark text is drawn with Noto Sans (static version), bundled with the app; only the characters actually used are embedded into the PDF. This keeps letters like ğ, ş, ı rendering correctly on every device.\n\nNoto Sans — Copyright The Noto Project Authors.\nLicensed under the SIL Open Font License 1.1.\nLicense text: assets/fonts/OFL.txt"</string>
     <string name="hakkinda_bilerek_yapilmayan_baslik">Deliberately not included</string>
-    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF conversion: can\'t be done reliably on a mobile device. Use the Microsoft Office app for that.\n• Signature flow (inviting signers, approval records): requires a server and authentication; meaningless in an offline phone app.\n• Accounts, subscriptions, telemetry, analytics, cloud sync, ads: none. One exception: the optional \'Support the developer\' donation — it uses Google Play\'s own payment system, card details never reach the app, and you can repeat it as many times as you like.\n• Embedding a searchable OCR text layer into the PDF: out of scope for this version."</string>
+    <string name="hakkinda_bilerek_yapilmayan_govde">"• Office → PDF conversion: can\'t be done reliably on a mobile device. Use the Microsoft Office app for that.\n• Signature flow (inviting signers, approval records): requires a server and authentication; meaningless in an offline phone app.\n• Accounts, subscriptions, telemetry, analytics, cloud sync, ads: none. The optional priority review services use Google Play Billing; card details never reach the app.\n• Embedding a searchable OCR text layer into the PDF: out of scope for this version."</string>
     <string name="hakkinda_dil_baslik">Dil / Language</string>
     <string name="hakkinda_dil_sistem">System</string>
     <string name="hakkinda_dil_turkce">Türkçe</string>
     <string name="hakkinda_dil_ingilizce">English</string>
     <string name="hakkinda_dil_eski_cihaz_bilgi">Changing the language requires Android 13 or newer — this device uses the automatic system language.</string>
 
-    <!-- ================= about: donation ================= -->
-    <string name="hakkinda_bagis_baslik">Support the Developer</string>
-    <string name="hakkinda_bagis_govde">An optional, repeatable donation. Payment is handled entirely by Google Play; card or identity details never reach the app.</string>
-    <string name="hakkinda_bagis_kahve">Buy a coffee</string>
-    <string name="hakkinda_bagis_ogun">Buy a meal</string>
-    <string name="hakkinda_bagis_comert">Generous support</string>
+    <!-- ================= about: priority review services ================= -->
+    <string name="hakkinda_bagis_baslik">Developer support</string>
+    <string name="hakkinda_bagis_govde">We aim to provide a priority review and written reply within 14 days for every request. No code change, feature implementation, or PR merge is promised.</string>
+    <string name="hakkinda_bagis_istek_incelemesi">Feature request review</string>
+    <string name="hakkinda_bagis_pr_incelemesi">Open-source PR review</string>
+    <string name="hakkinda_bagis_inceleme_paketi">Two-review bundle</string>
     <string name="hakkinda_bagis_baglaniyor">Connecting to the store…</string>
-    <string name="hakkinda_bagis_magaza_yok">Google Play Store wasn\'t found on this device; the donation feature isn\'t available.</string>
+    <string name="hakkinda_bagis_magaza_yok">Google Play could not provide the support options. Check the Play Store connection and make sure the support products are active in Play Console.</string>
+    <string name="hakkinda_bagis_tekrar_dene">Try again</string>
     <string name="hakkinda_bagis_satin_aliniyor">Purchase in progress…</string>
-    <string name="hakkinda_bagis_tesekkur">Thank you! We really appreciate your support.</string>
-    <string name="hakkinda_bagis_hata">Something went wrong with the donation: %1$s</string>
+    <string name="hakkinda_bagis_hata">Something went wrong with the purchase: %1$s</string>
     <string name="hakkinda_bagis_tamam">OK</string>
     <string name="hakkinda_bagis_secenek_etiketi">%1$s — %2$s</string>
+    <string name="hakkinda_bagis_talep_baslik">Your pending support request</string>
+    <string name="hakkinda_bagis_talep_aciklama">Open the email draft, add your request or PR link, and send it yourself. After sending, tap the button below. If you close the draft, the request stays here.</string>
+    <string name="hakkinda_bagis_talep_referans">Request code: %1$s</string>
+    <string name="hakkinda_bagis_eposta_ac">Open email draft</string>
+    <string name="hakkinda_bagis_talep_gonderildi">I sent the email</string>
+    <string name="hakkinda_bagis_eposta_yok">No email app was found on this device. Email bilalfarukozdemir@gmail.com and include your request code.</string>
+    <string name="hakkinda_bagis_urunler_yuklenemedi">New support options could not be loaded right now; you can still complete your pending request.</string>
+    <string name="hakkinda_bagis_eposta_istek_konu">PDF Kutusu feature request review [%1$s]</string>
+    <string name="hakkinda_bagis_eposta_istek_govde">I purchased a priority PDF Kutusu feature request review. My request code: %1$s\n\nMy feature request:\n\n\n\nA review and written reply within 14 days are targeted; no code change or implementation is promised.</string>
+    <string name="hakkinda_bagis_eposta_pr_konu">PDF Kutusu open-source PR review [%1$s]</string>
+    <string name="hakkinda_bagis_eposta_pr_govde">I purchased a priority PDF Kutusu open-source PR review. My request code: %1$s\n\nGitHub PR link:\n\nWhat I would like reviewed:\n\n\n\nA review and written reply within 14 days are targeted; no PR merge or code change is promised.</string>
+    <string name="hakkinda_bagis_eposta_paket_konu">PDF Kutusu two-review priority bundle [%1$s]</string>
+    <string name="hakkinda_bagis_eposta_paket_govde">I purchased one priority feature request review and one open-source PR review for PDF Kutusu. My request code: %1$s\n\nMy feature request:\n\n\n\nGitHub PR link:\n\nWhat I would like reviewed:\n\n\n\nA written reply within 14 days is targeted for each review; no code change or PR merge is promised.</string>
 
     <!-- ================= reader ================= -->
     <string name="okuyucu_varsayilan_baslik">Reader</string>

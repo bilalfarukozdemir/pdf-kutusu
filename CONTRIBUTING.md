@@ -32,7 +32,7 @@ karıştırılmaz:
   `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
 - `BILINCLI_KABUL_EDILEN`: proje sahibinin **bilerek, gerekçesiyle** kabul
   ettiği, gerçek bir yetenek veren istisnalar. Tek örneği
-  `com.android.vending.BILLING` (Google Play Billing — "bağış" özelliği
+  `com.android.vending.BILLING` (Google Play Billing — ücretli inceleme hizmetleri
   için gerekli; internete kendi çıkmaz, cihazdaki Play Store uygulamasıyla
   IPC üzerinden konuşur, kullanıcıya izin ekranında gösterilmez). Bu liste
   "artık her yeni izin buraya eklenebilir" anlamına gelmez — her yeni giriş
@@ -62,11 +62,11 @@ istisna `tumunuTemizle()`: ya hepsi durur ya hiçbiri.
 - **İmza akışı** (imzacı davet etme, onay kaydı, teslimat takibi). Sunucu ve
   kimlik doğrulama gerektirir.
 - **Hesap, abonelik, telemetri, analitik, bulut senkronu, reklam.** Tek
-  istisna: isteğe bağlı, tekrarlanabilir "Geliştiriciyi Destekle" bağışı
-  (Google Play Billing). Bu bir abonelik değildir — hesap açmaz, kimlik
-  doğrulamaz, hiçbir özelliği kilitlemez/açmaz; sadece bir kerelik ödeme
-  akışıdır ve kural #1'deki `BILINCLI_KABUL_EDILEN` istisnasıyla aynı
-  gerekçeye dayanır (bkz. [PRIVACY.md](PRIVACY.md)).
+  istisna: isteğe bağlı, tüketilebilir öncelikli inceleme hizmetleri
+  (Google Play Billing). Bu abonelik değildir — hesap açmaz, kimlik
+  doğrulamaz, uygulama özelliklerini kilitlemez/açmaz; hizmet talebini
+  kullanıcı e-posta uygulamasında kendisi gönderir. Billing izni kural #1'deki
+  `BILINCLI_KABUL_EDILEN` istisnasıdır (bkz. [PRIVACY.md](PRIVACY.md)).
 - **AGPL lisanslı kütüphane** (MuPDF, iText).
 
 ---

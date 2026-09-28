@@ -10,8 +10,10 @@ Tamamen çevrimdışı çalışan, kişisel bir Android PDF okuyucu ve araç kut
 **PDF okuma**, resimden PDF, birleştir, böl, sırala, döndür, sıkıştır,
 filigran ekle, **karart**, metin çıkar (OCR).
 
-**Hiçbir dosya cihazdan çıkmaz.** Uygulamanın `INTERNET` izni yoktur ve bu bir söz
-değil, derleme zamanında doğrulanan yapısal bir kısıttır — bkz. [İzinler](#i̇zinler).
+PDF dosyaları cihazda kalır; uygulama `INTERNET` izni istemez. Bir dosyayı veya
+destek talebini başka bir uygulamayla paylaşmayı seçersen gönderilecek içeriği
+sen kontrol edersin — uygulama kendiliğinden hiçbir şey göndermez. Ayrıntı için
+[gizlilik politikasına](PRIVACY.md) bak.
 
 <p align="center">
   <img src="docs/ekran-goruntusu.jpeg" alt="PDF Kutusu ana ekranı: çevrimdışı uyarısı ve araç ızgarası" width="320">
@@ -39,7 +41,9 @@ rectangles are painted opaque black onto the pixels, and the page is rebuilt fro
 that bitmap. Drawing a black rectangle over live text is fake redaction and is
 rejected by a mandatory test.
 
-Files never leave the device; the original file is never modified. Built with
+PDF files stay on the device unless you explicitly share them with another app;
+the original file is never modified. The app itself has no `INTERNET` permission
+and never sends email. Built with
 Kotlin, Jetpack Compose, PdfBox-Android and bundled ML Kit — no AGPL components.
 
 The UI is in English (the default) and Turkish: it follows the phone's language
@@ -485,7 +489,7 @@ Hepsi `OkuyucuCihazTesti` içinde cihaz üstünde doğrulanıyor.
   **yeni bir izin gerektirmez.**
 - **Kaydet** — SAF ile seçtiğiniz konuma yazar, dosya cihazda kalır.
 
-> **Paylaşma, "hiçbir şey cihazdan çıkmaz" sözünün bilinçli istisnasıdır.**
+> **Paylaşma, kullanıcının başlattığı dışa aktarımdır.**
 > Uygulama kendiliğinden hiçbir şey göndermez ve `INTERNET` izni yoktur; ama
 > dosyayı teslim ettiğiniz uygulama onu istediği yere yükleyebilir. Arayüz bunu
 > sonuç kartında açıkça yazar.
@@ -616,7 +620,7 @@ Rapor: `app/build/reports/tests/testDebugUnitTest/index.html`
 | `OkuyucuYerlesimTesti` | 24 | Okuyucunun kaydırma/yakınlaştırma aritmetiği: yakınlaştırma odağının ekranda sabit kalması, küçük adımların sapma biriktirmemesi, kaydırma sınırının ölçekle birlikte büyümesi, sayfaya gitme, sayfasız/sıfır genişlikli/negatif oranlı bozuk girdiler |
 | `BekleyenGirdiTesti` | 6 | Okuyucudan araçlara devredilen belge: okumanın kutuyu boşaltmaması (aynı belge birden fazla araca girebilmeli), silinmiş dosyanın sunulmaması |
 | `SonAcilanlarTesti` | 12 | Son açılanlar listesi: sıralama, aynı belgenin kopyalanmaması, kapasite aşımında düşen kaydın **döndürülmesi** (URI yetkisi bırakılabilsin diye), bozuk kayıtların yok sayılması, ayracın ada sızmaması |
-| `BagisDurumuTesti` | 5 | Bağış bölümünün durum eşlemesi: boş ürün listesinin "mağaza yok"a, dolu listenin "hazır"a dönmesi, seçenek sırasının korunması, seçenek eşitliğinin ürün kimliği ve fiyata göre çalışması |
+| `BagisDurumuTesti` | 5 | Öncelikli inceleme bölümünün durum eşlemesi: boş ürün listesinin "mağaza yok"a, dolu listenin "hazır"a dönmesi, seçenek sırasının korunması, seçenek eşitliğinin ürün kimliği ve fiyata göre çalışması |
 | `DilKaynaklariTesti` | 7 | Hangi telefon dilinde hangi dilin açıldığı (İngilizce, Türkçe; çevirisi olmayan Hintçe/Portekizce/Almanca'da İngilizce), iki dil dosyasında anahtarların ve yer tutucuların (`%1$s`) birebir aynı olması |
 | `HataOnerisiTesti` | 2 | Hata kartındaki öneri satırının arayüz dilinde gelmesi: İngilizce arayüzde Türkçe öneri kalmaması, Türkçe karşılıkların çekirdekteki metinle aynı olması |
 
@@ -811,9 +815,14 @@ Bu proje ücretsiz ve ücretsiz kalacak. İşine yaradıysa iki yol var:
 
 - **GitHub Sponsors** — [sponsor olabilirsin](https://github.com/sponsors/bilalfarukozdemir),
   aylık ya da tek seferlik. Repoyu bulan geliştiricilere yönelik.
-- **Uygulama içinden** — Play Store sürümünde "Geliştiriciyi Destekle"
-  bölümünden tek seferlik bağış. Ödeme tamamen Google Play üzerinden yürür,
-  kart bilgisi uygulamaya hiç ulaşmaz. Hiçbir özelliği kilitlemez.
+- **Uygulama içinden** — Play Store sürümünde Google Play Billing ile satın
+  alınan öncelikli hizmet incelemeleri: geliştiriciye özel özellik isteği,
+  açık kaynak PR incelemesi veya ikisini içeren paket. Her hizmet için 14 gün
+  içinde inceleme ve yazılı yanıt hedeflenir; kod değişikliği ya da PR'ın birleştirilmesi
+  vaat edilmez. Fiyat hedefleri Türkiye'de ₺29,99 / ₺79,99 / ₺149,99;
+  diğer pazarlarda $2 / $5 / $10'dur. Ürünler Play Console'da taslak durumunda.
+  Ödeme Google Play üzerinden yürür; kart bilgisi uygulamaya ulaşmaz. İstek,
+  uygulamanın açtığı e-posta taslağından yalnızca kullanıcı gönderirse iletilir.
 
 Bir yıldız ya da iyi bir hata bildirimi de en az onlar kadar kıymetli.
 
@@ -824,7 +833,7 @@ Bir yıldız ya da iyi bir hata bildirimi de en az onlar kadar kıymetli.
 | | |
 |---|---|
 | Bakım | Tek geliştirici, boş zamanlarında — [@bilalfarukozdemir](https://github.com/bilalfarukozdemir) |
-| Finansman | Reklam, telemetri ve ücretli sürüm yok. İki isteğe bağlı kanal: [GitHub Sponsors](https://github.com/sponsors/bilalfarukozdemir) ve Play Store sürümünde uygulama içi bağış |
+| Finansman | Reklam ve telemetri yok. İki isteğe bağlı kanal: [GitHub Sponsors](https://github.com/sponsors/bilalfarukozdemir) ve Play Store sürümündeki öncelikli inceleme hizmetleri |
 | Durum | Aktif geliştiriliyor |
 | Lisans | MIT |
 | Destek | Hata bildirimleri okunur ve ele alınır. Yanıt süresi taahhüdü ve garanti yoktur |

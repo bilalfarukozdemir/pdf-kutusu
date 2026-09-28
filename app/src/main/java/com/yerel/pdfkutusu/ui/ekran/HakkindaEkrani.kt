@@ -2,10 +2,14 @@ package com.yerel.pdfkutusu.ui.ekran
 
 import android.app.Activity
 import android.app.LocaleManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yerel.pdfkutusu.R
 import com.yerel.pdfkutusu.satinalma.BagisDurumu
 import com.yerel.pdfkutusu.satinalma.BagisSecenegi
+import com.yerel.pdfkutusu.satinalma.DestekTalebi
 import com.yerel.pdfkutusu.ui.model.BagisViewModel
 import com.yerel.pdfkutusu.ui.ortak.AracIskeleti
 import com.yerel.pdfkutusu.ui.ortak.BaglantiMetni
@@ -171,11 +176,24 @@ private fun UygulamaKimligi() {
 @Composable
 private fun BagisBolumu(gorunum: BagisViewModel) {
     val durum by gorunum.durum.collectAsStateWithLifecycle()
-    val activity = LocalContext.current.aktiviteyeCoz()
+    val baglam = LocalContext.current
+    val activity = baglam.aktiviteyeCoz()
 
     BagisIcerik(
         durum = durum,
         satinAl = { urunId -> activity?.let { gorunum.satinAl(it, urunId) } },
+        talepEpostasiAc = { talep ->
+            val act = activity
+            if (act == null || !act.destekTalebiEpostasiAc(talep)) {
+                Toast.makeText(
+                    baglam,
+                    R.string.hakkinda_bagis_eposta_yok,
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+        },
+        talebiTamamla = gorunum::talebiTamamla,
+        tekrarDene = { gorunum.tekrarDene() },
         mesajiKapat = { gorunum.mesajiKapat() },
     )
 }
@@ -194,6 +212,9 @@ internal fun BagisIcerik(
     durum: BagisDurumu,
     satinAl: (urunId: String) -> Unit,
     mesajiKapat: () -> Unit,
+    talepEpostasiAc: (DestekTalebi) -> Unit = {},
+    talebiTamamla: (String) -> Unit = {},
+    tekrarDene: () -> Unit = {},
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
@@ -219,9 +240,42 @@ internal fun BagisIcerik(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedButton(onClick = tekrarDene) {
+                        Text(stringResource(R.string.hakkinda_bagis_tekrar_dene))
+                    }
                 }
 
                 is BagisDurumu.Hazir -> {
+                    durum.bekleyenTalepler.forEach { talep ->
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                stringResource(R.string.hakkinda_bagis_talep_baslik),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(R.string.hakkinda_bagis_talep_aciklama),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            Text(
+                                stringResource(R.string.hakkinda_bagis_talep_referans, talep.referans),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            OutlinedButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { talepEpostasiAc(talep) },
+                            ) {
+                                Text(stringResource(R.string.hakkinda_bagis_eposta_ac))
+                            }
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { talebiTamamla(talep.referans) },
+                            ) {
+                                Text(stringResource(R.string.hakkinda_bagis_talep_gonderildi))
+                            }
+                        }
+                    }
+
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         durum.secenekler.forEach { secenek ->
                             OutlinedButton(
@@ -230,6 +284,17 @@ internal fun BagisIcerik(
                             ) {
                                 Text(bagisEtiketi(secenek))
                             }
+                        }
+                    }
+
+                    if (durum.secenekler.isEmpty() && durum.bekleyenTalepler.isNotEmpty()) {
+                        Text(
+                            stringResource(R.string.hakkinda_bagis_urunler_yuklenemedi),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        OutlinedButton(onClick = tekrarDene) {
+                            Text(stringResource(R.string.hakkinda_bagis_tekrar_dene))
                         }
                     }
                 }
@@ -242,17 +307,6 @@ internal fun BagisIcerik(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                }
-
-                is BagisDurumu.Tesekkur -> {
-                    Text(
-                        stringResource(R.string.hakkinda_bagis_tesekkur),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Button(onClick = mesajiKapat) {
-                        Text(stringResource(R.string.hakkinda_bagis_tamam))
-                    }
                 }
 
                 is BagisDurumu.Hata -> {
@@ -274,12 +328,37 @@ internal fun BagisIcerik(
 @Composable
 private fun bagisEtiketi(secenek: BagisSecenegi): String {
     val ad = when (secenek.urunId) {
-        "destek_kahve" -> stringResource(R.string.hakkinda_bagis_kahve)
-        "destek_ogun" -> stringResource(R.string.hakkinda_bagis_ogun)
-        "destek_comert" -> stringResource(R.string.hakkinda_bagis_comert)
+        "priority_request_review" -> stringResource(R.string.hakkinda_bagis_istek_incelemesi)
+        "priority_pr_review" -> stringResource(R.string.hakkinda_bagis_pr_incelemesi)
+        "priority_review_bundle" -> stringResource(R.string.hakkinda_bagis_inceleme_paketi)
         else -> secenek.urunId
     }
     return stringResource(R.string.hakkinda_bagis_secenek_etiketi, ad, secenek.fiyatMetni)
+}
+
+private const val GELISTIRICI_EPOSTASI = "bilalfarukozdemir@gmail.com"
+
+/** Mail taslağını kullanıcının seçtiği e-posta uygulamasında açar; uygulama kendisi e-posta göndermez. */
+private fun Context.destekTalebiEpostasiAc(talep: DestekTalebi): Boolean {
+    val (konuKaynak, govdeKaynak) = when (talep.urunId) {
+        "priority_request_review" ->
+            R.string.hakkinda_bagis_eposta_istek_konu to R.string.hakkinda_bagis_eposta_istek_govde
+        "priority_pr_review" ->
+            R.string.hakkinda_bagis_eposta_pr_konu to R.string.hakkinda_bagis_eposta_pr_govde
+        else ->
+            R.string.hakkinda_bagis_eposta_paket_konu to R.string.hakkinda_bagis_eposta_paket_govde
+    }
+    val taslak = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.fromParts("mailto", GELISTIRICI_EPOSTASI, null)
+        putExtra(Intent.EXTRA_SUBJECT, getString(konuKaynak, talep.referans))
+        putExtra(Intent.EXTRA_TEXT, getString(govdeKaynak, talep.referans))
+    }
+    return try {
+        startActivity(taslak)
+        true
+    } catch (_: ActivityNotFoundException) {
+        false
+    }
 }
 
 /** ContextWrapper zincirini cozup en yakin Activity'yi bulur (Compose Context'i saran katmanlar icin). */

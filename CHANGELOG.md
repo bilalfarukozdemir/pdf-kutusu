@@ -5,6 +5,81 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+### Değişti
+
+- **"Geliştiriciyi Destekle" bağış modeli, "öncelikli inceleme hizmeti"
+  modeline bıraktı.** Play ürünleri `destek_kahve` / `destek_ogun` /
+  `destek_comert` (bir kahve, bir öğün, cömert destek) yerine
+  `priority_request_review`, `priority_pr_review`, `priority_review_bundle`
+  oldu: özellik isteği incelemesi, açık kaynak PR incelemesi ve ikisini birden
+  içeren paket. Arayüzdeki üç seçeneğin adı da buna göre değişti. Sürüm
+  1.3.3'e (vc7) çıkarıldı; **henüz Play'e gönderilmedi.**
+
+- **Satın alma tek başına bir sonuç olmaktan çıktı; artık bir talep
+  kaydının başlangıcı.** Satın alma Play tarafından onaylanınca önce cihazda
+  kalıcı bir talebe çevriliyor, ancak ondan sonra tüketiliyor. Tüketilen
+  para; kalıcı kalan hizmet hakkı.
+
+  - **Talep kodu satın alma jetonundan türetiliyor.** `purchaseToken`
+    SHA-256 ile özetleniyor, ilk 6 baytı 12 haneli büyük harfli onaltılık
+    kod olarak kullanılıyor. Jetonun kendisi hiçbir yere yazılmıyor ve
+    ekranda da gösterilmiyor; aynı satın alma için kod her seferinde aynı
+    çıkıyor. E-postada gönderilen şey bu kod, jeton değil.
+  - **Kayıt cihazda tutuluyor.** `destek_talep_kayitlari` paylaşılan
+    tercihlerinde `urunId:referans` çiftleri olarak saklanıyor. Yazma
+    senkron `commit()` ile yapılıyor: kayıt tutulamazsa satın alma tüketilmiyor
+    ve akış hata durumunda kalıyor.
+  - **E-postayı kullanıcı gönderiyor.** Bekleyen talep için "E-posta
+    taslağını aç" düğmesi, seçilen hizmete göre hazır konu ve gövdeli bir
+    taslağı `ACTION_SENDTO` / `mailto` niyetiyle kullanıcının kendi e-posta
+    uygulamasında açıyor. Uygulama e-posta göndermez ve `INTERNET` izni yoktur.
+    Cihazda e-posta uygulaması yoksa ekranda geliştirici adresi ve talep kodu
+    yazılı bir uyarı çıkıyor. Taslak kapatılırsa talep listede kalıyor —
+    kayıt, ancak "E-postayı gönderdim" düğmesine basılınca siliniyor.
+
+- **`Tesekkur` durumu kaldırıldı.** Satın alma sonrası çıkan "Teşekkür
+  ederiz" ekranı artık yok; akış bekleme listesine, yani alınan hizmete geri
+  dönüyor. Satın alınan hizmet zaten ekranda göründüğü için ayrı bir teşekkür
+  ekranı gereksizdi.
+
+- **"Mağaza yok" kalıcı bir uyarı olmaktan çıktı, geçici bir duruma
+  dönüştü.** Play bağlantısı kurulamaz veya ürünler sorgulanamazsa ekran
+  "destek seçenekleri alınamadı" diyor ve **Tekrar dene** düğmesi sunuyor.
+  Önceden bu, cihazda Play Store bulunmadığı anlamına geliyordu. Bekleyen
+  talep varsa yeni ürün listesi yüklenmese bile talep tamamlanabiliyor.
+
+- **Bağlanma artık tekrar çağrılabilir.** Kurulmuş bir Billing bağlantısı
+  doğrudan ürün sorgusuna düşüyor, hâlâ kurulmakta olan bağlantı ikinci bir
+  bağlantı başlatmıyor; bağlantı koparsa saklanan talepler korunuyor. Ürün
+  sorgusu sırasında daha önce tüketilmemiş satın almalar da geriye dönük
+  talebe çevriliyor; yarım kalan bir akış uygulama kapansa da kaybolmuyor.
+
+- **Dokümanlar yeni modele göre düzeltildi.** `PRIVACY.md` (e-posta
+  taslağının kullanıcı kontrollü dış aktarımı), `README.md` (hizmet tanımı,
+  fiyat hedefleri, ürünlerin Play Console'da hâlâ taslak olduğu bilgisi),
+  `CONTRIBUTING.md` (Billing izninin gerekçesi) ve "Hakkında" ekranının izinler
+  ile "bilerek yapılmayanlar" metinleri.
+
+### Düzeltildi
+
+- **Enstrümante testler derlenmiyordu.** `BagisAkisiCihazTesti`, sealed
+  interface'ten kaldırılan `BagisDurumu.Tesekkur` durumuna ve silinen
+  `hakkinda_bagis_kahve` / `hakkinda_bagis_tesekkur` metinlerine referans
+  veriyordu. Bu bir derleme hatasıydı ama CI onu yakalamıyordu: hata yalnızca
+  `connectedAndroidTest` çalıştırıldığında ortaya çıkıyor ve CI'da cihaz
+  yok. Testler yeni modele göre düzeltildi — ürün kimlikleri
+  `URUN_KIMLIKLERI` ile aynı yapıldı, `Tesekkur` testinin yerine bekleyen
+  talep akışını doğrulayan blok geldi (talep kodunun görünmesi, taslak
+  açılması, "E-postayı gönderdim" ile kaydın silinmesi). Ayrıca ürün kimliği →
+  yerel ad eşitliği denetimi eklendi: `bagisEtiketi` bilinmeyen kimlikte
+  kimliğin kendisini gösterdiği için eski `destek_kahve` gibi kimlikler derleme
+  hatası vermeden sessizce yanlış metni test ediyordu.
+
+- **CI artık enstrümante testleri de derliyor.** `derleme.yml` işine
+  `:app:assembleDebugAndroidTest` adımı eklendi. Testler koşmuyor — cihaz ya da
+  emülatör yok — ama derleniyor; böylece bu tür bir kırık boru hattında
+  sessizce yeşil görünmüyor. Cihaz gerektirmez.
+
 ## [1.3.2] — 2026-09-14
 
 ### Değişti

@@ -1,7 +1,7 @@
 package com.yerel.pdfkutusu.satinalma
 
 /**
- * Bagis (destek) akisinin gorunur durumlari.
+ * Geliştirici desteği satın alma akışının görünür durumları.
  *
  * [BagisYoneticisi] bu tipi bir `StateFlow` olarak disa acar; UI katmani
  * (`BagisBolumu`) yalnizca bu durumlari dinler, BillingClient'i hic gormez.
@@ -11,23 +11,29 @@ sealed interface BagisDurumu {
     /** Magazaya baglaniliyor / urun sorgusu suruyor. */
     data object Baglaniyor : BagisDurumu
 
-    /** Cihazda Play Store yok ya da magaza kullanilamaz durumda. */
+    /** Play bağlantısı kurulamadı veya kullanılabilir destek ürünü bulunamadı. */
     data object MagazaYok : BagisDurumu
 
     /** Sorgulanan urunler hazir; kullanici secim yapabilir. */
-    data class Hazir(val secenekler: List<BagisSecenegi>) : BagisDurumu
+    data class Hazir(
+        val secenekler: List<BagisSecenegi>,
+        val bekleyenTalepler: List<DestekTalebi> = emptyList(),
+    ) : BagisDurumu
 
     /** Play'in kendi satin alma ekrani acik / islem suruyor. */
     data object SatinAliniyor : BagisDurumu
-
-    /** Satin alma basariyla tamamlandi ve tuketildi (tekrar bagis yapilabilir). */
-    data object Tesekkur : BagisDurumu
 
     /** Satin alma basarisiz oldu (kullanici iptali disinda bir hata). */
     data class Hata(val mesaj: String) : BagisDurumu
 }
 
-/** Tek bir bagis secenegi: Play Console'daki INAPP urun ID'si + yerel fiyat metni. */
+/** Play Billing ile alınmış ve henüz e-posta talebi gönderilmemiş hizmet hakkı. */
+data class DestekTalebi(
+    val urunId: String,
+    val referans: String,
+)
+
+/** Tek bir destek hizmeti: Play Console'daki INAPP ürün ID'si + yerel fiyat metni. */
 data class BagisSecenegi(
     val urunId: String,
     val fiyatMetni: String,
@@ -41,5 +47,12 @@ data class BagisSecenegi(
  * akisi bittikten sonra "onceki listeye don" icin kullanilir, bu yuzden
  * ayri bir yerde tanimli ve dogrudan birim testle dogrulanir.
  */
-fun secenekListesindenDurum(secenekler: List<BagisSecenegi>): BagisDurumu =
-    if (secenekler.isEmpty()) BagisDurumu.MagazaYok else BagisDurumu.Hazir(secenekler)
+fun secenekListesindenDurum(
+    secenekler: List<BagisSecenegi>,
+    bekleyenTalepler: List<DestekTalebi> = emptyList(),
+): BagisDurumu =
+    if (secenekler.isEmpty() && bekleyenTalepler.isEmpty()) {
+        BagisDurumu.MagazaYok
+    } else {
+        BagisDurumu.Hazir(secenekler, bekleyenTalepler)
+    }

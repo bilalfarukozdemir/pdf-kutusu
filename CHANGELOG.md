@@ -5,6 +5,14 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
 
 ## [Yayımlanmamış]
 
+## [1.3.5] – 2026-11-21
+
+### Düzeltildi
+
+- **Satın alma onayı (acknowledge) güvenilirleştirildi.** Satın almalar açılışta ve uygulama ön plana döndüğünde de onaylanıp tüketiliyor; ödeme sonradan tamamlansa da ürün korunur ve onaylanır.
+
+## [1.3.4] – 2026-10-04
+
 ### Değişti
 
 - **"Geliştiriciyi Destekle" bağış modeli, "öncelikli inceleme hizmeti"
@@ -13,7 +21,7 @@ Sürümleme [Semantic Versioning](https://semver.org/lang/tr/) izler.
   `priority_request_review`, `priority_pr_review`, `priority_review_bundle`
   oldu: özellik isteği incelemesi, açık kaynak PR incelemesi ve ikisini birden
   içeren paket. Arayüzdeki üç seçeneğin adı da buna göre değişti. Sürüm
-  1.3.3'e (vc7) çıkarıldı; **henüz Play'e gönderilmedi.**
+  1.3.4 (vc8) üretim incelemesine 4 Ekim 2026 tarihinde gönderildi; önceki 1.3.3 (vc7) Play taslağı kullanılmadı. Google hızlı kontrolleri/incelemesi bekleniyor; canlı üretim onayı değildir.
 
 - **Satın alma tek başına bir sonuç olmaktan çıktı; artık bir talep
   kaydının başlangıcı.** Satın alma Play tarafından onaylanınca önce cihazda

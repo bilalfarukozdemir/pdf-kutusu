@@ -820,7 +820,7 @@ Bu proje ücretsiz ve ücretsiz kalacak. İşine yaradıysa iki yol var:
   açık kaynak PR incelemesi veya ikisini içeren paket. Her hizmet için 14 gün
   içinde inceleme ve yazılı yanıt hedeflenir; kod değişikliği ya da PR'ın birleştirilmesi
   vaat edilmez. Fiyat hedefleri Türkiye'de ₺29,99 / ₺79,99 / ₺149,99;
-  diğer pazarlarda $2 / $5 / $10'dur. Ürünler Play Console'da taslak durumunda.
+  diğer pazarlarda $2 / $5 / $10'dur. Üç ürünün satın alma seçenekleri 4 Ekim 2026 tarihinde Play Console'da etkinleştirildi. ABD fiyatları $1,99 / $4,99 / $9,99; diğer bölgelerde yerel fiyatlar uygulanır.
   Ödeme Google Play üzerinden yürür; kart bilgisi uygulamaya ulaşmaz. İstek,
   uygulamanın açtığı e-posta taslağından yalnızca kullanıcı gönderirse iletilir.
 

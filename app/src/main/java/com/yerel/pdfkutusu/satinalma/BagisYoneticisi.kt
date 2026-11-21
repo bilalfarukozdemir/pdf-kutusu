@@ -2,6 +2,7 @@ package com.yerel.pdfkutusu.satinalma
 
 import android.app.Activity
 import android.content.Context
+import android.os.SystemClock
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
@@ -69,6 +70,8 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
     /** Son sorgulanan urun detaylari - satin alma akisini baslatmak icin gerekli. */
     private var urunDetaylari: Map<String, ProductDetails> = emptyMap()
     private var baglantiSuruyor = false
+    private var taramaSuruyor = false
+    private var sonTaramaMs: Long? = null
 
     private val satinAlmaDinleyicisi = PurchasesUpdatedListener { sonuc, satinAlmalar ->
         when (sonuc.responseCode) {
@@ -90,30 +93,63 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
         .enablePendingPurchases(
             PendingPurchasesParams.newBuilder().enableOneTimeProducts().build(),
         )
+        .enableAutoServiceReconnection()
         .build()
 
     override fun baglan() {
         _durum.value = BagisDurumu.Baglaniyor
+        baglantiyiHazirla(
+            basarili = { urunleriSorgula() },
+            basarisiz = { _durum.value = mevcutDurum() },
+        )
+    }
+
+    /**
+     * Ekrandan bagimsiz tarama: uygulama acilisinda ve AnaAktivite onResume'da
+     * cagrilir. Urun ayrintilari gerekmeden PURCHASED alimlari talebe cevirip
+     * tuketir. Play, 3 gun icinde onaylanmayan alimi iade eder. Hata olursa
+     * zaman damgasi sifirlanir, sonraki gecis yeniden dener.
+     */
+    fun arkaPlandaTara() {
+        val simdi = SystemClock.elapsedRealtime()
+        if (taramaSuruyor || !taramaZamaniGeldiMi(sonTaramaMs, simdi)) return
+        taramaSuruyor = true
+        sonTaramaMs = simdi
+        baglantiyiHazirla(
+            basarili = { sahiplikleriSorgula() },
+            basarisiz = {
+                taramaSuruyor = false
+                sonTaramaMs = null
+            },
+        )
+    }
+
+    private val baglantiBekleyenleri = mutableListOf<Pair<() -> Unit, () -> Unit>>()
+
+    private fun baglantiyiHazirla(basarili: () -> Unit, basarisiz: () -> Unit) {
         if (istemci.isReady) {
-            urunleriSorgula()
+            basarili()
             return
         }
+        baglantiBekleyenleri += basarili to basarisiz
         if (baglantiSuruyor) return
         baglantiSuruyor = true
         istemci.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 baglantiSuruyor = false
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    urunleriSorgula()
-                } else {
-                    _durum.value = mevcutDurum()
-                }
+                val bekleyenler = baglantiBekleyenleri.toList()
+                baglantiBekleyenleri.clear()
+                val tamam = billingResult.responseCode == BillingClient.BillingResponseCode.OK
+                bekleyenler.forEach { (ok, hata) -> if (tamam) ok() else hata() }
             }
 
             override fun onBillingServiceDisconnected() {
+                // enableAutoServiceReconnection yeniden baglanir; ayrica sonraki
+                // tarama/baglan() cagrisi isReady false ise yeniden kurar.
                 baglantiSuruyor = false
-                // Bekleyen istekleri sakla; BillingClient baglantiyi yeniden dener.
-                _durum.value = mevcutDurum()
+                val bekleyenler = baglantiBekleyenleri.toList()
+                baglantiBekleyenleri.clear()
+                bekleyenler.forEach { (_, hata) -> hata() }
             }
         })
     }
@@ -130,11 +166,10 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
             .build()
 
         istemci.queryProductDetailsAsync(parametreler) { sonuc, queryProductDetailsResult ->
-            if (sonuc.responseCode != BillingClient.BillingResponseCode.OK) {
-                mevcutDurumaDon()
-                return@queryProductDetailsAsync
+            if (sonuc.responseCode == BillingClient.BillingResponseCode.OK) {
+                urunDetaylari = queryProductDetailsResult.productDetailsList.associateBy { it.productId }
             }
-            urunDetaylari = queryProductDetailsResult.productDetailsList.associateBy { it.productId }
+            // Urun sorgusu basarisiz olsa da PURCHASED alimlar islenmeli.
             sahiplikleriSorgula()
         }
     }
@@ -145,15 +180,18 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
             .setProductType(BillingClient.ProductType.INAPP)
             .build()
         istemci.queryPurchasesAsync(parametreler) { sonuc, satinAlmalar ->
+            taramaSuruyor = false
             if (sonuc.responseCode != BillingClient.BillingResponseCode.OK) {
+                sonTaramaMs = null
                 mevcutDurumaDon()
                 return@queryPurchasesAsync
             }
 
-            val hizmetSatinAlmalari = satinAlmalar.filter { satinAlma ->
-                satinAlma.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                    satinAlma.products.any { it in URUN_KIMLIKLERI }
-            }
+            val ozetler = satinAlmalar.map { SatinAlmaOzeti(it.products, it.purchaseState, it.purchaseToken) }
+            val islenecek = islenecekSatinAlmalar(ozetler, URUN_KIMLIKLERI).map { it.jeton }.toSet()
+            val hizmetSatinAlmalari = satinAlmalar
+                .filter { it.purchaseToken in islenecek }
+                .distinctBy { it.purchaseToken }
             if (hizmetSatinAlmalari.isEmpty()) {
                 mevcutDurumaDon()
             } else {
@@ -218,6 +256,8 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
             _durum.value = if (sonuc.responseCode == BillingClient.BillingResponseCode.OK) {
                 mevcutDurum()
             } else {
+                // Sessizce yutma: alim tuketilmemis kalir, sonraki tarama yeniden dener.
+                sonTaramaMs = null
                 BagisDurumu.Hata(sonuc.debugMessage)
             }
         }
@@ -250,8 +290,10 @@ class BagisYoneticisi(baglam: Context) : BagisKaynagi {
         }
 
     private fun talebiKaliciKaydet(talep: DestekTalebi): Boolean {
-        val kayitlar = tercihler.getStringSet(TALEP_ANAHTARI, emptySet()).orEmpty().toMutableSet()
-        kayitlar += talepKaydi(talep)
+        val kayitlar = talepKaydiEkle(
+            tercihler.getStringSet(TALEP_ANAHTARI, emptySet()).orEmpty(),
+            talepKaydi(talep),
+        ).toMutableSet()
         return tercihler.edit().putStringSet(TALEP_ANAHTARI, kayitlar).commit()
     }
 

@@ -24,5 +24,7 @@ class PdfKutusuUygulamasi : Application() {
         // varlik yukleyicisiyle ayni yerde durmasi bilincli.
         YaziTipi.baslat(applicationContext)
         bagimliliklar = Bagimliliklar(this)
+        // Onaylanmamis alimlar Play tarafindan 3 gunde iade edilir; ekrandan bagimsiz tara.
+        bagimliliklar.bagisYoneticisi.arkaPlandaTara()
     }
 }

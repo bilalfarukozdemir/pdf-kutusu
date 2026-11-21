@@ -78,6 +78,12 @@ class AnaAktivite : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // En cok dakikada bir; basarisiz tarama sonrakinde yeniden denenir.
+        (applicationContext as PdfKutusuUygulamasi).bagimliliklar.bagisYoneticisi.arkaPlandaTara()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
